@@ -56,14 +56,16 @@ class FranchiseAccountCreateSerializer(serializers.ModelSerializer):
 class WithdrawalRequestSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     franchise = FranchiseProfileSerializer(read_only=True)
-    franchise_account = FranchiseAccountSerializer(read_only=True)  # Add this
+    franchise_account = FranchiseAccountSerializer(read_only=True)
+    franchise_account_id = serializers.IntegerField(write_only=True, required=True)
 
     class Meta:
         model = WithdrawalRequest
         fields = [
-            'id', 'user', 'franchise', 'franchise_account', 'amount',
-            'bank_account', 'upi_id', 'qr_code', 'status', 'created_at'
+            'id', 'user', 'franchise', 'franchise_account', 'franchise_account_id',
+            'amount', 'bank_account', 'upi_id', 'qr_code', 'status', 'created_at'
         ]
+
 
 
 

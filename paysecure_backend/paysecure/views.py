@@ -79,24 +79,71 @@ class WithdrawalRequestCreateView(generics.CreateAPIView):
 # Admin assigns Withdrawal to Franchise
 # ---------------------------
 class AssignFranchiseView(APIView):
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [IsAdmin]
 
     def post(self, request, withdrawal_id, franchise_id):
         try:
             withdrawal = WithdrawalRequest.objects.get(id=withdrawal_id)
             franchise = Franchise.objects.get(id=franchise_id)
 
+            if withdrawal.status != "pending":
+                return Response(
+                    {"error": f"Cannot assign. Current status: {withdrawal.status}"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             withdrawal.franchise = franchise
-            withdrawal.status = "assigned"
+            withdrawal.status = "processing"
             withdrawal.save()
 
-            return Response({"message": "Franchise assigned successfully"}, status=status.HTTP_200_OK)
+            return Response(
+                {"message": "Franchise assigned successfully, status set to processing"},
+                status=status.HTTP_200_OK,
+            )
 
         except WithdrawalRequest.DoesNotExist:
             return Response({"error": "Withdrawal request not found"}, status=status.HTTP_404_NOT_FOUND)
         except Franchise.DoesNotExist:
             return Response({"error": "Franchise not found"}, status=status.HTTP_404_NOT_FOUND)
 
+
+# ---------------------------
+# Franchise marks Withdrawal as Completed
+# ---------------------------
+class MarkCompletedView(APIView):
+    permission_classes = [IsFranchise]
+
+    def post(self, request, withdrawal_id):
+        try:
+            withdrawal = WithdrawalRequest.objects.get(id=withdrawal_id)
+
+            # Only assigned franchise can complete
+            if withdrawal.franchise.user != request.user:
+                return Response({"error": "Not authorized"}, status=status.HTTP_403_FORBIDDEN)
+
+            if withdrawal.status != "processing":
+                return Response(
+                    {"error": f"Cannot complete. Current status: {withdrawal.status}"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            withdrawal.status = "completed"
+            withdrawal.completed_at = timezone.now()
+            withdrawal.save()
+
+            # Save transaction history
+            TransactionHistory.objects.create(
+                user=withdrawal.user,
+                franchise=withdrawal.franchise,
+                amount=withdrawal.amount,
+                transaction_type="withdraw",
+                status="completed",
+            )
+
+            return Response({"message": "Withdrawal marked as completed"}, status=status.HTTP_200_OK)
+
+        except WithdrawalRequest.DoesNotExist:
+            return Response({"error": "Withdrawal request not found"}, status=status.HTTP_404_NOT_FOUND)
 
 # ---------------------------
 # Franchise marks Withdrawal as Paid
@@ -120,8 +167,10 @@ class MarkPaidView(APIView):
                 user=withdrawal.user,
                 franchise=withdrawal.franchise,
                 amount=withdrawal.amount,
+                transaction_type="withdraw",
                 status="completed"
             )
+
 
             return Response({"message": "Withdrawal marked as paid"}, status=status.HTTP_200_OK)
 
@@ -148,7 +197,10 @@ class LogoutView(APIView):
     def post(self, request):
         try:
             # Expecting client to send refresh token
-            refresh_token = request.data["refresh"]
+            refresh_token = request.data.get("refresh")
+            if not refresh_token:
+                return Response({"error": "Refresh token required"}, status=status.HTTP_400_BAD_REQUEST)
+
             token = RefreshToken(refresh_token)
             token.blacklist()  # Blacklist the token
             return Response({"message": "Logout successful"}, status=status.HTTP_205_RESET_CONTENT)

@@ -19,6 +19,7 @@ urlpatterns = [
 
     # Admin assigns withdrawal to franchise
     path("withdraw/<int:withdrawal_id>/assign/<int:franchise_id>/", AssignFranchiseView.as_view(), name="assign-franchise"),
+    path("withdraw/<int:withdrawal_id>/mark-completed/", MarkCompletedView.as_view(), name="mark-completed"),
 
     # Franchise marks withdrawal as paid
     path("withdraw/<int:withdrawal_id>/mark-paid/", MarkPaidView.as_view(), name="mark-paid"),
