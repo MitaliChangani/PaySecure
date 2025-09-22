@@ -4,6 +4,7 @@ import VideoFile from "../assets/Video.mp4";
 
 function Home() {
   return (
+    <>
     <div className="min-h-screen flex flex-col justify-center bg-blue-100">
       <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
 
@@ -49,6 +50,8 @@ function Home() {
 
       </div>
     </div>
+    <hr></hr>
+</>
   );
 }
 
