@@ -23,7 +23,7 @@ function Register() {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Username */}
+      
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Username
@@ -38,7 +38,6 @@ function Register() {
             />
           </div>
 
-          {/* Email */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Email
@@ -53,7 +52,6 @@ function Register() {
             />
           </div>
 
-          {/* Password */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Password
@@ -68,7 +66,6 @@ function Register() {
             />
           </div>
 
-          {/* Dropdown */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Select Role
@@ -84,7 +81,6 @@ function Register() {
             </select>
           </div>
 
-          {/* Register Button */}
           <button
             type="submit"
             className="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300"

@@ -1,5 +1,5 @@
-// Login.jsx
 import React, { useState } from "react";
+import { Link } from "react-router-dom"; 
 
 function Login() {
   const [username, setUsername] = useState("");
@@ -20,7 +20,7 @@ function Login() {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Username */}
+      
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Username
@@ -35,7 +35,6 @@ function Login() {
             />
           </div>
 
-          {/* Password */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Password
@@ -50,7 +49,6 @@ function Login() {
             />
           </div>
 
-          {/* Forgot Password */}
           <div className="text-right">
             <a
               href="#"
@@ -60,13 +58,19 @@ function Login() {
             </a>
           </div>
 
-          {/* Login Button */}
           <button
             type="submit"
             className="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300"
           >
             Login
           </button>
+
+          <p className="text-center text-sm text-gray-600 mt-4">
+            Don't have an account?{" "}
+            <Link to="/Register" className="text-blue-500 hover:underline font-medium">
+              Register here
+            </Link>
+          </p>
         </form>
       </div>
     </div>
