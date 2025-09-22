@@ -5,6 +5,7 @@ import Forgot from './Components/Forgot'
 import Otp from './Components/Otp'
 import Header from "./Components/Header";
 import FranchiseDs from "./Components/FranchiseDs";
+import UserDs from "./Components/UserDs";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/Forgot" element={<Forgot />} />
         <Route path="/Otp" element={<Otp />} />
         <Route path="/FranchiseDs" element={<FranchiseDs />} />
+        <Route path="/UserDs" element={<UserDs />} />
       </Routes>
     </Router>
   );
