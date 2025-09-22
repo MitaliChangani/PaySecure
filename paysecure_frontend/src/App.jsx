@@ -1,16 +1,24 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Register from "./Components/Register";
+import Login from './Components/Login'
+import Forgot from './Components/Forgot'
+import Otp from './Components/Otp'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-     
-    </>
-  )
+    <Router>
+      <Routes>
+        {/* Default route */}
+        {/* <Route path="/" element={<Register />} /> */}
+
+        {/* Example: if you want to navigate using /register */}
+        <Route path="/Register" element={<Register />} />
+        <Route path="/Login" element={<Login />} />
+        <Route path="/Forgot" element={<Forgot />} />
+        <Route path="/Otp" element={<Otp />} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;
