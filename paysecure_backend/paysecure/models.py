@@ -76,10 +76,15 @@ class TransactionHistory(models.Model):
         ('deposit', 'Deposit'),
         ('withdraw', 'Withdraw'),
     )
+    STATUS_CHOICES = (
+        ('processing', 'Processing'),
+        ('completed', 'Completed'),
+        ('failed', 'Failed'),
+    )
 
     user = models.ForeignKey('CustomUser', on_delete=models.CASCADE)
     franchise = models.ForeignKey(Franchise, on_delete=models.SET_NULL, null=True)
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     transaction_type = models.CharField(max_length=20, choices=TRANSACTION_TYPES)
-    status = models.CharField(max_length=20)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
