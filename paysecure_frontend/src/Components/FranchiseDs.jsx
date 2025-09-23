@@ -5,7 +5,6 @@ export default function FranchiseDs() {
   const [historyTab, setHistoryTab] = useState("pending");
   const [accountSubTab, setAccountSubTab] = useState("view");
 const [editingId, setEditingId] = useState(null);
-//   // Multiple bank accounts
   const [accounts, setAccounts] = useState([
     {
       id: 1,
@@ -24,8 +23,6 @@ const [editingId, setEditingId] = useState(null);
     ifsc: "",
     balance: "",
   });
-
-  // Handlers
   const handleNewChange = (e) => {
     setNewAccount({ ...newAccount, [e.target.name]: e.target.value });
   };
@@ -44,8 +41,6 @@ const [editingId, setEditingId] = useState(null);
     );
     setAccounts(updatedAccounts);
   };
-
-  // Sample bank details
   const userBankDetails = {
     accountName: "John Doe",
     accountNumber: "123456789012",
@@ -56,9 +51,7 @@ const [editingId, setEditingId] = useState(null);
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
       <aside className="w-64 bg-white shadow-lg p-6 flex flex-col items-center">
-        {/* Profile */}
         <div className="flex flex-col items-center">
           <div className="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center">
             <User size={40} className="text-gray-600" />
@@ -66,8 +59,6 @@ const [editingId, setEditingId] = useState(null);
           <h2 className="mt-3 text-lg font-semibold">John Doe</h2>
           <p className="text-sm text-gray-500">+91 9876543210</p>
         </div>
-
-        {/* Menu */}
         <nav className="mt-8 w-full space-y-3">
           <button
             onClick={() => setActiveTab("account")}
@@ -106,15 +97,10 @@ const [editingId, setEditingId] = useState(null);
           </button>
         </nav>
       </aside>
-
-        {/* Content Area */}
       <main className="flex-1 p-8 overflow-y-auto">
-        {/* Account Tab */}
         {activeTab === "account" && (
           <div className="bg-white p-6 rounded-lg shadow max-w-3xl">
             <h1 className="text-2xl font-bold mb-6">Bank Accounts</h1>
-
-            {/* Sub-tabs */}
             <div className="flex space-x-4 mb-6">
               <button
                 className={`px-4 py-2 rounded-lg font-medium ${
@@ -137,8 +123,6 @@ const [editingId, setEditingId] = useState(null);
                 Add Account
               </button>
             </div>
-
-            {/* View All Accounts */}
             {accountSubTab === "view" && (
               <div className="space-y-6">
                 {accounts.map((acc) => (
@@ -220,8 +204,6 @@ const [editingId, setEditingId] = useState(null);
                 ))}
               </div>
             )}
-
-            {/* Add New Account */}
             {accountSubTab === "add" && (
               <form className="space-y-4 max-w-md" onSubmit={handleAddAccount}>
                 <div>
@@ -289,12 +271,9 @@ const [editingId, setEditingId] = useState(null);
             )}
           </div>
         )}
-        {/* History Tab */}
         {activeTab === "history" && (
           <div>
             <h1 className="text-2xl font-bold mb-6">History</h1>
-
-            {/* Tabs for Pending / Complete */}
             <div className="flex space-x-4 mb-6">
               <button
                 onClick={() => setHistoryTab("pending")}
@@ -317,8 +296,6 @@ const [editingId, setEditingId] = useState(null);
                 Complete
               </button>
             </div>
-
-            {/* Pending List */}
             {historyTab === "pending" && (
               <div className="space-y-4">
                 {[1, 2, 3].map((item) => (
@@ -334,8 +311,6 @@ const [editingId, setEditingId] = useState(null);
                 ))}
               </div>
             )}
-
-            {/* Complete List */}
             {historyTab === "complete" && (
               <div className="space-y-4">
                 {[1, 2].map((item) => (
@@ -353,8 +328,6 @@ const [editingId, setEditingId] = useState(null);
             )}
           </div>
         )}
-
-        {/* Profile Tab */}
         {activeTab === "profile" && (
           <div>
             <h1 className="text-2xl font-bold mb-6">Edit Profile</h1>

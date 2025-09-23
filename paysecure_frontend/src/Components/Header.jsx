@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 
@@ -7,14 +7,36 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = () => setIsLoggedIn(true);
-  const handleLogout = () => setIsLoggedIn(false);
+  useEffect(() => {
+    const storedLogin = localStorage.getItem("isLoggedIn");
+    if (storedLogin === "true") {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+    localStorage.setItem("isLoggedIn", "true");
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    localStorage.removeItem("isLoggedIn");
+    navigate("/"); 
+  };
+
+  const handleRegister = () => {
+    // After successful registration, mark user as logged in
+    setIsLoggedIn(true);
+    localStorage.setItem("isLoggedIn", "true");
+    navigate("/"); // optional: redirect to home after register
+  };
 
   return (
     <header className="w-full bg-black shadow-sm">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
         
-        {/* Logo (only text now) */}
+        {/* Logo */}
         <h1 className="text-xl font-bold text-white">Pay Secure</h1>
 
         {/* Desktop Navigation */}
@@ -35,7 +57,7 @@ export default function Header() {
                 Login
               </button>
               <button
-                onClick={() => navigate("/Register")}
+                onClick={handleRegister} // <-- registration sets user as logged in
                 className="px-5 py-2 rounded-lg font-medium bg-blue-700 text-white hover:bg-blue-800"
               >
                 Create Account
@@ -81,7 +103,7 @@ export default function Header() {
                 </button>
                 <button
                   onClick={() => {
-                    navigate("/Register");
+                    handleRegister(); // registration sets user as logged in
                     setMenuOpen(false);
                   }}
                   className="w-40 px-5 py-2 rounded-lg font-medium bg-blue-700 text-white hover:bg-blue-800"
