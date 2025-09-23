@@ -1,13 +1,14 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Register from "./Components/Register";
-import Login from "./Components/Login";
-import Forgot from "./Components/Forgot";
-import Otp from "./Components/Otp";
-import Footer from "./Components/Footer";
-import Home from "./Components/Home";
+import Login from './Components/Login'
+import Forgot from './Components/Forgot'
+import Otp from './Components/Otp'
+import Footer from './Components/Footer'
+import Home from './Components/Home'
 import Header from "./Components/Header";
 import FranchiseDs from "./Components/FranchiseDs";
-import UserDs from "./Components/UserDs";
+import UserDs from "./Components/UserDs"
+
 
 function Layout({ children }) {
   const location = useLocation();
@@ -23,6 +24,7 @@ function Layout({ children }) {
     </>
   );
 }
+
 
 function App() {
   return (

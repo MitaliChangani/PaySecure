@@ -1,19 +1,46 @@
 import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
+// ✅ Backend API URL (adjust if deployed)
+const API_URL = "http://localhost:8000/api";
 
 function Register() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("User");
+  const [role, setRole] = useState("user"); // backend expects lowercase: 'admin', 'franchise', 'user'
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  function handleSubmit(e) {
+  const navigate = useNavigate();
+
+  async function handleSubmit(e) {
     e.preventDefault();
-    console.log("Username:", username);
-    console.log("Email:", email);
-    console.log("Password:", password);
-    console.log("Role:", role);
-    alert("Registered Successfully!");
+    setError("");
+    setLoading(true);
+
+    try {
+      const response = await axios.post(`${API_URL}/register/`, {
+        username,
+        email,
+        password,
+        role: role.toLowerCase(),
+      });
+
+      console.log("Response:", response.data);
+      alert("Registered Successfully!");
+      navigate("/Login"); // redirect to login page
+    } catch (err) {
+      console.error(err);
+      if (err.response && err.response.data) {
+        setError(JSON.stringify(err.response.data));
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -23,8 +50,13 @@ function Register() {
           Register
         </h2>
 
+        {error && (
+          <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
+            {error}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-5">
-      
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Username
@@ -76,17 +108,18 @@ function Register() {
               onChange={(e) => setRole(e.target.value)}
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             >
-              <option value="Admin">Admin</option>
-              <option value="Franchise">Franchise</option>
-              <option value="User">User</option>
+              <option value="admin">Admin</option>
+              <option value="franchise">Franchise</option>
+              <option value="user">User</option>
             </select>
           </div>
 
           <button
             type="submit"
+            disabled={loading}
             className="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300"
           >
-            Register
+            {loading ? "Registering..." : "Register"}
           </button>
         </form>
       </div>

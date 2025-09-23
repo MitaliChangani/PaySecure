@@ -7,37 +7,30 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
+  // Check login state on component mount
   useEffect(() => {
-    const storedLogin = localStorage.getItem("isLoggedIn");
-    if (storedLogin === "true") {
+    const userRole = localStorage.getItem("user_role"); // check if user info exists
+    if (userRole) {
       setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
     }
   }, []);
 
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-    localStorage.setItem("isLoggedIn", "true");
-  };
-
+  // Logout handler
   const handleLogout = () => {
     setIsLoggedIn(false);
-    localStorage.removeItem("isLoggedIn");
-    navigate("/"); 
-  };
-
-  const handleRegister = () => {
-    // After successful registration, mark user as logged in
-    setIsLoggedIn(true);
-    localStorage.setItem("isLoggedIn", "true");
-    navigate("/"); // optional: redirect to home after register
+    localStorage.removeItem("user_role");
+    localStorage.removeItem("user_id");
+    localStorage.removeItem("username");
+    navigate("/"); // optional: redirect to home
   };
 
   return (
     <header className="w-full bg-black shadow-sm">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
-        
         {/* Logo */}
-        <h1 className="text-xl font-bold text-white">Pay Secure</h1>
+        <h1 className="text-xl font-bold text-white">PaySecure</h1>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6 font-medium text-white">
@@ -57,19 +50,27 @@ export default function Header() {
                 Login
               </button>
               <button
-                onClick={handleRegister} // <-- registration sets user as logged in
+                onClick={() => navigate("/register")}
                 className="px-5 py-2 rounded-lg font-medium bg-blue-700 text-white hover:bg-blue-800"
               >
                 Create Account
               </button>
             </>
           ) : (
-            <button
-              onClick={handleLogout}
-              className="px-5 py-2 rounded-lg font-medium bg-red-600 text-white hover:bg-red-700"
-            >
-              Logout
-            </button>
+            <>
+              <button
+                onClick={() => navigate("/dashboard")}
+                className="px-5 py-2 rounded-lg font-medium bg-green-600 text-white hover:bg-green-700"
+              >
+                Dashboard
+              </button>
+              <button
+                onClick={handleLogout}
+                className="px-5 py-2 rounded-lg font-medium bg-red-600 text-white hover:bg-red-700"
+              >
+                Logout
+              </button>
+            </>
           )}
         </div>
 
@@ -103,7 +104,7 @@ export default function Header() {
                 </button>
                 <button
                   onClick={() => {
-                    handleRegister(); // registration sets user as logged in
+                    navigate("/register");
                     setMenuOpen(false);
                   }}
                   className="w-40 px-5 py-2 rounded-lg font-medium bg-blue-700 text-white hover:bg-blue-800"
@@ -112,15 +113,26 @@ export default function Header() {
                 </button>
               </>
             ) : (
-              <button
-                onClick={() => {
-                  handleLogout();
-                  setMenuOpen(false);
-                }}
-                className="w-40 px-5 py-2 rounded-lg font-medium bg-red-600 text-white hover:bg-red-700"
-              >
-                Logout
-              </button>
+              <>
+                <button
+                  onClick={() => {
+                    navigate("/dashboard");
+                    setMenuOpen(false);
+                  }}
+                  className="w-40 px-5 py-2 rounded-lg font-medium bg-green-600 text-white hover:bg-green-700"
+                >
+                  Dashboard
+                </button>
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setMenuOpen(false);
+                  }}
+                  className="w-40 px-5 py-2 rounded-lg font-medium bg-red-600 text-white hover:bg-red-700"
+                >
+                  Logout
+                </button>
+              </>
             )}
           </nav>
         </div>
