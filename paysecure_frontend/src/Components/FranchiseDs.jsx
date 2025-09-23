@@ -5,7 +5,6 @@ export default function FranchiseDs() {
   const [historyTab, setHistoryTab] = useState("pending");
   const [accountSubTab, setAccountSubTab] = useState("view");
   const [editingId, setEditingId] = useState(null);
-  // Sample Withdraw Requests Data
   const withdrawRequests = [
     {
       id: 1,
@@ -32,9 +31,6 @@ export default function FranchiseDs() {
       qr: "https://via.placeholder.com/100x100.png?text=QR2",
     },
   ];
-
-
-  // Multiple bank accounts
   const [accounts, setAccounts] = useState([
     {
       id: 1,
@@ -96,8 +92,8 @@ export default function FranchiseDs() {
           <button
             onClick={() => setActiveTab("account")}
             className={`w-full flex items-center px-4 py-2 rounded-lg font-medium ${activeTab === "account"
-                ? "bg-blue-600 text-white"
-                : "hover:bg-gray-100 text-gray-700"
+              ? "bg-blue-600 text-white"
+              : "hover:bg-gray-100 text-gray-700"
               }`}
           >
             <CreditCard size={18} className="mr-2" />
@@ -107,8 +103,8 @@ export default function FranchiseDs() {
           <button
             onClick={() => setActiveTab("history")}
             className={`w-full flex items-center px-4 py-2 rounded-lg font-medium ${activeTab === "history"
-                ? "bg-blue-600 text-white"
-                : "hover:bg-gray-100 text-gray-700"
+              ? "bg-blue-600 text-white"
+              : "hover:bg-gray-100 text-gray-700"
               }`}
           >
             <Clock size={18} className="mr-2" />
@@ -118,8 +114,8 @@ export default function FranchiseDs() {
           <button
             onClick={() => setActiveTab("profile")}
             className={`w-full flex items-center px-4 py-2 rounded-lg font-medium ${activeTab === "profile"
-                ? "bg-blue-600 text-white"
-                : "hover:bg-gray-100 text-gray-700"
+              ? "bg-blue-600 text-white"
+              : "hover:bg-gray-100 text-gray-700"
               }`}
           >
             <User size={18} className="mr-2" />
@@ -134,8 +130,8 @@ export default function FranchiseDs() {
             <div className="flex space-x-4 mb-6">
               <button
                 className={`px-4 py-2 rounded-lg font-medium ${accountSubTab === "view"
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                   }`}
                 onClick={() => setAccountSubTab("view")}
               >
@@ -143,8 +139,8 @@ export default function FranchiseDs() {
               </button>
               <button
                 className={`px-4 py-2 rounded-lg font-medium ${accountSubTab === "add"
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                   }`}
                 onClick={() => setAccountSubTab("add")}
               >
@@ -340,8 +336,8 @@ export default function FranchiseDs() {
               <button
                 onClick={() => setHistoryTab("pending")}
                 className={`px-4 py-2 rounded-lg font-medium ${historyTab === "pending"
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                   }`}
               >
                 Pending
@@ -349,8 +345,8 @@ export default function FranchiseDs() {
               <button
                 onClick={() => setHistoryTab("complete")}
                 className={`px-4 py-2 rounded-lg font-medium ${historyTab === "complete"
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                   }`}
               >
                 Complete
@@ -359,163 +355,160 @@ export default function FranchiseDs() {
 
             {/* Pending List */}
 
-    {historyTab === "pending" && (
-  <div className="bg-white p-6 rounded-lg shadow w-full overflow-x-auto">
-    <h2 className="text-xl font-semibold mb-4">Pending Withdraw Requests</h2>
-    <table className="min-w-full border-collapse border border-gray-300">
-      <thead>
-        <tr className="bg-gray-100 text-left">
-          <th className="border px-4 py-2">#</th>
-          <th className="border px-4 py-2">Account Holder</th>
-          <th className="border px-4 py-2">Account Number</th>
-          <th className="border px-4 py-2">Bank Name</th>
-          <th className="border px-4 py-2">IFSC</th>
-          <th className="border px-4 py-2">UPI ID</th>
-          <th className="border px-4 py-2">Amount</th>
-          <th className="border px-4 py-2">Date</th>
-          <th className="border px-4 py-2">Time</th>
-          <th className="border px-4 py-2">QR Code</th>
-          <th className="border px-4 py-2">Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {withdrawRequests.map((req, index) => (
-          <tr key={req.id} className="hover:bg-gray-50">
-            <td className="border px-4 py-2">{index + 1}</td>
-            <td className="border px-4 py-2">{req.accountName}</td>
-            <td className="border px-4 py-2">{req.accountNumber}</td>
-            <td className="border px-4 py-2">{req.bankName}</td>
-            <td className="border px-4 py-2">{req.ifsc}</td>
-            <td className="border px-4 py-2">{req.upiId}</td>
-            <td className="border px-4 py-2">₹{req.amount.toLocaleString()}</td>
-            <td className="border px-4 py-2">{req.date}</td>
-            <td className="border px-4 py-2">{req.time}</td>
-            <td className="border px-4 py-2 text-center">
-              <a
-                href={req.qr}
-                download={`QR-${req.id}.png`}
-                className="text-blue-600 underline hover:text-blue-800"
-              >
-                Download
-              </a>
-            </td>
-            <td className="border px-4 py-2 text-center">
-              <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
-                Pay Now
-              </button>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-)}
+            {historyTab === "pending" && (
+              <div className="bg-white p-6 rounded-lg shadow w-full overflow-x-auto">
+                <h2 className="text-xl font-semibold mb-4">Pending Withdraw Requests</h2>
+                <table className="min-w-full border-collapse border border-gray-300">
+                  <thead>
+                    <tr className="bg-gray-100 text-left">
+                      <th className="border px-4 py-2">#</th>
+                      <th className="border px-4 py-2">Account Holder</th>
+                      <th className="border px-4 py-2">Account Number</th>
+                      <th className="border px-4 py-2">Bank Name</th>
+                      <th className="border px-4 py-2">IFSC</th>
+                      <th className="border px-4 py-2">UPI ID</th>
+                      <th className="border px-4 py-2">Amount</th>
+                      <th className="border px-4 py-2">Date</th>
+                      <th className="border px-4 py-2">Time</th>
+                      <th className="border px-4 py-2">QR Code</th>
+                      <th className="border px-4 py-2">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {withdrawRequests.map((req, index) => (
+                      <tr key={req.id} className="hover:bg-gray-50">
+                        <td className="border px-4 py-2">{index + 1}</td>
+                        <td className="border px-4 py-2">{req.accountName}</td>
+                        <td className="border px-4 py-2">{req.accountNumber}</td>
+                        <td className="border px-4 py-2">{req.bankName}</td>
+                        <td className="border px-4 py-2">{req.ifsc}</td>
+                        <td className="border px-4 py-2">{req.upiId}</td>
+                        <td className="border px-4 py-2">₹{req.amount.toLocaleString()}</td>
+                        <td className="border px-4 py-2">{req.date}</td>
+                        <td className="border px-4 py-2">{req.time}</td>
+                        <td className="border px-4 py-2 text-center">
+                          <a
+                            href={req.qr}
+                            download={`QR-${req.id}.png`}
+                            className="text-blue-600 underline hover:text-blue-800"
+                          >
+                            Download
+                          </a>
+                        </td>
+                        <td className="border px-4 py-2 text-center">
+                          <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+                            Pay Now
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
 
-
-
-            {/* Complete List */}
-  {
-    historyTab === "complete" && (
-      <div className="bg-white p-6 rounded-lg shadow w-full overflow-x-auto">
-        <h2 className="text-xl font-semibold mb-4">Completed Transactions</h2>
-        <table className="min-w-full border-collapse border border-gray-300">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="border px-4 py-2 text-left">#</th>
-              <th className="border px-4 py-2 text-left">Status</th>
-              <th className="border px-4 py-2 text-left">UPI ID</th>
-              <th className="border px-4 py-2 text-left">Transaction ID</th>
-              <th className="border px-4 py-2 text-left">Date</th>
-              <th className="border px-4 py-2 text-left">Time</th>
-              <th className="border px-4 py-2 text-left">From</th>
-              <th className="border px-4 py-2 text-left">To</th>
-              <th className="border px-4 py-2 text-left">Amount</th>
-            </tr>
-          </thead>
-          <tbody>
-            {[
-              {
-                id: 1,
-                status: "Withdraw",
-                upi: "user@upi",
-                transactionId: "TXN123456",
-                date: "2025-09-22",
-                time: "14:30",
-                from: "John Doe",
-                to: "Bank Account",
-                amount: 5000,
-              },
-              {
-                id: 2,
-                status: "Deposit",
-                upi: "recipient@upi",
-                transactionId: "TXN654321",
-                date: "2025-09-20",
-                time: "10:15",
-                from: "Bank Account",
-                to: "John Doe",
-                amount: 2000,
-              },
-            ].map((tx, index) => (
-              <tr key={tx.id} className="hover:bg-gray-50">
-                <td className="border px-4 py-2">{index + 1}</td>
-                <td className="border px-4 py-2">{tx.status}</td>
-                <td className="border px-4 py-2">{tx.upi}</td>
-                <td className="border px-4 py-2">{tx.transactionId}</td>
-                <td className="border px-4 py-2">{tx.date}</td>
-                <td className="border px-4 py-2">{tx.time}</td>
-                <td className="border px-4 py-2">{tx.from}</td>
-                <td className="border px-4 py-2">{tx.to}</td>
-                <td className="border px-4 py-2">₹{tx.amount.toLocaleString()}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    )
-  }
+            {
+              historyTab === "complete" && (
+                <div className="bg-white p-6 rounded-lg shadow w-full overflow-x-auto">
+                  <h2 className="text-xl font-semibold mb-4">Completed Transactions</h2>
+                  <table className="min-w-full border-collapse border border-gray-300">
+                    <thead>
+                      <tr className="bg-gray-100">
+                        <th className="border px-4 py-2 text-left">#</th>
+                        <th className="border px-4 py-2 text-left">Status</th>
+                        <th className="border px-4 py-2 text-left">UPI ID</th>
+                        <th className="border px-4 py-2 text-left">Transaction ID</th>
+                        <th className="border px-4 py-2 text-left">Date</th>
+                        <th className="border px-4 py-2 text-left">Time</th>
+                        <th className="border px-4 py-2 text-left">From</th>
+                        <th className="border px-4 py-2 text-left">To</th>
+                        <th className="border px-4 py-2 text-left">Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        {
+                          id: 1,
+                          status: "Withdraw",
+                          upi: "user@upi",
+                          transactionId: "TXN123456",
+                          date: "2025-09-22",
+                          time: "14:30",
+                          from: "John Doe",
+                          to: "Bank Account",
+                          amount: 5000,
+                        },
+                        {
+                          id: 2,
+                          status: "Deposit",
+                          upi: "recipient@upi",
+                          transactionId: "TXN654321",
+                          date: "2025-09-20",
+                          time: "10:15",
+                          from: "Bank Account",
+                          to: "John Doe",
+                          amount: 2000,
+                        },
+                      ].map((tx, index) => (
+                        <tr key={tx.id} className="hover:bg-gray-50">
+                          <td className="border px-4 py-2">{index + 1}</td>
+                          <td className="border px-4 py-2">{tx.status}</td>
+                          <td className="border px-4 py-2">{tx.upi}</td>
+                          <td className="border px-4 py-2">{tx.transactionId}</td>
+                          <td className="border px-4 py-2">{tx.date}</td>
+                          <td className="border px-4 py-2">{tx.time}</td>
+                          <td className="border px-4 py-2">{tx.from}</td>
+                          <td className="border px-4 py-2">{tx.to}</td>
+                          <td className="border px-4 py-2">₹{tx.amount.toLocaleString()}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )
+            }
           </div >
         )
-}
-{
-  activeTab === "profile" && (
-    <div>
-      <h1 className="text-2xl font-bold mb-6">Edit Profile</h1>
-      <form className="space-y-4 max-w-lg">
-        <div>
-          <label className="block text-gray-700">Full Name</label>
-          <input
-            type="text"
-            defaultValue="John Doe"
-            className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-        <div>
-          <label className="block text-gray-700">Phone Number</label>
-          <input
-            type="text"
-            defaultValue="+91 9876543210"
-            className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-        <div>
-          <label className="block text-gray-700">Email</label>
-          <input
-            type="email"
-            defaultValue="johndoe@example.com"
-            className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-        <button
-          type="submit"
-          className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
-        >
-          Save Changes
-        </button>
-      </form>
-    </div>
-  )
-}
+        }
+        {
+          activeTab === "profile" && (
+            <div>
+              <h1 className="text-2xl font-bold mb-6">Edit Profile</h1>
+              <form className="space-y-4 max-w-lg">
+                <div>
+                  <label className="block text-gray-700">Full Name</label>
+                  <input
+                    type="text"
+                    defaultValue="John Doe"
+                    className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-700">Phone Number</label>
+                  <input
+                    type="text"
+                    defaultValue="+91 9876543210"
+                    className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-700">Email</label>
+                  <input
+                    type="email"
+                    defaultValue="johndoe@example.com"
+                    className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+                >
+                  Save Changes
+                </button>
+              </form>
+            </div>
+          )
+        }
       </main >
     </div >
   );
