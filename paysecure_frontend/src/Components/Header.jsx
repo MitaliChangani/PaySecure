@@ -1,65 +1,60 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
-import { Menu } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 export default function Header() {
-  // login state (default: false → not logged in)
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const events = ()=>{
-    navigate("/Register")
-  }
-  const eventss = ()=>{
-    navigate("/Login")
-  }
-  
-  const handleLogin = () => {
-    setIsLoggedIn(true); // simulate login
-  };
 
+  // Check login state on component mount
+  useEffect(() => {
+    const userRole = localStorage.getItem("user_role"); // check if user info exists
+    if (userRole) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, []);
+
+  // Logout handler
   const handleLogout = () => {
-    setIsLoggedIn(false); // simulate logout
+    setIsLoggedIn(false);
+    localStorage.removeItem("user_role");
+    localStorage.removeItem("user_id");
+    localStorage.removeItem("username");
+    navigate("/"); // optional: redirect to home
   };
 
   return (
-    <header className="w-full bg-white shadow-sm">
+    <header className="w-full bg-black shadow-sm">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
-        
         {/* Logo */}
-        <div className="flex items-center space-x-2">
-          <img
-            src="/logo.png" // replace with your logo path
-            alt="Logo"
-            className="h-8 w-8"
-          />
-          <h1 className="text-xl font-bold text-blue-900">ONE UPI</h1>
-        </div>
+        <h1 className="text-xl font-bold text-white">PaySecure</h1>
 
-        {/* Navigation */}
-        <nav className="hidden md:flex items-center space-x-6 font-medium text-gray-800">
-          <a href="#" className="hover:text-blue-700">Home</a>
-          <a href="#" className="hover:text-blue-700">About Us</a>
-          <a href="#" className="hover:text-blue-700">Features</a>
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center space-x-6 font-medium text-white">
+          <a href="/" className="hover:text-gray-300">Home</a>
+          <a href="/about" className="hover:text-gray-300">About Us</a>
+          <a href="/features" className="hover:text-gray-300">Features</a>
         </nav>
 
-        {/* Buttons */}
+        {/* Desktop Buttons */}
         <div className="hidden md:flex items-center space-x-3">
           {!isLoggedIn ? (
             <>
               <button
-                onClick={eventss}
-                className="px-5 py-2 rounded-lg font-medium bg-gray-600 text-white hover:bg-gray-700"
+                onClick={() => navigate("/Login")}
+                className="px-5 py-2 rounded-lg font-medium bg-gray-700 text-white hover:bg-gray-800"
               >
                 Login
               </button>
-              <a
-                href="/Register"
-                onClick={events}
-                className="px-5 py-2 rounded-lg font-medium bg-blue-600 text-white hover:bg-blue-700"
+              <button
+                onClick={() => navigate("/register")}
+                className="px-5 py-2 rounded-lg font-medium bg-blue-700 text-white hover:bg-blue-800"
               >
                 Create Account
-              </a>
+              </button>
             </>
           ) : (
             <button
@@ -71,11 +66,58 @@ export default function Header() {
           )}
         </div>
 
-        {/* Mobile Menu */}
-        <button className="md:hidden p-2 rounded-lg hover:bg-gray-100">
-          <Menu size={24} />
+        {/* Mobile Hamburger */}
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="md:hidden p-2 rounded-lg hover:bg-gray-800"
+        >
+          {menuOpen ? <X size={24} className="text-white" /> : <Menu size={24} className="text-white" />}
         </button>
       </div>
+
+      {/* Mobile Dropdown Menu */}
+      {menuOpen && (
+        <div className="md:hidden bg-black shadow-md border-t border-gray-800">
+          <nav className="flex flex-col items-center space-y-4 py-4 font-medium text-white">
+            <a href="/" className="hover:text-gray-300">Home</a>
+            <a href="/about" className="hover:text-gray-300">About Us</a>
+            <a href="/features" className="hover:text-gray-300">Features</a>
+
+            {!isLoggedIn ? (
+              <>
+                <button
+                  onClick={() => {
+                    navigate("/Login");
+                    setMenuOpen(false);
+                  }}
+                  className="w-40 px-5 py-2 rounded-lg font-medium bg-gray-700 text-white hover:bg-gray-800"
+                >
+                  Login
+                </button>
+                <button
+                  onClick={() => {
+                    navigate("/register");
+                    setMenuOpen(false);
+                  }}
+                  className="w-40 px-5 py-2 rounded-lg font-medium bg-blue-700 text-white hover:bg-blue-800"
+                >
+                  Create Account
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => {
+                  handleLogout();
+                  setMenuOpen(false);
+                }}
+                className="w-40 px-5 py-2 rounded-lg font-medium bg-red-600 text-white hover:bg-red-700"
+              >
+                Logout
+              </button>
+            )}
+          </nav>
+        </div>
+      )}
     </header>
   );
 }

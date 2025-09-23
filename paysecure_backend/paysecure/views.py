@@ -1,7 +1,7 @@
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
 from .models import *
 from .serializers import *
 from .permissions import IsAdmin, IsFranchise, IsNormalUser
@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
+
 
 CustomUser = get_user_model()
 
@@ -19,10 +20,48 @@ class RegisterView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.AllowAny]
+    
+    # def perform_create(self, serializer):
+    #     user = serializer.save()
+    #     if user.role == "franchise":
+    #         Franchise.objects.create(user=user)
 
+class LoginView(APIView):
+    permission_classes = [permissions.AllowAny]
 
-class CustomTokenObtainPairView(TokenObtainPairView):
-    serializer_class = CustomTokenObtainPairSerializer
+    def post(self, request):
+        username = request.data.get("username")
+        password = request.data.get("password")
+        user = authenticate(username=username, password=password)
+
+        if user:
+            refresh = RefreshToken.for_user(user)
+
+            response = Response({
+                "id": user.id,
+                "username": user.username,
+                "role": user.role
+            }, status=status.HTTP_200_OK)
+
+            # Set HttpOnly cookies
+            response.set_cookie(
+                key="access_token",
+                value=str(refresh.access_token),
+                httponly=True,
+                secure=False,  # True in production with HTTPS
+                samesite='Lax',
+                max_age=5*60  # 5 minutes
+            )
+            response.set_cookie(
+                key="refresh_token",
+                value=str(refresh),
+                httponly=True,
+                secure=False,
+                samesite='Lax',
+                max_age=7*24*60*60  # 7 days
+            )
+            return response
+        return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 # ---------------------------
@@ -179,14 +218,9 @@ class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        try:
-            # Expecting client to send refresh token
-            refresh_token = request.data.get("refresh")
-            if not refresh_token:
-                return Response({"error": "Refresh token required"}, status=status.HTTP_400_BAD_REQUEST)
-
-            token = RefreshToken(refresh_token)
-            token.blacklist()  # Blacklist the token
-            return Response({"message": "Logout successful"}, status=status.HTTP_205_RESET_CONTENT)
-        except Exception as e:
-            return Response({"error": "Invalid token or already blacklisted"}, status=status.HTTP_400_BAD_REQUEST)
+        # Blacklist refresh token if needed (optional)
+        response = Response({"message": "Logout successful"}, status=status.HTTP_205_RESET_CONTENT)
+        # Clear cookies
+        response.delete_cookie("access_token")
+        response.delete_cookie("refresh_token")
+        return response

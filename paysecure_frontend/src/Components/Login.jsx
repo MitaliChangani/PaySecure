@@ -1,16 +1,51 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom"; 
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+
+// Backend API URL
+const API_URL = "http://localhost:8000/api";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  function handleSubmit(e) {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Username:", username);
-    console.log("Password:", password);
-    alert("Login Successful!");
-  }
+    setError("");
+    setLoading(true);
+
+    try {
+      // Make request with credentials: 'include' to allow HttpOnly cookies
+      const response = await axios.post(
+        `${API_URL}/login/`,
+        { username, password },
+        { withCredentials: true } // Important for HttpOnly cookies
+      );
+
+      console.log("Login response:", response.data);
+
+      // Save only user info (no tokens in localStorage)
+      localStorage.setItem("user_role", response.data.role);
+      localStorage.setItem("user_id", response.data.id);
+      localStorage.setItem("username", response.data.username);
+
+      alert("Login Successful!");
+      navigate("/"); // redirect to homepage or dashboard
+    } catch (err) {
+      console.error(err);
+      if (err.response && err.response.data.detail) {
+        setError(err.response.data.detail);
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-blue-100 px-4">
@@ -19,8 +54,11 @@ function Login() {
           Login
         </h2>
 
+        {error && (
+          <div className="bg-red-100 text-red-700 p-3 rounded mb-4">{error}</div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-5">
-      
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Username
@@ -50,24 +88,25 @@ function Login() {
           </div>
 
           <div className="text-right">
-            <a
-              href="#"
-              className="text-sm text-blue-500 hover:underline"
-            >
+            <a href="#" className="text-sm text-blue-500 hover:underline">
               Forgot Password?
             </a>
           </div>
 
           <button
             type="submit"
+            disabled={loading}
             className="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300"
           >
-            Login
+            {loading ? "Logging in..." : "Login"}
           </button>
 
           <p className="text-center text-sm text-gray-600 mt-4">
             Don't have an account?{" "}
-            <Link to="/Register" className="text-blue-500 hover:underline font-medium">
+            <Link
+              to="/register"
+              className="text-blue-500 hover:underline font-medium"
+            >
               Register here
             </Link>
           </p>
