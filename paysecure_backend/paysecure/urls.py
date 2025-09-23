@@ -8,7 +8,7 @@ urlpatterns = [
     
     # User Registration
     path("register/", RegisterView.as_view(), name="register"),
-    path("login/", CustomTokenObtainPairView.as_view(), name="login"),
+    path("login/", LoginView.as_view(), name="login"),
 
 
     # Franchise Profile (view/update their own details)

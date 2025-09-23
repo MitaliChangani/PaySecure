@@ -58,9 +58,9 @@ class FranchiseAccountCreateSerializer(serializers.ModelSerializer):
         model = FranchiseAccount
         fields = ['bank_name', 'bank_account_number', 'ifsc_code', 'upi_id', 'qr_code']
 
-    def create(self, validated_data):
-        franchise = Franchise.objects.get(user=self.context['request'].user)
-        return FranchiseAccount.objects.create(franchise=franchise, **validated_data)
+    # def create(self, validated_data):
+    #     franchise = Franchise.objects.get(user=self.context['request'].user)
+    #     return FranchiseAccount.objects.create(franchise=franchise, **validated_data)
 
 # ---------------------------
 # Withdrawal Request Serializer
