@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 
@@ -7,15 +7,30 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = () => setIsLoggedIn(true);
-  const handleLogout = () => setIsLoggedIn(false);
+  // Check login state on component mount
+  useEffect(() => {
+    const userRole = localStorage.getItem("user_role"); // check if user info exists
+    if (userRole) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, []);
+
+  // Logout handler
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    localStorage.removeItem("user_role");
+    localStorage.removeItem("user_id");
+    localStorage.removeItem("username");
+    navigate("/"); // optional: redirect to home
+  };
 
   return (
     <header className="w-full bg-black shadow-sm">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
-        
-        {/* Logo (only text now) */}
-        <h1 className="text-xl font-bold text-white">Pay Secure</h1>
+        {/* Logo */}
+        <h1 className="text-xl font-bold text-white">PaySecure</h1>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6 font-medium text-white">
@@ -35,7 +50,7 @@ export default function Header() {
                 Login
               </button>
               <button
-                onClick={() => navigate("/Register")}
+                onClick={() => navigate("/register")}
                 className="px-5 py-2 rounded-lg font-medium bg-blue-700 text-white hover:bg-blue-800"
               >
                 Create Account
@@ -81,7 +96,7 @@ export default function Header() {
                 </button>
                 <button
                   onClick={() => {
-                    navigate("/Register");
+                    navigate("/register");
                     setMenuOpen(false);
                   }}
                   className="w-40 px-5 py-2 rounded-lg font-medium bg-blue-700 text-white hover:bg-blue-800"
