@@ -407,171 +407,65 @@ export default function FranchiseDs() {
               </div>
             )}
 
-<<<<<<< HEAD
-            {
-              historyTab === "complete" && (
-                <div className="bg-white p-6 rounded-lg shadow w-full overflow-x-auto">
-                  <h2 className="text-xl font-semibold mb-4">Completed Transactions</h2>
-                  <table className="min-w-full border-collapse border border-gray-300">
-                    <thead>
-                      <tr className="bg-gray-100">
-                        <th className="border px-4 py-2 text-left">#</th>
-                        <th className="border px-4 py-2 text-left">Status</th>
-                        <th className="border px-4 py-2 text-left">UPI ID</th>
-                        <th className="border px-4 py-2 text-left">Transaction ID</th>
-                        <th className="border px-4 py-2 text-left">Date</th>
-                        <th className="border px-4 py-2 text-left">Time</th>
-                        <th className="border px-4 py-2 text-left">From</th>
-                        <th className="border px-4 py-2 text-left">To</th>
-                        <th className="border px-4 py-2 text-left">Amount</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {[
-                        {
-                          id: 1,
-                          status: "Withdraw",
-                          upi: "user@upi",
-                          transactionId: "TXN123456",
-                          date: "2025-09-22",
-                          time: "14:30",
-                          from: "John Doe",
-                          to: "Bank Account",
-                          amount: 5000,
-                        },
-                        {
-                          id: 2,
-                          status: "Deposit",
-                          upi: "recipient@upi",
-                          transactionId: "TXN654321",
-                          date: "2025-09-20",
-                          time: "10:15",
-                          from: "Bank Account",
-                          to: "John Doe",
-                          amount: 2000,
-                        },
-                      ].map((tx, index) => (
-                        <tr key={tx.id} className="hover:bg-gray-50">
-                          <td className="border px-4 py-2">{index + 1}</td>
-                          <td className="border px-4 py-2">{tx.status}</td>
-                          <td className="border px-4 py-2">{tx.upi}</td>
-                          <td className="border px-4 py-2">{tx.transactionId}</td>
-                          <td className="border px-4 py-2">{tx.date}</td>
-                          <td className="border px-4 py-2">{tx.time}</td>
-                          <td className="border px-4 py-2">{tx.from}</td>
-                          <td className="border px-4 py-2">{tx.to}</td>
-                          <td className="border px-4 py-2">₹{tx.amount.toLocaleString()}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )
-            }
-          </div >
-        )
-        }
-        {
-          activeTab === "profile" && (
-            <div>
-              <h1 className="text-2xl font-bold mb-6">Edit Profile</h1>
-              <form className="space-y-4 max-w-lg">
-                <div>
-                  <label className="block text-gray-700">Full Name</label>
-                  <input
-                    type="text"
-                    defaultValue="John Doe"
-                    className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">Phone Number</label>
-                  <input
-                    type="text"
-                    defaultValue="+91 9876543210"
-                    className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-gray-700">Email</label>
-                  <input
-                    type="email"
-                    defaultValue="johndoe@example.com"
-                    className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
-                >
-                  Save Changes
-                </button>
-              </form>
-            </div>
-          )
-        }
-      </main >
-    </div >
-=======
             {/* Complete List */}
             {historyTab === "complete" && (
-                            <div className="bg-white p-6 rounded-lg shadow w-full overflow-x-auto">
-                                <h2 className="text-xl font-semibold mb-4">Completed Transactions</h2>
-                                <table className="min-w-full border-collapse border border-gray-300">
-                                    <thead>
-                                        <tr className="bg-gray-100">
-                                            <th className="border px-4 py-2 text-left">#</th>
-                                            <th className="border px-4 py-2 text-left">Status</th>
-                                            <th className="border px-4 py-2 text-left">UPI ID</th>
-                                            <th className="border px-4 py-2 text-left">Transaction ID</th>
-                                            <th className="border px-4 py-2 text-left">Date</th>
-                                            <th className="border px-4 py-2 text-left">Time</th>
-                                            <th className="border px-4 py-2 text-left">From</th>
-                                            <th className="border px-4 py-2 text-left">To</th>
-                                            <th className="border px-4 py-2 text-left">Amount</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {[
-                                            {
-                                                id: 1,
-                                                status: "Withdraw",
-                                                upi: "user@upi",
-                                                transactionId: "TXN123456",
-                                                date: "2025-09-22",
-                                                time: "14:30",
-                                                from: "John Doe",
-                                                to: "Bank Account",
-                                                amount: 5000,
-                                            },
-                                            {
-                                                id: 2,
-                                                status: "Deposit",
-                                                upi: "recipient@upi",
-                                                transactionId: "TXN654321",
-                                                date: "2025-09-20",
-                                                time: "10:15",
-                                                from: "Bank Account",
-                                                to: "John Doe",
-                                                amount: 2000,
-                                            },
-                                        ].map((tx, index) => (
-                                            <tr key={tx.id} className="hover:bg-gray-50">
-                                                <td className="border px-4 py-2">{index + 1}</td>
-                                                <td className="border px-4 py-2">{tx.status}</td>
-                                                <td className="border px-4 py-2">{tx.upi}</td>
-                                                <td className="border px-4 py-2">{tx.transactionId}</td>
-                                                <td className="border px-4 py-2">{tx.date}</td>
-                                                <td className="border px-4 py-2">{tx.time}</td>
-                                                <td className="border px-4 py-2">{tx.from}</td>
-                                                <td className="border px-4 py-2">{tx.to}</td>
-                                                <td className="border px-4 py-2">₹{tx.amount.toLocaleString()}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        )}
+              <div className="bg-white p-6 rounded-lg shadow w-full overflow-x-auto">
+                <h2 className="text-xl font-semibold mb-4">Completed Transactions</h2>
+                <table className="min-w-full border-collapse border border-gray-300">
+                  <thead>
+                    <tr className="bg-gray-100">
+                      <th className="border px-4 py-2 text-left">#</th>
+                      <th className="border px-4 py-2 text-left">Status</th>
+                      <th className="border px-4 py-2 text-left">UPI ID</th>
+                      <th className="border px-4 py-2 text-left">Transaction ID</th>
+                      <th className="border px-4 py-2 text-left">Date</th>
+                      <th className="border px-4 py-2 text-left">Time</th>
+                      <th className="border px-4 py-2 text-left">From</th>
+                      <th className="border px-4 py-2 text-left">To</th>
+                      <th className="border px-4 py-2 text-left">Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      {
+                        id: 1,
+                        status: "Withdraw",
+                        upi: "user@upi",
+                        transactionId: "TXN123456",
+                        date: "2025-09-22",
+                        time: "14:30",
+                        from: "John Doe",
+                        to: "Bank Account",
+                        amount: 5000,
+                      },
+                      {
+                        id: 2,
+                        status: "Deposit",
+                        upi: "recipient@upi",
+                        transactionId: "TXN654321",
+                        date: "2025-09-20",
+                        time: "10:15",
+                        from: "Bank Account",
+                        to: "John Doe",
+                        amount: 2000,
+                      },
+                    ].map((tx, index) => (
+                      <tr key={tx.id} className="hover:bg-gray-50">
+                        <td className="border px-4 py-2">{index + 1}</td>
+                        <td className="border px-4 py-2">{tx.status}</td>
+                        <td className="border px-4 py-2">{tx.upi}</td>
+                        <td className="border px-4 py-2">{tx.transactionId}</td>
+                        <td className="border px-4 py-2">{tx.date}</td>
+                        <td className="border px-4 py-2">{tx.time}</td>
+                        <td className="border px-4 py-2">{tx.from}</td>
+                        <td className="border px-4 py-2">{tx.to}</td>
+                        <td className="border px-4 py-2">₹{tx.amount.toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         )}
 
@@ -607,6 +501,5 @@ export default function FranchiseDs() {
         )}
       </main>
     </div>
->>>>>>> def3170ba5c6acadf21d1db6f90b5fad46c24dee
   );
 }
