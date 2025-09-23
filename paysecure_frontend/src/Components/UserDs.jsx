@@ -5,6 +5,34 @@ export default function UserDs() {
     const [activeTab, setActiveTab] = useState("history");
     const [historyTab, setHistoryTab] = useState("pending");
     const [pendingSection, setPendingSection] = useState("withdraw");
+    const withdrawRequests = [
+        {
+            id: 1,
+            franchiseName: "Franchise A",
+            accountName: "John Doe",
+            accountNumber: "123456789012",
+            bankName: "State Bank of India",
+            ifsc: "SBIN0001234",
+            upiId: "john@upi",
+            amount: 5000,
+            date: "2025-09-22",
+            time: "10:45 AM",
+            status: "Pending",
+        },
+        {
+            id: 2,
+            franchiseName: "Franchise B",
+            accountName: "Jane Smith",
+            accountNumber: "987654321098",
+            bankName: "HDFC Bank",
+            ifsc: "HDFC0005678",
+            upiId: "jane@upi",
+            amount: 3000,
+            date: "2025-09-21",
+            time: "03:20 PM",
+            status: "Pending",
+        },
+    ];
     const pendingWithdraws = [
         {
             id: 1,
@@ -44,7 +72,7 @@ export default function UserDs() {
                         <User size={40} className="text-gray-600" />
                     </div>
                     <h2 className="mt-3 text-lg font-semibold">John Doe</h2>
-                    <p className="text-sm text-gray-500">+91 9876543210</p>
+                    <p className="text-sm text-gray-500">Johndoe@gmail.com</p>
                 </div>
 
                 {/* Menu */}
@@ -53,8 +81,8 @@ export default function UserDs() {
                     <button
                         onClick={() => setActiveTab("withdraw")}
                         className={`w-full flex items-center px-4 py-2 rounded-lg font-medium ${activeTab === "withdraw"
-                                ? "bg-blue-600 text-white"
-                                : "hover:bg-gray-100 text-gray-700"
+                            ? "bg-blue-600 text-white"
+                            : "hover:bg-gray-100 text-gray-700"
                             }`}
                     >
                         <ArrowUpCircle size={18} className="mr-2" />
@@ -65,8 +93,8 @@ export default function UserDs() {
                     <button
                         onClick={() => setActiveTab("payment")}
                         className={`w-full flex items-center px-4 py-2 rounded-lg font-medium ${activeTab === "payment"
-                                ? "bg-blue-600 text-white"
-                                : "hover:bg-gray-100 text-gray-700"
+                            ? "bg-blue-600 text-white"
+                            : "hover:bg-gray-100 text-gray-700"
                             }`}
                     >
                         <CreditCard size={18} className="mr-2" />
@@ -77,8 +105,8 @@ export default function UserDs() {
                     <button
                         onClick={() => setActiveTab("history")}
                         className={`w-full flex items-center px-4 py-2 rounded-lg font-medium ${activeTab === "history"
-                                ? "bg-blue-600 text-white"
-                                : "hover:bg-gray-100 text-gray-700"
+                            ? "bg-blue-600 text-white"
+                            : "hover:bg-gray-100 text-gray-700"
                             }`}
                     >
                         <Clock size={18} className="mr-2" />
@@ -89,8 +117,8 @@ export default function UserDs() {
                     <button
                         onClick={() => setActiveTab("profile")}
                         className={`w-full flex items-center px-4 py-2 rounded-lg font-medium ${activeTab === "profile"
-                                ? "bg-blue-600 text-white"
-                                : "hover:bg-gray-100 text-gray-700"
+                            ? "bg-blue-600 text-white"
+                            : "hover:bg-gray-100 text-gray-700"
                             }`}
                     >
                         <User size={18} className="mr-2" />
@@ -118,6 +146,14 @@ export default function UserDs() {
 
                             {/* Bank Details Form */}
                             <div>
+                                <label className="block text-gray-700">Bank Account Holder Name</label>
+                                <input
+                                    type="text"
+                                    className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    placeholder="Enter Bank Account Holder name"
+                                />
+                            </div>
+                            <div>
                                 <label className="block text-gray-700">Bank Name</label>
                                 <input
                                     type="text"
@@ -139,6 +175,14 @@ export default function UserDs() {
                                     type="text"
                                     className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                                     placeholder="Enter IFSC code"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-gray-700">UpiId</label>
+                                <input
+                                    type="text"
+                                    className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    placeholder="Enter UpiId"
                                 />
                             </div>
 
@@ -164,7 +208,7 @@ export default function UserDs() {
 
 
                             <button className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
-                                Withdraw
+                                Withdraw Request
                             </button>
                         </form>
                     </div>
@@ -172,48 +216,42 @@ export default function UserDs() {
 
 
                 {/* Payment Tab */}
-
                 {activeTab === "payment" && (
                     <div className="bg-white p-6 rounded-lg shadow max-w-3xl">
                         <h1 className="text-2xl font-bold mb-6">Make Payment</h1>
                         <form className="space-y-4 max-w-md">
                             <div>
-                                <label className="block text-gray-700">Amount</label>
-                                <input
-                                    type="number"
-                                    className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                                    placeholder="Enter amount to pay"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-gray-700">Recipient</label>
+                                <label className="block text-gray-700">Franchise Name</label>
                                 <input
                                     type="text"
                                     className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                                    placeholder="Enter recipient name"
+                                    placeholder="Enter Franchise Name"
                                 />
                             </div>
 
-                            {/* Download Bank Details */}
-                            <div>
-                                <button
-                                    type="button"
-                                    onClick={() => alert("Bank details downloaded!")}
-                                    className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 mr-2"
-                                >
-                                    Download Bank Details
-                                </button>
+                            {/* Bank Details Section */}
+                            <div className="bg-gray-50 border rounded-lg p-4 space-y-2">
+                                <h2 className="text-lg font-semibold text-gray-800 mb-2">
+                                    Bank Details
+                                </h2>
+                                <p><span className="font-medium">Bank Name:</span> HDFC Bank</p>
+                                <p><span className="font-medium">Account Number:</span> 987654321012</p>
+                                <p><span className="font-medium">IFSC Code:</span> HDFC0005678</p>
+                                <p><span className="font-medium">UPI ID:</span> franchise@upi</p>
 
-                                {/* Download QR Code */}
-                                <button
-                                    type="button"
-                                    onClick={() => alert("QR Code downloaded!")}
-                                    className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700"
-                                >
-                                    Download QR Code
-                                </button>
+                                {/* QR Code Section */}
+                                <div className="mt-4 flex items-center space-x-4">
+                                    <button
+                                        type="button"
+                                        onClick={() => alert("QR Code downloaded!")}
+                                        className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700"
+                                    >
+                                        Download QR Code
+                                    </button>
+                                </div>
                             </div>
 
+                            {/* Pay Button */}
                             <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 mt-4">
                                 Pay
                             </button>
@@ -229,8 +267,8 @@ export default function UserDs() {
                             <button
                                 onClick={() => setHistoryTab("pending")}
                                 className={`px-4 py-2 rounded-lg font-medium ${historyTab === "pending"
-                                        ? "bg-blue-600 text-white"
-                                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                                    ? "bg-blue-600 text-white"
+                                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                                     }`}
                             >
                                 Pending
@@ -238,8 +276,8 @@ export default function UserDs() {
                             <button
                                 onClick={() => setHistoryTab("complete")}
                                 className={`px-4 py-2 rounded-lg font-medium ${historyTab === "complete"
-                                        ? "bg-blue-600 text-white"
-                                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                                    ? "bg-blue-600 text-white"
+                                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                                     }`}
                             >
                                 Complete
@@ -248,40 +286,46 @@ export default function UserDs() {
 
                         {/* Pending List */}
                         {historyTab === "pending" && (
-                            <div className="space-y-4">
-                                {[1, 2, 3].map((item) => (
-                                    <div
-                                        key={item}
-                                        className="flex justify-between items-center bg-white p-4 rounded-lg shadow"
-                                    >
-                                        <span>Transaction #{item}</span>
-                                        <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
-                                            Pay Now
-                                        </button>
-                                    </div>
-                                ))}
+                            <div className="bg-white p-6 rounded-lg shadow w-full overflow-x-auto">
+                                <h2 className="text-xl font-semibold mb-4">Withdraw Requests</h2>
+                                <table className="min-w-full border-collapse border border-gray-300">
+                                    <thead>
+                                        <tr className="bg-gray-100 text-left">
+                                            <th className="border px-4 py-2">#</th>
+                                            <th className="border px-4 py-2">Franchise Name</th>
+                                            <th className="border px-4 py-2">Account Holder</th>
+                                            <th className="border px-4 py-2">Account Number</th>
+                                            <th className="border px-4 py-2">Bank Name</th>
+                                            <th className="border px-4 py-2">IFSC</th>
+                                            <th className="border px-4 py-2">UPI ID</th>
+                                            <th className="border px-4 py-2">Amount</th>
+                                            <th className="border px-4 py-2">Date</th>
+                                            <th className="border px-4 py-2">Time</th>
+                                            <th className="border px-4 py-2">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {withdrawRequests.map((req, index) => (
+                                            <tr key={req.id} className="hover:bg-gray-50">
+                                                <td className="border px-4 py-2">{index + 1}</td>
+                                                <td className="border px-4 py-2">{req.franchiseName}</td>
+                                                <td className="border px-4 py-2">{req.accountName}</td>
+                                                <td className="border px-4 py-2">{req.accountNumber}</td>
+                                                <td className="border px-4 py-2">{req.bankName}</td>
+                                                <td className="border px-4 py-2">{req.ifsc}</td>
+                                                <td className="border px-4 py-2">{req.upiId}</td>
+                                                <td className="border px-4 py-2">₹{req.amount.toLocaleString()}</td>
+                                                <td className="border px-4 py-2">{req.date}</td>
+                                                <td className="border px-4 py-2">{req.time}</td>
+                                                <td className="border px-4 py-2">{req.status}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
                             </div>
                         )}
 
                         {/* Complete List */}
-                        {/* {historyTab === "complete" && (
-              <div className="space-y-4">
-                {[1, 2].map((item) => (
-                  <div
-                    key={item}
-                    className="flex justify-between items-center bg-white p-4 rounded-lg shadow"
-                  >
-                    <span>Transaction #{item}</span>
-                    <button className="bg-gray-500 text-white px-4 py-2 rounded-lg cursor-not-allowed">
-                      Paid
-                    </button>
-                  </div>
-                ))}
-              </div>
-              
-            )} */}
-                       
-
                         {historyTab === "complete" && (
                             <div className="bg-white p-6 rounded-lg shadow max-w-5xl overflow-x-auto">
                                 <h2 className="text-xl font-semibold mb-4">Completed Transactions</h2>
@@ -358,27 +402,21 @@ export default function UserDs() {
                                 />
                             </div>
                             <div>
-                                <label className="block text-gray-700">Phone Number</label>
-                                <input
-                                    type="text"
-                                    defaultValue="+91 9876543210"
-                                    className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                                />
-                            </div>
-                            <div>
                                 <label className="block text-gray-700">Email</label>
                                 <input
                                     type="email"
-                                    defaultValue="johndoe@example.com"
+                                    defaultValue="johnduo@gmail.com"
                                     className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                                 />
                             </div>
+
                             <button className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
                                 Save Changes
                             </button>
                         </form>
                     </div>
                 )}
+
             </main>
         </div>
     );

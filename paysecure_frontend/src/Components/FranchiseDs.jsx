@@ -4,34 +4,34 @@ export default function FranchiseDs() {
   const [activeTab, setActiveTab] = useState("account");
   const [historyTab, setHistoryTab] = useState("pending");
   const [accountSubTab, setAccountSubTab] = useState("view");
-const [editingId, setEditingId] = useState(null);
-// Sample Withdraw Requests Data
-const withdrawRequests = [
-  {
-    id: 1,
-    accountName: "John Doe",
-    accountNumber: "123456789012",
-    bankName: "State Bank of India",
-    ifsc: "SBIN0001234",
-    upiId: "john@upi",
-    amount: 5000,
-    date: "2025-09-22",
-    time: "10:45 AM",
-    qr: "https://via.placeholder.com/100x100.png?text=QR1",
-  },
-  {
-    id: 2,
-    accountName: "Jane Smith",
-    accountNumber: "987654321098",
-    bankName: "HDFC Bank",
-    ifsc: "HDFC0005678",
-    upiId: "jane@upi",
-    amount: 3000,
-    date: "2025-09-21",
-    time: "03:20 PM",
-    qr: "https://via.placeholder.com/100x100.png?text=QR2",
-  },
-];
+  const [editingId, setEditingId] = useState(null);
+  // Sample Withdraw Requests Data
+  const withdrawRequests = [
+    {
+      id: 1,
+      accountName: "John Doe",
+      accountNumber: "123456789012",
+      bankName: "State Bank of India",
+      ifsc: "SBIN0001234",
+      upiId: "john@upi",
+      amount: 5000,
+      date: "2025-09-22",
+      time: "10:45 AM",
+      qr: "https://via.placeholder.com/100x100.png?text=QR1",
+    },
+    {
+      id: 2,
+      accountName: "Jane Smith",
+      accountNumber: "987654321098",
+      bankName: "HDFC Bank",
+      ifsc: "HDFC0005678",
+      upiId: "jane@upi",
+      amount: 3000,
+      date: "2025-09-21",
+      time: "03:20 PM",
+      qr: "https://via.placeholder.com/100x100.png?text=QR2",
+    },
+  ];
 
 
   // Multiple bank accounts
@@ -43,7 +43,7 @@ const withdrawRequests = [
       bankName: "State Bank of India",
       ifsc: "SBIN0001234",
       upiId: "SBI@upi",
-      QrCode:"",
+      QrCode: "",
     },
   ]);
 
@@ -53,7 +53,7 @@ const withdrawRequests = [
     bankName: "",
     ifsc: "",
     upiId: "",
-    QrCode:"",
+    QrCode: "",
   });
 
   // Handlers
@@ -65,7 +65,7 @@ const withdrawRequests = [
     e.preventDefault();
     const newId = accounts.length ? accounts[accounts.length - 1].id + 1 : 1;
     setAccounts([...accounts, { ...newAccount, id: newId }]);
-    setNewAccount({ accountName: "", accountNumber: "", bankName: "", ifsc: "", upiId: "",QrCode:""});
+    setNewAccount({ accountName: "", accountNumber: "", bankName: "", ifsc: "", upiId: "", QrCode: "" });
     setAccountSubTab("view");
   };
 
@@ -83,7 +83,7 @@ const withdrawRequests = [
     bankName: "State Bank of India",
     ifsc: "SBIN0001234",
     upiId: "sbi@upi",
-    qrCode:"",
+    qrCode: "",
   };
 
   return (
@@ -103,11 +103,10 @@ const withdrawRequests = [
         <nav className="mt-8 w-full space-y-3">
           <button
             onClick={() => setActiveTab("account")}
-            className={`w-full flex items-center px-4 py-2 rounded-lg font-medium ${
-              activeTab === "account"
+            className={`w-full flex items-center px-4 py-2 rounded-lg font-medium ${activeTab === "account"
                 ? "bg-blue-600 text-white"
                 : "hover:bg-gray-100 text-gray-700"
-            }`}
+              }`}
           >
             <CreditCard size={18} className="mr-2" />
             Account
@@ -115,11 +114,10 @@ const withdrawRequests = [
 
           <button
             onClick={() => setActiveTab("history")}
-            className={`w-full flex items-center px-4 py-2 rounded-lg font-medium ${
-              activeTab === "history"
+            className={`w-full flex items-center px-4 py-2 rounded-lg font-medium ${activeTab === "history"
                 ? "bg-blue-600 text-white"
                 : "hover:bg-gray-100 text-gray-700"
-            }`}
+              }`}
           >
             <Clock size={18} className="mr-2" />
             History
@@ -127,11 +125,10 @@ const withdrawRequests = [
 
           <button
             onClick={() => setActiveTab("profile")}
-            className={`w-full flex items-center px-4 py-2 rounded-lg font-medium ${
-              activeTab === "profile"
+            className={`w-full flex items-center px-4 py-2 rounded-lg font-medium ${activeTab === "profile"
                 ? "bg-blue-600 text-white"
                 : "hover:bg-gray-100 text-gray-700"
-            }`}
+              }`}
           >
             <User size={18} className="mr-2" />
             My Profile
@@ -139,7 +136,7 @@ const withdrawRequests = [
         </nav>
       </aside>
 
-        {/* Content Area */}
+      {/* Content Area */}
       <main className="flex-1 p-8 overflow-y-auto">
         {/* Account Tab */}
         {activeTab === "account" && (
@@ -149,21 +146,19 @@ const withdrawRequests = [
             {/* Sub-tabs */}
             <div className="flex space-x-4 mb-6">
               <button
-                className={`px-4 py-2 rounded-lg font-medium ${
-                  accountSubTab === "view"
+                className={`px-4 py-2 rounded-lg font-medium ${accountSubTab === "view"
                     ? "bg-blue-600 text-white"
                     : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
+                  }`}
                 onClick={() => setAccountSubTab("view")}
               >
                 View
               </button>
               <button
-                className={`px-4 py-2 rounded-lg font-medium ${
-                  accountSubTab === "add"
+                className={`px-4 py-2 rounded-lg font-medium ${accountSubTab === "add"
                     ? "bg-blue-600 text-white"
                     : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
+                  }`}
                 onClick={() => setAccountSubTab("add")}
               >
                 Add Account
@@ -233,43 +228,43 @@ const withdrawRequests = [
                         acc.ifsc
                       )}
                     </p>
-                      <p>
-  <span className="font-semibold">UPI ID:</span>{" "}
-  {editingId === acc.id ? (
-    <input
-      type="text"
-      name="upiId"
-      value={acc.upiId || ""}
-      onChange={(e) => handleEditChange(acc.id, e)}
-      className="px-2 py-1 border rounded w-full"
-    />
-  ) : (
-    acc.upiId || "Not Added"
-  )}
-</p>
+                    <p>
+                      <span className="font-semibold">UPI ID:</span>{" "}
+                      {editingId === acc.id ? (
+                        <input
+                          type="text"
+                          name="upiId"
+                          value={acc.upiId || ""}
+                          onChange={(e) => handleEditChange(acc.id, e)}
+                          className="px-2 py-1 border rounded w-full"
+                        />
+                      ) : (
+                        acc.upiId || "Not Added"
+                      )}
+                    </p>
 
-<p className="mt-2">
-  <span className="font-semibold">QR Code:</span>{" "}
-  {editingId === acc.id ? (
-    <input
-      type="file"
-      name="qrCode"
-      accept="image/*"
-      onChange={(e) => handleEditChange(acc.id, e)}
-      className="px-2 py-1 border rounded w-full"
-    />
-  ) : acc.qrCode ? (
-    <img
-      src={URL.createObjectURL(acc.rCode)}
-      alt="QR Code"
-      className="w-20 h-20 mt-2 border rounded"
-    />
-  ) : (
-    "Not Uploaded"
-  )}
-</p>
+                    <p className="mt-2">
+                      <span className="font-semibold">QR Code:</span>{" "}
+                      {editingId === acc.id ? (
+                        <input
+                          type="file"
+                          name="qrCode"
+                          accept="image/*"
+                          onChange={(e) => handleEditChange(acc.id, e)}
+                          className="px-2 py-1 border rounded w-full"
+                        />
+                      ) : acc.qrCode ? (
+                        <img
+                          src={URL.createObjectURL(acc.rCode)}
+                          alt="QR Code"
+                          className="w-20 h-20 mt-2 border rounded"
+                        />
+                      ) : (
+                        "Not Uploaded"
+                      )}
+                    </p>
 
-                   
+
                   </div>
                 ))}
               </div>
@@ -322,29 +317,29 @@ const withdrawRequests = [
                     required
                   />
                 </div>
-             <div>
-  <label className="block text-gray-700">UPI ID</label>
-  <input
-    type="text"
-    name="upiId"
-    value={newAccount.upiId}
-    onChange={handleNewChange}
-    placeholder="example@upi"
-    className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-    required
-  />
-</div>
-<div className="mt-4">
-  <label className="block text-gray-700">Upload QR Code</label>
-  <input
-    type="file"
-    name="qrCode"
-    accept="image/*"
-    onChange={handleNewChange}
-    className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-    required
-  />
-</div>
+                <div>
+                  <label className="block text-gray-700">UPI ID</label>
+                  <input
+                    type="text"
+                    name="upiId"
+                    value={newAccount.upiId}
+                    onChange={handleNewChange}
+                    placeholder="example@upi"
+                    className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+                <div className="mt-4">
+                  <label className="block text-gray-700">Upload QR Code</label>
+                  <input
+                    type="file"
+                    name="qrCode"
+                    accept="image/*"
+                    onChange={handleNewChange}
+                    className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
                 <button
                   type="submit"
                   className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700"
@@ -364,141 +359,139 @@ const withdrawRequests = [
             <div className="flex space-x-4 mb-6">
               <button
                 onClick={() => setHistoryTab("pending")}
-                className={`px-4 py-2 rounded-lg font-medium ${
-                  historyTab === "pending"
+                className={`px-4 py-2 rounded-lg font-medium ${historyTab === "pending"
                     ? "bg-blue-600 text-white"
                     : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
+                  }`}
               >
                 Pending
               </button>
               <button
                 onClick={() => setHistoryTab("complete")}
-                className={`px-4 py-2 rounded-lg font-medium ${
-                  historyTab === "complete"
+                className={`px-4 py-2 rounded-lg font-medium ${historyTab === "complete"
                     ? "bg-blue-600 text-white"
                     : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
+                  }`}
               >
                 Complete
               </button>
             </div>
 
             {/* Pending List */}
-          
-    {historyTab === "pending" && (
-  <div className="bg-white p-6 rounded-lg shadow w-full overflow-x-auto">
-    <h2 className="text-xl font-semibold mb-4">Pending Withdraw Requests</h2>
-    <table className="min-w-full border-collapse border border-gray-300">
-      <thead>
-        <tr className="bg-gray-100 text-left">
-          <th className="border px-4 py-2">#</th>
-          <th className="border px-4 py-2">Account Holder</th>
-          <th className="border px-4 py-2">Account Number</th>
-          <th className="border px-4 py-2">Bank Name</th>
-          <th className="border px-4 py-2">IFSC</th>
-          <th className="border px-4 py-2">UPI ID</th>
-          <th className="border px-4 py-2">Amount</th>
-          <th className="border px-4 py-2">Date</th>
-          <th className="border px-4 py-2">Time</th>
-          <th className="border px-4 py-2">QR Code</th>
-          <th className="border px-4 py-2">Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {withdrawRequests.map((req, index) => (
-          <tr key={req.id} className="hover:bg-gray-50">
-            <td className="border px-4 py-2">{index + 1}</td>
-            <td className="border px-4 py-2">{req.accountName}</td>
-            <td className="border px-4 py-2">{req.accountNumber}</td>
-            <td className="border px-4 py-2">{req.bankName}</td>
-            <td className="border px-4 py-2">{req.ifsc}</td>
-            <td className="border px-4 py-2">{req.upiId}</td>
-            <td className="border px-4 py-2">₹{req.amount.toLocaleString()}</td>
-            <td className="border px-4 py-2">{req.date}</td>
-            <td className="border px-4 py-2">{req.time}</td>
-            <td className="border px-4 py-2 text-center">
-              <a
-                href={req.qr}
-                download={`QR-${req.id}.png`}
-                className="text-blue-600 underline hover:text-blue-800"
-              >
-                Download
-              </a>
-            </td>
-            <td className="border px-4 py-2 text-center">
-              <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
-                Pay Now
-              </button>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-)}
 
-      
+            {historyTab === "pending" && (
+              <div className="bg-white p-6 rounded-lg shadow w-full overflow-x-auto">
+                <h2 className="text-xl font-semibold mb-4">Pending Withdraw Requests</h2>
+                <table className="min-w-full border-collapse border border-gray-300">
+                  <thead>
+                    <tr className="bg-gray-100 text-left">
+                      <th className="border px-4 py-2">#</th>
+                      <th className="border px-4 py-2">Account Holder</th>
+                      <th className="border px-4 py-2">Account Number</th>
+                      <th className="border px-4 py-2">Bank Name</th>
+                      <th className="border px-4 py-2">IFSC</th>
+                      <th className="border px-4 py-2">UPI ID</th>
+                      <th className="border px-4 py-2">Amount</th>
+                      <th className="border px-4 py-2">Date</th>
+                      <th className="border px-4 py-2">Time</th>
+                      <th className="border px-4 py-2">QR Code</th>
+                      <th className="border px-4 py-2">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {withdrawRequests.map((req, index) => (
+                      <tr key={req.id} className="hover:bg-gray-50">
+                        <td className="border px-4 py-2">{index + 1}</td>
+                        <td className="border px-4 py-2">{req.accountName}</td>
+                        <td className="border px-4 py-2">{req.accountNumber}</td>
+                        <td className="border px-4 py-2">{req.bankName}</td>
+                        <td className="border px-4 py-2">{req.ifsc}</td>
+                        <td className="border px-4 py-2">{req.upiId}</td>
+                        <td className="border px-4 py-2">₹{req.amount.toLocaleString()}</td>
+                        <td className="border px-4 py-2">{req.date}</td>
+                        <td className="border px-4 py-2">{req.time}</td>
+                        <td className="border px-4 py-2 text-center">
+                          <a
+                            href={req.qr}
+                            download={`QR-${req.id}.png`}
+                            className="text-blue-600 underline hover:text-blue-800"
+                          >
+                            Download
+                          </a>
+                        </td>
+                        <td className="border px-4 py-2 text-center">
+                          <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+                            Pay Now
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+
 
             {/* Complete List */}
             {historyTab === "complete" && (
-                            <div className="bg-white p-6 rounded-lg shadow w-full overflow-x-auto">
-                                <h2 className="text-xl font-semibold mb-4">Completed Transactions</h2>
-                                <table className="min-w-full border-collapse border border-gray-300">
-                                    <thead>
-                                        <tr className="bg-gray-100">
-                                            <th className="border px-4 py-2 text-left">#</th>
-                                            <th className="border px-4 py-2 text-left">Status</th>
-                                            <th className="border px-4 py-2 text-left">UPI ID</th>
-                                            <th className="border px-4 py-2 text-left">Transaction ID</th>
-                                            <th className="border px-4 py-2 text-left">Date</th>
-                                            <th className="border px-4 py-2 text-left">Time</th>
-                                            <th className="border px-4 py-2 text-left">From</th>
-                                            <th className="border px-4 py-2 text-left">To</th>
-                                            <th className="border px-4 py-2 text-left">Amount</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {[
-                                            {
-                                                id: 1,
-                                                status: "Withdraw",
-                                                upi: "user@upi",
-                                                transactionId: "TXN123456",
-                                                date: "2025-09-22",
-                                                time: "14:30",
-                                                from: "John Doe",
-                                                to: "Bank Account",
-                                                amount: 5000,
-                                            },
-                                            {
-                                                id: 2,
-                                                status: "Deposit",
-                                                upi: "recipient@upi",
-                                                transactionId: "TXN654321",
-                                                date: "2025-09-20",
-                                                time: "10:15",
-                                                from: "Bank Account",
-                                                to: "John Doe",
-                                                amount: 2000,
-                                            },
-                                        ].map((tx, index) => (
-                                            <tr key={tx.id} className="hover:bg-gray-50">
-                                                <td className="border px-4 py-2">{index + 1}</td>
-                                                <td className="border px-4 py-2">{tx.status}</td>
-                                                <td className="border px-4 py-2">{tx.upi}</td>
-                                                <td className="border px-4 py-2">{tx.transactionId}</td>
-                                                <td className="border px-4 py-2">{tx.date}</td>
-                                                <td className="border px-4 py-2">{tx.time}</td>
-                                                <td className="border px-4 py-2">{tx.from}</td>
-                                                <td className="border px-4 py-2">{tx.to}</td>
-                                                <td className="border px-4 py-2">₹{tx.amount.toLocaleString()}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        )}
+              <div className="bg-white p-6 rounded-lg shadow w-full overflow-x-auto">
+                <h2 className="text-xl font-semibold mb-4">Completed Transactions</h2>
+                <table className="min-w-full border-collapse border border-gray-300">
+                  <thead>
+                    <tr className="bg-gray-100">
+                      <th className="border px-4 py-2 text-left">#</th>
+                      <th className="border px-4 py-2 text-left">Status</th>
+                      <th className="border px-4 py-2 text-left">UPI ID</th>
+                      <th className="border px-4 py-2 text-left">Transaction ID</th>
+                      <th className="border px-4 py-2 text-left">Date</th>
+                      <th className="border px-4 py-2 text-left">Time</th>
+                      <th className="border px-4 py-2 text-left">From</th>
+                      <th className="border px-4 py-2 text-left">To</th>
+                      <th className="border px-4 py-2 text-left">Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      {
+                        id: 1,
+                        status: "Withdraw",
+                        upi: "user@upi",
+                        transactionId: "TXN123456",
+                        date: "2025-09-22",
+                        time: "14:30",
+                        from: "John Doe",
+                        to: "Bank Account",
+                        amount: 5000,
+                      },
+                      {
+                        id: 2,
+                        status: "Deposit",
+                        upi: "recipient@upi",
+                        transactionId: "TXN654321",
+                        date: "2025-09-20",
+                        time: "10:15",
+                        from: "Bank Account",
+                        to: "John Doe",
+                        amount: 2000,
+                      },
+                    ].map((tx, index) => (
+                      <tr key={tx.id} className="hover:bg-gray-50">
+                        <td className="border px-4 py-2">{index + 1}</td>
+                        <td className="border px-4 py-2">{tx.status}</td>
+                        <td className="border px-4 py-2">{tx.upi}</td>
+                        <td className="border px-4 py-2">{tx.transactionId}</td>
+                        <td className="border px-4 py-2">{tx.date}</td>
+                        <td className="border px-4 py-2">{tx.time}</td>
+                        <td className="border px-4 py-2">{tx.from}</td>
+                        <td className="border px-4 py-2">{tx.to}</td>
+                        <td className="border px-4 py-2">₹{tx.amount.toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         )}
 
