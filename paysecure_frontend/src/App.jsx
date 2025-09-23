@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Register from "./Components/Register";
 import Login from './Components/Login'
 import Forgot from './Components/Forgot'
@@ -8,40 +8,40 @@ import Home from './Components/Home'
 import Header from "./Components/Header";
 import FranchiseDs from "./Components/FranchiseDs";
 import UserDs from "./Components/UserDs"
-    
 
 
+function Layout({ children }) {
+  const location = useLocation();
 
+  // Pages where header/footer should be hidden
+  const hideLayout = ["/Register", "/Login"];
 
-
-function App() {
-        return (
-                <Router>
-                        <Header/>
-                        <Routes>
-
-                                <Route path="/" element={<Home />} />
-
-                                {/* Default route */}
-                                {/* <Route path="/Header" element={<Header />} /> */}
-
-                                {/* Example: if you want to navigate using /register */}
-
-                                <Route path="/Register" element={<Register />} />
-                                <Route path="/Login" element={<Login />} />
-                                <Route path="/Forgot" element={<Forgot />} />
-                                <Route path="/Otp" element={<Otp />} />
-
-                                <Route path="/Footer" element={<Footer />} />
-                        
-
-                        <Route path="/FranchiseDs" element={<FranchiseDs />} />
-                        <Route path="/UserDs" element={<UserDs />} />
-                </Routes>
-                <Footer/>
-
-    </Router >
+  return (
+    <>
+      {!hideLayout.includes(location.pathname) && <Header />}
+      {children}
+      {!hideLayout.includes(location.pathname) && <Footer />}
+    </>
   );
 }
 
-export default App
+
+function App() {
+  return (
+    <Router>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/Register" element={<Register />} />
+          <Route path="/Login" element={<Login />} />
+          <Route path="/Forgot" element={<Forgot />} />
+          <Route path="/Otp" element={<Otp />} />
+          <Route path="/FranchiseDs" element={<FranchiseDs />} />
+          <Route path="/UserDs" element={<UserDs />} />
+        </Routes>
+      </Layout>
+    </Router>
+  );
+}
+
+export default App;

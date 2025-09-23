@@ -5,10 +5,10 @@ from django.contrib.auth import get_user_model
 from .models import *
 from .serializers import *
 from .permissions import IsAdmin, IsFranchise, IsNormalUser
-
+from django.shortcuts import get_object_or_404
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 CustomUser = get_user_model()
 
@@ -19,6 +19,10 @@ class RegisterView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.AllowAny]
+
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
 
 
 # ---------------------------
@@ -73,7 +77,20 @@ class WithdrawalRequestCreateView(generics.CreateAPIView):
             franchise_account=account
         )
 
+class FranchiseAccountDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    GET / PUT / DELETE for a single franchise account.
+    Only the franchise that owns the account can use these.
+    """
+    serializer_class = FranchiseAccountSerializer
+    permission_classes = [IsFranchise]
 
+    def get_queryset(self):
+        # Only allow franchise owner to access their own accounts
+        return FranchiseAccount.objects.filter(franchise__user=self.request.user)
+
+    def get_object(self):
+        return get_object_or_404(self.get_queryset(), pk=self.kwargs.get('pk'))
 
 # ---------------------------
 # Admin assigns Withdrawal to Franchise
@@ -115,23 +132,23 @@ class MarkCompletedView(APIView):
 
     def post(self, request, withdrawal_id):
         try:
-            withdrawal = WithdrawalRequest.objects.get(id=withdrawal_id)
+            withdrawal = get_object_or_404(WithdrawalRequest, id=withdrawal_id)
 
-            # Only assigned franchise can complete
-            if withdrawal.franchise.user != request.user:
+            # Ensure there is an assigned franchise and it belongs to the requester
+            if not withdrawal.franchise or withdrawal.franchise.user != request.user:
                 return Response({"error": "Not authorized"}, status=status.HTTP_403_FORBIDDEN)
 
+            # Only allow completion when processing
             if withdrawal.status != "processing":
                 return Response(
                     {"error": f"Cannot complete. Current status: {withdrawal.status}"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            withdrawal.status = "completed"
-            withdrawal.completed_at = timezone.now()
-            withdrawal.save()
+            # Use the model helper to clear sensitive fields + set completed_at/status
+            withdrawal.mark_completed()
 
-            # Save transaction history
+            # Log transaction history (transaction_type is required by model)
             TransactionHistory.objects.create(
                 user=withdrawal.user,
                 franchise=withdrawal.franchise,
@@ -144,39 +161,6 @@ class MarkCompletedView(APIView):
 
         except WithdrawalRequest.DoesNotExist:
             return Response({"error": "Withdrawal request not found"}, status=status.HTTP_404_NOT_FOUND)
-
-# ---------------------------
-# Franchise marks Withdrawal as Paid
-# ---------------------------
-class MarkPaidView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def post(self, request, withdrawal_id):
-        try:
-            withdrawal = WithdrawalRequest.objects.get(id=withdrawal_id)
-
-            # Only assigned franchise can mark as paid
-            if withdrawal.franchise.user != request.user:
-                return Response({"error": "Not authorized"}, status=status.HTTP_403_FORBIDDEN)
-
-            withdrawal.status = "paid"
-            withdrawal.save()
-
-            # Save transaction history
-            TransactionHistory.objects.create(
-                user=withdrawal.user,
-                franchise=withdrawal.franchise,
-                amount=withdrawal.amount,
-                transaction_type="withdraw",
-                status="completed"
-            )
-
-
-            return Response({"message": "Withdrawal marked as paid"}, status=status.HTTP_200_OK)
-
-        except WithdrawalRequest.DoesNotExist:
-            return Response({"error": "Withdrawal request not found"}, status=status.HTTP_404_NOT_FOUND)
-
 
 # ---------------------------
 # Transaction History for a User
