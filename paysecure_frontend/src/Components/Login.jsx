@@ -96,7 +96,7 @@ function Login() {
           </div>
 
           <div className="text-right">
-            <a href="#" className="text-sm text-blue-500 hover:underline">
+            <a href="/Forgot" className="text-sm text-blue-500 hover:underline">
               Forgot Password?
             </a>
           </div>
