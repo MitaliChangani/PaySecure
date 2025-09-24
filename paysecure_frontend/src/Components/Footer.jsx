@@ -11,19 +11,19 @@ function Footer() {
                     </p>
                     <div className="flex justify-center md:justify-start space-x-4">
                         <a href="#">
-                            <img src="https://img.icons8.com/ios-filled/24/000000/facebook-new.png" alt="Facebook" />
+                            <img src="https://img.icons8.com/ios-filled/24/1f2937/facebook-new.png" alt="Facebook" />
                         </a>
                         <a href="#">
-                            <img src="https://img.icons8.com/ios-filled/24/000000/twitter.png" alt="Twitter" />
+                            <img src="https://img.icons8.com/ios-filled/24/1f2937/twitter.png" alt="Twitter" />
                         </a>
                         <a href="#">
-                            <img src="https://img.icons8.com/ios-filled/24/000000/linkedin.png" alt="LinkedIn" />
+                            <img src="https://img.icons8.com/ios-filled/24/1f2937/linkedin.png" alt="LinkedIn" />
                         </a>
                         <a href="#">
-                            <img src="https://img.icons8.com/ios-filled/24/000000/youtube.png" alt="YouTube" />
+                            <img src="https://img.icons8.com/ios-filled/24/1f2937/youtube.png" alt="YouTube" />
                         </a>
                         <a href="#">
-                            <img src="https://img.icons8.com/ios-filled/24/000000/github.png" alt="GitHub" />
+                            <img src="https://img.icons8.com/ios-filled/24/1f2937/github.png" alt="GitHub" />
                         </a>
                     </div>
 
