@@ -96,6 +96,7 @@ export default function FranchiseDs() {
             className={`w-full flex items-center px-4 py-2 rounded-lg font-medium ${activeTab === "account"
                 ? "bg-blue-600 text-white"
                 : "hover:bg-gray-100 text-gray-700"
+
               }`}
           >
             <CreditCard size={18} className="mr-2" />
@@ -105,8 +106,10 @@ export default function FranchiseDs() {
           <button
             onClick={() => setActiveTab("history")}
             className={`w-full flex items-center px-4 py-2 rounded-lg font-medium ${activeTab === "history"
+
                 ? "bg-blue-600 text-white"
                 : "hover:bg-gray-100 text-gray-700"
+
               }`}
           >
             <Clock size={18} className="mr-2" />
@@ -126,13 +129,7 @@ export default function FranchiseDs() {
           </button>
         </nav>
       </aside>
-
-      {/* Content Area */}
       <main className="flex-1 p-8 overflow-y-auto">
-        {activeTab === "account" && (
-          <div className="bg-white p-6 rounded-lg shadow max-w-3xl">
-            <h1 className="text-2xl font-bold mb-6">Bank Accounts</h1>
-            <div className="flex space-x-4 mb-6">
               <button
                 className={`px-4 py-2 rounded-lg font-medium ${accountSubTab === "view"
                     ? "bg-blue-600 text-white"
@@ -333,6 +330,7 @@ export default function FranchiseDs() {
               </form>
             )}
           </div>
+        
         )}
         {activeTab === "history" && (
           <div>
@@ -411,7 +409,6 @@ export default function FranchiseDs() {
                 </table>
               </div>
             )}
-
 
             {/* Complete List */}
             {historyTab === "complete" && (
