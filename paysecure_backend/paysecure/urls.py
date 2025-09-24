@@ -16,6 +16,7 @@ urlpatterns = [
     path("franchise/accounts/", FranchiseAccountListView.as_view(), name="franchise-accounts"),
     path("franchise/accounts/add/", FranchiseAccountCreateView.as_view(), name="franchise-add-account"),
     path("franchise/accounts/<int:pk>/", FranchiseAccountDetailView.as_view(), name="franchise-account-detail"),
+    path("franchise/withdrawals/", FranchiseAssignedWithdrawalsView.as_view(), name="franchise-assigned-withdrawals"),
 
     # User Withdrawal Request
     path("withdraw/", WithdrawalRequestCreateView.as_view(), name="withdraw"),

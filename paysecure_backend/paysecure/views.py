@@ -110,10 +110,19 @@ class WithdrawalRequestCreateView(generics.CreateAPIView):
         except FranchiseAccount.DoesNotExist:
             raise serializers.ValidationError({"franchise_account_id": "Invalid account id."})
 
+        bank_account = self.request.data.get('bank_account')
+        ifsc_code = self.request.data.get('ifsc_code')
+        upi_id = self.request.data.get('upi_id')
+        qr_code = self.request.data.get('qr_code')
+
         serializer.save(
             user=self.request.user,
             franchise=account.franchise,
-            franchise_account=account
+            franchise_account=account,
+            bank_account=bank_account,
+            ifsc_code=ifsc_code,
+            upi_id=upi_id,
+            qr_code=qr_code,
         )
 
 class FranchiseAccountDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -224,3 +233,10 @@ class LogoutView(APIView):
         response.delete_cookie("access_token")
         response.delete_cookie("refresh_token")
         return response
+    
+class FranchiseAssignedWithdrawalsView(generics.ListAPIView):
+    serializer_class = WithdrawalRequestSerializer
+    permission_classes = [IsFranchise]
+
+    def get_queryset(self):
+        return WithdrawalRequest.objects.filter(franchise__user=self.request.user).exclude(status="completed")
