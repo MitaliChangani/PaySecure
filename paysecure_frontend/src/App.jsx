@@ -12,8 +12,6 @@ import UserDs from "./Components/UserDs"
 
 function Layout({ children }) {
   const location = useLocation();
-
-  // Pages where header/footer should be hidden
   const hideLayout = ["/Register", "/Login"];
 
   return (
@@ -24,8 +22,6 @@ function Layout({ children }) {
     </>
   );
 }
-
-
 function App() {
   return (
     <Router>

@@ -1,15 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
-// ✅ Backend API URL (adjust if deployed)
 const API_URL = "http://localhost:8000/api";
 
 function Register() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("user"); // backend expects lowercase: 'admin', 'franchise', 'user'
+  const [role, setRole] = useState("user");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -30,7 +28,7 @@ function Register() {
 
       console.log("Response:", response.data);
       alert("Registered Successfully!");
-      navigate("/Login"); // redirect to login page
+      navigate("/Login");
     } catch (err) {
       console.error(err);
       if (err.response && err.response.data) {

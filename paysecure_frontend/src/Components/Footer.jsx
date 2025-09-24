@@ -1,5 +1,4 @@
 import React from "react";
-
 function Footer() {
     return (
         <footer className="bg-black text-white">
@@ -49,7 +48,7 @@ function Footer() {
                 </div>
 
             </div>
-            <hr className="border-gray-700" /> 
+            <hr className="border-gray-700" />
             <div className="text-center text-sm py-4 bg-black">
                 &copy; {new Date().getFullYear()} <span className="font-semibold text-blue-400">Pay Secure</span>. All rights reserved.
             </div>

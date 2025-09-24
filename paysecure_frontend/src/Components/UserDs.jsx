@@ -36,9 +36,9 @@ export default function UserDs() {
     ];
     return (
         <div className="flex h-screen bg-gray-100">
-            {/* Sidebar */}
+
             <aside className="w-64 bg-white shadow-lg p-6 flex flex-col items-center">
-                {/* Profile */}
+
                 <div className="flex flex-col items-center">
                     <div className="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center">
                         <User size={40} className="text-gray-600" />
@@ -47,50 +47,46 @@ export default function UserDs() {
                     <p className="text-sm text-gray-500">+91 9876543210</p>
                 </div>
 
-                {/* Menu */}
                 <nav className="mt-8 w-full space-y-3">
-                    {/* Withdraw Button */}
+
                     <button
                         onClick={() => setActiveTab("withdraw")}
                         className={`w-full flex items-center px-4 py-2 rounded-lg font-medium ${activeTab === "withdraw"
-                                ? "bg-blue-600 text-white"
-                                : "hover:bg-gray-100 text-gray-700"
+                            ? "bg-blue-600 text-white"
+                            : "hover:bg-gray-100 text-gray-700"
                             }`}
                     >
                         <ArrowUpCircle size={18} className="mr-2" />
                         Withdraw
                     </button>
 
-                    {/* Payment Button */}
                     <button
                         onClick={() => setActiveTab("payment")}
                         className={`w-full flex items-center px-4 py-2 rounded-lg font-medium ${activeTab === "payment"
-                                ? "bg-blue-600 text-white"
-                                : "hover:bg-gray-100 text-gray-700"
+                            ? "bg-blue-600 text-white"
+                            : "hover:bg-gray-100 text-gray-700"
                             }`}
                     >
                         <CreditCard size={18} className="mr-2" />
                         Payment
                     </button>
 
-                    {/* History Button */}
                     <button
                         onClick={() => setActiveTab("history")}
                         className={`w-full flex items-center px-4 py-2 rounded-lg font-medium ${activeTab === "history"
-                                ? "bg-blue-600 text-white"
-                                : "hover:bg-gray-100 text-gray-700"
+                            ? "bg-blue-600 text-white"
+                            : "hover:bg-gray-100 text-gray-700"
                             }`}
                     >
                         <Clock size={18} className="mr-2" />
                         History
                     </button>
 
-                    {/* Profile Button */}
                     <button
                         onClick={() => setActiveTab("profile")}
                         className={`w-full flex items-center px-4 py-2 rounded-lg font-medium ${activeTab === "profile"
-                                ? "bg-blue-600 text-white"
-                                : "hover:bg-gray-100 text-gray-700"
+                            ? "bg-blue-600 text-white"
+                            : "hover:bg-gray-100 text-gray-700"
                             }`}
                     >
                         <User size={18} className="mr-2" />
@@ -99,10 +95,8 @@ export default function UserDs() {
                 </nav>
             </aside>
 
-            {/* Content Area */}
             <main className="flex-1 p-8 overflow-y-auto">
 
-                {/* Withdraw Tab */}
                 {activeTab === "withdraw" && (
                     <div className="bg-white p-6 rounded-lg shadow max-w-3xl">
                         <h1 className="text-2xl font-bold mb-6">Withdraw Money</h1>
@@ -115,8 +109,6 @@ export default function UserDs() {
                                     placeholder="Enter amount to withdraw"
                                 />
                             </div>
-
-                            {/* Bank Details Form */}
                             <div>
                                 <label className="block text-gray-700">Bank Name</label>
                                 <input
@@ -141,9 +133,6 @@ export default function UserDs() {
                                     placeholder="Enter IFSC code"
                                 />
                             </div>
-
-
-                            {/* Upload QR Code */}
                             <div>
                                 <label className="block text-gray-700 mb-2">Upload QR Code</label>
                                 <label className="cursor-pointer bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 inline-block">
@@ -153,26 +142,19 @@ export default function UserDs() {
                                         accept="image/*"
                                         className="hidden"
                                         onChange={(e) => {
-                                            // Optional: handle selected file
+
                                             console.log(e.target.files[0]);
                                         }}
                                     />
                                 </label>
-                                {/* Optional: show selected file name */}
                                 <span className="ml-3 text-gray-600" id="file-name">No file chosen</span>
                             </div>
-
-
                             <button className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
                                 Withdraw
                             </button>
                         </form>
                     </div>
                 )}
-
-
-                {/* Payment Tab */}
-
                 {activeTab === "payment" && (
                     <div className="bg-white p-6 rounded-lg shadow max-w-3xl">
                         <h1 className="text-2xl font-bold mb-6">Make Payment</h1>
@@ -193,8 +175,6 @@ export default function UserDs() {
                                     placeholder="Enter recipient name"
                                 />
                             </div>
-
-                            {/* Download Bank Details */}
                             <div>
                                 <button
                                     type="button"
@@ -204,7 +184,6 @@ export default function UserDs() {
                                     Download Bank Details
                                 </button>
 
-                                {/* Download QR Code */}
                                 <button
                                     type="button"
                                     onClick={() => alert("QR Code downloaded!")}
@@ -220,8 +199,6 @@ export default function UserDs() {
                         </form>
                     </div>
                 )}
-
-                {/* History Tab */}
                 {activeTab === "history" && (
                     <div>
                         <h1 className="text-2xl font-bold mb-6">History</h1>
@@ -229,8 +206,8 @@ export default function UserDs() {
                             <button
                                 onClick={() => setHistoryTab("pending")}
                                 className={`px-4 py-2 rounded-lg font-medium ${historyTab === "pending"
-                                        ? "bg-blue-600 text-white"
-                                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                                    ? "bg-blue-600 text-white"
+                                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                                     }`}
                             >
                                 Pending
@@ -238,15 +215,13 @@ export default function UserDs() {
                             <button
                                 onClick={() => setHistoryTab("complete")}
                                 className={`px-4 py-2 rounded-lg font-medium ${historyTab === "complete"
-                                        ? "bg-blue-600 text-white"
-                                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                                    ? "bg-blue-600 text-white"
+                                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                                     }`}
                             >
                                 Complete
                             </button>
                         </div>
-
-                        {/* Pending List */}
                         {historyTab === "pending" && (
                             <div className="space-y-4">
                                 {[1, 2, 3].map((item) => (
@@ -262,26 +237,6 @@ export default function UserDs() {
                                 ))}
                             </div>
                         )}
-
-                        {/* Complete List */}
-                        {/* {historyTab === "complete" && (
-              <div className="space-y-4">
-                {[1, 2].map((item) => (
-                  <div
-                    key={item}
-                    className="flex justify-between items-center bg-white p-4 rounded-lg shadow"
-                  >
-                    <span>Transaction #{item}</span>
-                    <button className="bg-gray-500 text-white px-4 py-2 rounded-lg cursor-not-allowed">
-                      Paid
-                    </button>
-                  </div>
-                ))}
-              </div>
-              
-            )} */}
-                       
-
                         {historyTab === "complete" && (
                             <div className="bg-white p-6 rounded-lg shadow max-w-5xl overflow-x-auto">
                                 <h2 className="text-xl font-semibold mb-4">Completed Transactions</h2>
@@ -343,8 +298,6 @@ export default function UserDs() {
 
                     </div>
                 )}
-
-                {/* Profile Tab */}
                 {activeTab === "profile" && (
                     <div>
                         <h1 className="text-2xl font-bold mb-6">Edit Profile</h1>
