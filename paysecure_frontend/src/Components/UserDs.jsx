@@ -62,6 +62,7 @@ export default function UserDs() {
             amount: 4000,
         },
     ];
+    
     return (
         <div className="flex h-screen bg-gray-100">
 
@@ -85,7 +86,7 @@ export default function UserDs() {
                             }`}
                     >
                         <ArrowUpCircle size={18} className="mr-2" />
-                        Withdraw
+                        Pay Out
                     </button>
 
                     <button
@@ -96,7 +97,7 @@ export default function UserDs() {
                             }`}
                     >
                         <CreditCard size={18} className="mr-2" />
-                        Payment
+                        Pay In
                     </button>
 
                     <button
