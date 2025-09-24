@@ -4,7 +4,7 @@ function Otp() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
 
   const handleChange = (e, index) => {
-    const value = e.target.value.replace(/[^0-9]/g, ""); 
+    const value = e.target.value.replace(/[^0-9]/g, "");
     if (value.length <= 1) {
       const newOtp = [...otp];
       newOtp[index] = value;
@@ -29,14 +29,14 @@ function Otp() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-blue-100 px-4">
-      <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center text-blue-600 mb-6">
+      <div className="bg-white shadow-lg rounded-2xl p-6 sm:p-8 w-full max-w-md">
+        <h2 className="text-xl sm:text-2xl font-bold text-center text-blue-600 mb-6">
           Enter OTP
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-      
-          <div className="flex justify-between">
+          {/* OTP Input Boxes */}
+          <div className="flex justify-center gap-2 sm:gap-3">
             {otp.map((digit, index) => (
               <input
                 key={index}
@@ -45,14 +45,15 @@ function Otp() {
                 value={digit}
                 onChange={(e) => handleChange(e, index)}
                 maxLength="1"
-                className="w-12 h-12 text-center text-lg font-semibold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-10 h-10 sm:w-14 sm:h-14 text-center text-lg sm:text-xl font-bold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             ))}
           </div>
 
+          {/* Verify Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300"
+            className="w-full bg-blue-600 text-white py-2 sm:py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300 text-sm sm:text-base"
           >
             Verify OTP
           </button>

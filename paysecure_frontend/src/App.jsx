@@ -12,7 +12,7 @@ import UserDs from "./Components/UserDs"
 
 function Layout({ children }) {
   const location = useLocation();
-  const hideLayout = ["/Register", "/Login"];
+  const hideLayout = ["/Register", "/Login", "/Forgot", "/Otp"];
 
   return (
     <>
