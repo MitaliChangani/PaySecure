@@ -121,8 +121,6 @@ function Register() {
             {loading ? "Registering..." : "Register"}
           </button>
         </form>
-
-        {/* Already have an account? */}
         <p className="text-center text-sm text-gray-600 mt-4">
           Already have an account?{" "}
           <Link to="/Login" className="text-blue-600 font-semibold hover:underline">
