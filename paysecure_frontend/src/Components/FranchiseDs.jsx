@@ -88,7 +88,7 @@ export default function FranchiseDs() {
             <User size={40} className="text-gray-600" />
           </div>
           <h2 className="mt-3 text-lg font-semibold">John Doe</h2>
-          <p className="text-sm text-gray-500">+91 9876543210</p>
+          <p className="text-sm text-gray-500"></p>
         </div>
         <nav className="mt-8 w-full space-y-3">
           <button
@@ -412,11 +412,7 @@ export default function FranchiseDs() {
               </div>
             )}
 
-          
-          </div >
-        )
-        }
-      
+
             {/* Complete List */}
             {historyTab === "complete" && (
               <div className="bg-white p-6 rounded-lg shadow w-full overflow-x-auto">
@@ -476,7 +472,8 @@ export default function FranchiseDs() {
                 </table>
               </div>
             )}
-          
+          </div>
+        )}
 
         {/* Profile Tab */}
         {activeTab === "profile" && (

@@ -50,7 +50,7 @@ class LoginView(APIView):
                 httponly=True,
                 secure=False,  # True in production with HTTPS
                 samesite='Lax',
-                max_age=5*60  # 5 minutes
+                
             )
             response.set_cookie(
                 key="refresh_token",
@@ -58,7 +58,7 @@ class LoginView(APIView):
                 httponly=True,
                 secure=False,
                 samesite='Lax',
-                max_age=7*24*60*60  # 7 days
+                
             )
             return response
         return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
