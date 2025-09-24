@@ -1,4 +1,3 @@
-// Forgot.jsx
 import React, { useState } from "react";
 
 function Forgot() {
@@ -25,7 +24,6 @@ function Forgot() {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* New Password */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               New Password
@@ -39,8 +37,6 @@ function Forgot() {
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
-
-          {/* Confirm New Password */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Confirm New Password
@@ -54,8 +50,6 @@ function Forgot() {
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
-
-          {/* Send OTP Button */}
           <button
             type="submit"
             className="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300"

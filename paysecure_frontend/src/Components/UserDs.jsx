@@ -64,9 +64,9 @@ export default function UserDs() {
     ];
     return (
         <div className="flex h-screen bg-gray-100">
-            {/* Sidebar */}
+
             <aside className="w-64 bg-white shadow-lg p-6 flex flex-col items-center">
-                {/* Profile */}
+
                 <div className="flex flex-col items-center">
                     <div className="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center">
                         <User size={40} className="text-gray-600" />
@@ -75,9 +75,8 @@ export default function UserDs() {
                     <p className="text-sm text-gray-500">Johndoe@gmail.com</p>
                 </div>
 
-                {/* Menu */}
                 <nav className="mt-8 w-full space-y-3">
-                    {/* Withdraw Button */}
+
                     <button
                         onClick={() => setActiveTab("withdraw")}
                         className={`w-full flex items-center px-4 py-2 rounded-lg font-medium ${activeTab === "withdraw"
@@ -89,7 +88,6 @@ export default function UserDs() {
                         Withdraw
                     </button>
 
-                    {/* Payment Button */}
                     <button
                         onClick={() => setActiveTab("payment")}
                         className={`w-full flex items-center px-4 py-2 rounded-lg font-medium ${activeTab === "payment"
@@ -101,7 +99,6 @@ export default function UserDs() {
                         Payment
                     </button>
 
-                    {/* History Button */}
                     <button
                         onClick={() => setActiveTab("history")}
                         className={`w-full flex items-center px-4 py-2 rounded-lg font-medium ${activeTab === "history"
@@ -113,7 +110,6 @@ export default function UserDs() {
                         History
                     </button>
 
-                    {/* Profile Button */}
                     <button
                         onClick={() => setActiveTab("profile")}
                         className={`w-full flex items-center px-4 py-2 rounded-lg font-medium ${activeTab === "profile"
@@ -127,10 +123,8 @@ export default function UserDs() {
                 </nav>
             </aside>
 
-            {/* Content Area */}
             <main className="flex-1 p-8 overflow-y-auto">
 
-                {/* Withdraw Tab */}
                 {activeTab === "withdraw" && (
                     <div className="bg-white p-6 rounded-lg shadow max-w-3xl">
                         <h1 className="text-2xl font-bold mb-6">Withdraw Money</h1>
@@ -143,8 +137,6 @@ export default function UserDs() {
                                     placeholder="Enter amount to withdraw"
                                 />
                             </div>
-
-                            {/* Bank Details Form */}
                             <div>
                                 <label className="block text-gray-700">Bank Account Holder Name</label>
                                 <input
@@ -188,6 +180,7 @@ export default function UserDs() {
 
 
                             {/* Upload QR Code */}
+
                             <div>
                                 <label className="block text-gray-700 mb-2">Upload QR Code</label>
                                 <label className="cursor-pointer bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 inline-block">
@@ -197,22 +190,20 @@ export default function UserDs() {
                                         accept="image/*"
                                         className="hidden"
                                         onChange={(e) => {
-                                            // Optional: handle selected file
+
                                             console.log(e.target.files[0]);
                                         }}
                                     />
                                 </label>
-                                {/* Optional: show selected file name */}
                                 <span className="ml-3 text-gray-600" id="file-name">No file chosen</span>
                             </div>
-
-
                             <button className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
                                 Withdraw Request
                             </button>
                         </form>
                     </div>
                 )}
+
 
 
                 {/* Payment Tab */}
@@ -228,6 +219,7 @@ export default function UserDs() {
                                     placeholder="Enter Franchise Name"
                                 />
                             </div>
+
 
                             {/* Bank Details Section */}
                             <div className="bg-gray-50 border rounded-lg p-4 space-y-2">
@@ -250,6 +242,23 @@ export default function UserDs() {
                                     </button>
                                 </div>
                             </div>
+                            {/* <div>
+                                <button
+                                    type="button"
+                                    onClick={() => alert("Bank details downloaded!")}
+                                    className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 mr-2"
+                                >
+                                    Download Bank Details
+                                </button>
+
+                                <button
+                                    type="button"
+                                    onClick={() => alert("QR Code downloaded!")}
+                                    className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700"
+                                >
+                                    Download QR Code
+                                </button>
+                            </div> */}
 
                             {/* Pay Button */}
                             <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 mt-4">
@@ -258,8 +267,6 @@ export default function UserDs() {
                         </form>
                     </div>
                 )}
-
-                {/* History Tab */}
                 {activeTab === "history" && (
                     <div>
                         <h1 className="text-2xl font-bold mb-6">History</h1>
@@ -283,8 +290,6 @@ export default function UserDs() {
                                 Complete
                             </button>
                         </div>
-
-                        {/* Pending List */}
                         {historyTab === "pending" && (
                             <div className="bg-white p-6 rounded-lg shadow w-full overflow-x-auto">
                                 <h2 className="text-xl font-semibold mb-4">Withdraw Requests</h2>
@@ -324,7 +329,6 @@ export default function UserDs() {
                                 </table>
                             </div>
                         )}
-
                         {/* Complete List */}
                         {historyTab === "complete" && (
                             <div className="bg-white p-6 rounded-lg shadow max-w-5xl overflow-x-auto">
@@ -387,8 +391,6 @@ export default function UserDs() {
 
                     </div>
                 )}
-
-                {/* Profile Tab */}
                 {activeTab === "profile" && (
                     <div>
                         <h1 className="text-2xl font-bold mb-6">Edit Profile</h1>

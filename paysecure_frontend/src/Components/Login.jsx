@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-// Backend API URL
 const API_URL = "http://localhost:8000/api";
 
 function Login() {
@@ -19,22 +18,31 @@ function Login() {
     setLoading(true);
 
     try {
-      // Make request with credentials: 'include' to allow HttpOnly cookies
       const response = await axios.post(
         `${API_URL}/login/`,
         { username, password },
-        { withCredentials: true } // Important for HttpOnly cookies
+        { withCredentials: true } 
       );
 
       console.log("Login response:", response.data);
 
-      // Save only user info (no tokens in localStorage)
       localStorage.setItem("user_role", response.data.role);
       localStorage.setItem("user_id", response.data.id);
       localStorage.setItem("username", response.data.username);
 
       alert("Login Successful!");
-      navigate("/"); // redirect to homepage or dashboard
+
+      const role = response.data.role.toLowerCase();
+      if (role === "franchise") {
+        navigate("/FranchiseDs"); 
+      } else if (role === "user") {
+        navigate("/UserDs"); 
+      } else if (role === "admin") {
+        navigate("/AdminDs"); 
+      } else {
+        navigate("/"); 
+      }
+
     } catch (err) {
       console.error(err);
       if (err.response && err.response.data.detail) {

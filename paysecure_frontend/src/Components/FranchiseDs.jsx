@@ -5,7 +5,7 @@ export default function FranchiseDs() {
   const [historyTab, setHistoryTab] = useState("pending");
   const [accountSubTab, setAccountSubTab] = useState("view");
   const [editingId, setEditingId] = useState(null);
-  // Sample Withdraw Requests Data
+
   const withdrawRequests = [
     {
       id: 1,
@@ -33,8 +33,6 @@ export default function FranchiseDs() {
     },
   ];
 
-
-  // Multiple bank accounts
   const [accounts, setAccounts] = useState([
     {
       id: 1,
@@ -55,8 +53,6 @@ export default function FranchiseDs() {
     upiId: "",
     QrCode: "",
   });
-
-  // Handlers
   const handleNewChange = (e) => {
     setNewAccount({ ...newAccount, [e.target.name]: e.target.value });
   };
@@ -75,8 +71,6 @@ export default function FranchiseDs() {
     );
     setAccounts(updatedAccounts);
   };
-
-  // Sample bank details
   const userBankDetails = {
     accountName: "John Doe",
     accountNumber: "123456789012",
@@ -88,9 +82,7 @@ export default function FranchiseDs() {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
       <aside className="w-64 bg-white shadow-lg p-6 flex flex-col items-center">
-        {/* Profile */}
         <div className="flex flex-col items-center">
           <div className="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center">
             <User size={40} className="text-gray-600" />
@@ -98,8 +90,6 @@ export default function FranchiseDs() {
           <h2 className="mt-3 text-lg font-semibold">John Doe</h2>
           <p className="text-sm text-gray-500">+91 9876543210</p>
         </div>
-
-        {/* Menu */}
         <nav className="mt-8 w-full space-y-3">
           <button
             onClick={() => setActiveTab("account")}
@@ -128,6 +118,7 @@ export default function FranchiseDs() {
             className={`w-full flex items-center px-4 py-2 rounded-lg font-medium ${activeTab === "profile"
                 ? "bg-blue-600 text-white"
                 : "hover:bg-gray-100 text-gray-700"
+
               }`}
           >
             <User size={18} className="mr-2" />
@@ -138,12 +129,9 @@ export default function FranchiseDs() {
 
       {/* Content Area */}
       <main className="flex-1 p-8 overflow-y-auto">
-        {/* Account Tab */}
         {activeTab === "account" && (
           <div className="bg-white p-6 rounded-lg shadow max-w-3xl">
             <h1 className="text-2xl font-bold mb-6">Bank Accounts</h1>
-
-            {/* Sub-tabs */}
             <div className="flex space-x-4 mb-6">
               <button
                 className={`px-4 py-2 rounded-lg font-medium ${accountSubTab === "view"
@@ -164,8 +152,6 @@ export default function FranchiseDs() {
                 Add Account
               </button>
             </div>
-
-            {/* View All Accounts */}
             {accountSubTab === "view" && (
               <div className="space-y-6">
                 {accounts.map((acc) => (
@@ -269,8 +255,6 @@ export default function FranchiseDs() {
                 ))}
               </div>
             )}
-
-            {/* Add New Account */}
             {accountSubTab === "add" && (
               <form className="space-y-4 max-w-md" onSubmit={handleAddAccount}>
                 <div>
@@ -350,12 +334,9 @@ export default function FranchiseDs() {
             )}
           </div>
         )}
-        {/* History Tab */}
         {activeTab === "history" && (
           <div>
             <h1 className="text-2xl font-bold mb-6">History</h1>
-
-            {/* Tabs for Pending / Complete */}
             <div className="flex space-x-4 mb-6">
               <button
                 onClick={() => setHistoryTab("pending")}
@@ -431,8 +412,11 @@ export default function FranchiseDs() {
               </div>
             )}
 
-
-
+          
+          </div >
+        )
+        }
+      
             {/* Complete List */}
             {historyTab === "complete" && (
               <div className="bg-white p-6 rounded-lg shadow w-full overflow-x-auto">
@@ -492,8 +476,7 @@ export default function FranchiseDs() {
                 </table>
               </div>
             )}
-          </div>
-        )}
+          
 
         {/* Profile Tab */}
         {activeTab === "profile" && (
@@ -505,14 +488,6 @@ export default function FranchiseDs() {
                 <input
                   type="text"
                   defaultValue="John Doe"
-                  className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700">Phone Number</label>
-                <input
-                  type="text"
-                  defaultValue="+91 9876543210"
                   className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                 />
               </div>
