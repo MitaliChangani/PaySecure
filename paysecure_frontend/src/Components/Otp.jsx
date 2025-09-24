@@ -35,7 +35,6 @@ function Otp() {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* OTP Input Boxes */}
           <div className="flex justify-center gap-2 sm:gap-3">
             {otp.map((digit, index) => (
               <input
@@ -49,8 +48,6 @@ function Otp() {
               />
             ))}
           </div>
-
-          {/* Verify Button */}
           <button
             type="submit"
             className="w-full bg-blue-600 text-white py-2 sm:py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300 text-sm sm:text-base"
