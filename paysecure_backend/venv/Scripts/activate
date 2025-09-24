@@ -36,6 +36,16 @@ deactivate () {
 deactivate nondestructive
 
 # on Windows, a path can contain colons and backslashes and has to be converted:
+<<<<<<< HEAD
+if [ "${OSTYPE:-}" = "cygwin" ] || [ "${OSTYPE:-}" = "msys" ] ; then
+    # transform D:\path\to\venv to /d/path/to/venv on MSYS
+    # and to /cygdrive/d/path/to/venv on Cygwin
+    export VIRTUAL_ENV=$(cygpath "C:\Users\Dhruvi\PaySecure\paysecure_backend\venv")
+else
+    # use the path as-is
+    export VIRTUAL_ENV="C:\Users\Dhruvi\PaySecure\paysecure_backend\venv"
+fi
+=======
 case "$(uname)" in
     CYGWIN*|MSYS*)
         # transform D:\path\to\venv to /d/path/to/venv on MSYS
@@ -48,6 +58,7 @@ case "$(uname)" in
         export VIRTUAL_ENV="C:\Users\jeels\PaySecure\paysecure_backend\venv"
         ;;
 esac
+>>>>>>> ec9d79f070b8f6780957c47a12c2e943725352df
 
 _OLD_VIRTUAL_PATH="$PATH"
 PATH="$VIRTUAL_ENV/Scripts:$PATH"
@@ -68,6 +79,8 @@ if [ -z "${VIRTUAL_ENV_DISABLE_PROMPT:-}" ] ; then
     _OLD_VIRTUAL_PS1="${PS1:-}"
     PS1="(venv) ${PS1:-}"
     export PS1
+    VIRTUAL_ENV_PROMPT="(venv) "
+    export VIRTUAL_ENV_PROMPT
 fi
 
 # Call hash to forget past commands. Without forgetting

@@ -5,6 +5,7 @@ export default function FranchiseDs() {
   const [historyTab, setHistoryTab] = useState("pending");
   const [accountSubTab, setAccountSubTab] = useState("view");
   const [editingId, setEditingId] = useState(null);
+
   const withdrawRequests = [
     {
       id: 1,
@@ -31,6 +32,7 @@ export default function FranchiseDs() {
       qr: "https://via.placeholder.com/100x100.png?text=QR2",
     },
   ];
+
   const [accounts, setAccounts] = useState([
     {
       id: 1,
@@ -92,8 +94,8 @@ export default function FranchiseDs() {
           <button
             onClick={() => setActiveTab("account")}
             className={`w-full flex items-center px-4 py-2 rounded-lg font-medium ${activeTab === "account"
-              ? "bg-blue-600 text-white"
-              : "hover:bg-gray-100 text-gray-700"
+                ? "bg-blue-600 text-white"
+                : "hover:bg-gray-100 text-gray-700"
               }`}
           >
             <CreditCard size={18} className="mr-2" />
@@ -103,8 +105,8 @@ export default function FranchiseDs() {
           <button
             onClick={() => setActiveTab("history")}
             className={`w-full flex items-center px-4 py-2 rounded-lg font-medium ${activeTab === "history"
-              ? "bg-blue-600 text-white"
-              : "hover:bg-gray-100 text-gray-700"
+                ? "bg-blue-600 text-white"
+                : "hover:bg-gray-100 text-gray-700"
               }`}
           >
             <Clock size={18} className="mr-2" />
@@ -114,8 +116,9 @@ export default function FranchiseDs() {
           <button
             onClick={() => setActiveTab("profile")}
             className={`w-full flex items-center px-4 py-2 rounded-lg font-medium ${activeTab === "profile"
-              ? "bg-blue-600 text-white"
-              : "hover:bg-gray-100 text-gray-700"
+                ? "bg-blue-600 text-white"
+                : "hover:bg-gray-100 text-gray-700"
+
               }`}
           >
             <User size={18} className="mr-2" />
@@ -123,6 +126,8 @@ export default function FranchiseDs() {
           </button>
         </nav>
       </aside>
+
+      {/* Content Area */}
       <main className="flex-1 p-8 overflow-y-auto">
         {activeTab === "account" && (
           <div className="bg-white p-6 rounded-lg shadow max-w-3xl">
@@ -130,8 +135,8 @@ export default function FranchiseDs() {
             <div className="flex space-x-4 mb-6">
               <button
                 className={`px-4 py-2 rounded-lg font-medium ${accountSubTab === "view"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                   }`}
                 onClick={() => setAccountSubTab("view")}
               >
@@ -139,8 +144,8 @@ export default function FranchiseDs() {
               </button>
               <button
                 className={`px-4 py-2 rounded-lg font-medium ${accountSubTab === "add"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                   }`}
                 onClick={() => setAccountSubTab("add")}
               >
@@ -336,8 +341,8 @@ export default function FranchiseDs() {
               <button
                 onClick={() => setHistoryTab("pending")}
                 className={`px-4 py-2 rounded-lg font-medium ${historyTab === "pending"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                   }`}
               >
                 Pending
@@ -345,8 +350,8 @@ export default function FranchiseDs() {
               <button
                 onClick={() => setHistoryTab("complete")}
                 className={`px-4 py-2 rounded-lg font-medium ${historyTab === "complete"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                   }`}
               >
                 Complete
@@ -406,6 +411,7 @@ export default function FranchiseDs() {
                 </table>
               </div>
             )}
+
 
             {/* Complete List */}
             {historyTab === "complete" && (
