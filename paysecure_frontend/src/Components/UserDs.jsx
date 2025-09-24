@@ -243,25 +243,6 @@ export default function UserDs() {
                                     </button>
                                 </div>
                             </div>
-                            {/* <div>
-                                <button
-                                    type="button"
-                                    onClick={() => alert("Bank details downloaded!")}
-                                    className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 mr-2"
-                                >
-                                    Download Bank Details
-                                </button>
-
-                                <button
-                                    type="button"
-                                    onClick={() => alert("QR Code downloaded!")}
-                                    className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700"
-                                >
-                                    Download QR Code
-                                </button>
-                            </div> */}
-
-                            {/* Pay Button */}
                             <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 mt-4">
                                 Pay
                             </button>
@@ -330,7 +311,6 @@ export default function UserDs() {
                                 </table>
                             </div>
                         )}
-                        {/* Complete List */}
                         {historyTab === "complete" && (
                             <div className="bg-white p-6 rounded-lg shadow max-w-5xl overflow-x-auto">
                                 <h2 className="text-xl font-semibold mb-4">Completed Transactions</h2>
