@@ -34,6 +34,17 @@ class FranchiseAccount(models.Model):
 
     def __str__(self):
         return f"{self.bank_name} - {self.bank_account_number}"
+    
+    def as_dict(self):
+        """Return a small dict snapshot (handy when embedding into responses)."""
+        return {
+            "id": self.id,
+            "bank_name": self.bank_name,
+            "bank_account_number": self.bank_account_number,
+            "ifsc_code": self.ifsc_code,
+            "upi_id": self.upi_id,
+            "qr_code": self.qr_code.url if self.qr_code else None,
+        }
 
 class WithdrawalRequest(models.Model):
     STATUS_CHOICES = (
