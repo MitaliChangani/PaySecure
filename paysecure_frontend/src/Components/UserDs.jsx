@@ -62,7 +62,7 @@ export default function UserDs() {
             amount: 4000,
         },
     ];
-    
+
     return (
         <div className="flex h-screen bg-gray-100">
 
@@ -171,17 +171,13 @@ export default function UserDs() {
                                 />
                             </div>
                             <div>
-                                <label className="block text-gray-700">UpiId</label>
+                                <label className="block text-gray-700">UPI Id</label>
                                 <input
                                     type="text"
                                     className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                                     placeholder="Enter UpiId"
                                 />
                             </div>
-
-
-                            {/* Upload QR Code */}
-
                             <div>
                                 <label className="block text-gray-700 mb-2">Upload QR Code</label>
                                 <label className="cursor-pointer bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 inline-block">
@@ -204,10 +200,6 @@ export default function UserDs() {
                         </form>
                     </div>
                 )}
-
-
-
-                {/* Payment Tab */}
                 {activeTab === "payment" && (
                     <div className="bg-white p-6 rounded-lg shadow max-w-3xl">
                         <h1 className="text-2xl font-bold mb-6">Make Payment</h1>
@@ -220,19 +212,14 @@ export default function UserDs() {
                                     placeholder="Enter Franchise Name"
                                 />
                             </div>
-
-
-                            {/* Bank Details Section */}
                             <div className="bg-gray-50 border rounded-lg p-4 space-y-2">
                                 <h2 className="text-lg font-semibold text-gray-800 mb-2">
                                     Bank Details
                                 </h2>
                                 <p><span className="font-medium">Bank Name:</span> HDFC Bank</p>
-                                <p><span className="font-medium">Account Number:</span> 987654321012</p>
+                                <p><span className="font-medium">Account Number:</span> 9876543210</p>
                                 <p><span className="font-medium">IFSC Code:</span> HDFC0005678</p>
                                 <p><span className="font-medium">UPI ID:</span> franchise@upi</p>
-
-                                {/* QR Code Section */}
                                 <div className="mt-4 flex items-center space-x-4">
                                     <button
                                         type="button"

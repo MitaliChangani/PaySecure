@@ -103,8 +103,6 @@ function Home() {
           ))}
         </div>
       </section>
-
-      {/* How It Works Section */}
       <section className="bg-blue-50 py-16 px-6 sm:px-10 lg:px-20">
         <div className="max-w-7xl mx-auto text-center mb-12">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">How It Works</h2>
@@ -128,8 +126,6 @@ function Home() {
           </div>
         </div>
       </section>
-
-      {/* Testimonials Section */}
       <section className="bg-blue-50 py-16 px-6 sm:px-10 lg:px-20">
         <div className="max-w-7xl mx-auto text-center mb-12">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">What Our Users Say</h2>
@@ -150,8 +146,6 @@ function Home() {
           </div>
         </div>
       </section>
-
-      {/* Call To Action Section */}
       <section className="bg-blue-100 text-black py-16 px-6 sm:px-10 lg:px-20">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl sm:text-4xl font-bold mb-6">Ready to Get Started?</h2>
