@@ -41,8 +41,8 @@ export default function UserDs() {
             <div className="w-full bg-white shadow-sm">
                 <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-3 px-6 py-3">
                     {[
-                        { key: "withdraw", label: "Withdraw", icon: <ArrowUpCircle size={20} /> },
-                        { key: "payment", label: "Payment", icon: <CreditCard size={20} /> },
+                        { key: "withdraw", label: "Pay-out", icon: <ArrowUpCircle size={20} /> },
+                        { key: "payment", label: "Pay-in", icon: <CreditCard size={20} /> },
                         { key: "history", label: "History", icon: <Clock size={20} /> },
                         { key: "profile", label: "Profile", icon: <User size={20} /> },
                     ].map((tab) => (
