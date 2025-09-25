@@ -3,6 +3,8 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import get_user_model
 from .models import *
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework import serializers
+from django.contrib.auth.models import User
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -36,6 +38,16 @@ class BankAccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = BankAccount
         fields = ['id', 'bank_name', 'account_number', 'ifsc_code', 'upi_id', 'qr_code', 'limit', 'is_active']
+        
+
+class ForgotPasswordSerializer(serializers.Serializer):
+    username = serializers.CharField()
+
+class ResetPasswordSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    otp = serializers.CharField()
+    new_password = serializers.CharField()
+
 
 # CustomUser = get_user_model()
 

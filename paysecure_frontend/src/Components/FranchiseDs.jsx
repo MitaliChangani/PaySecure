@@ -486,9 +486,19 @@ export default function FranchiseDs() {
               >
                 Save Changes
               </button>
+
+              {/* Reset Password Button */}
+              <button
+                type="button"
+                onClick={() => window.location.href = "/forgot-reset-password"}
+                className="mt-4 ml-2 bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700"
+              >
+                Reset Password
+              </button>
             </form>
           </div>
         )}
+
       </main>
     </div>
   );
