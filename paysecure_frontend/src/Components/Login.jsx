@@ -21,7 +21,7 @@ function Login() {
       const response = await axios.post(
         `${API_URL}/login/`,
         { username, password },
-        { withCredentials: true } 
+        { withCredentials: true }
       );
 
       console.log("Login response:", response.data);
@@ -34,13 +34,13 @@ function Login() {
 
       const role = response.data.role.toLowerCase();
       if (role === "franchise") {
-        navigate("/FranchiseDs"); 
+        navigate("/FranchiseDs");
       } else if (role === "user") {
-        navigate("/UserDs"); 
+        navigate("/UserDs");
       } else if (role === "admin") {
-        navigate("/AdminDs"); 
+        navigate("/AdminDs");
       } else {
-        navigate("/"); 
+        navigate("/");
       }
 
     } catch (err) {
@@ -96,7 +96,7 @@ function Login() {
           </div>
 
           <div className="text-right">
-            <a href="#" className="text-sm text-blue-500 hover:underline">
+            <a href="/Forgot" className="text-sm text-blue-500 hover:underline">
               Forgot Password?
             </a>
           </div>

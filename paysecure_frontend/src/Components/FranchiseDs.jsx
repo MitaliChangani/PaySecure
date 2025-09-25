@@ -194,7 +194,6 @@ export default function FranchiseDs() {
                         acc.bankName
                       )}
                     </p>
-
                     <p>
                       <span className="font-semibold">IFSC:</span>{" "}
                       {editingId === acc.id ? (
@@ -244,8 +243,6 @@ export default function FranchiseDs() {
                         "Not Uploaded"
                       )}
                     </p>
-
-
                   </div>
                 ))}
               </div>
@@ -352,9 +349,6 @@ export default function FranchiseDs() {
                 Complete
               </button>
             </div>
-
-            {/* Pending List */}
-
             {historyTab === "pending" && (
               <div className="bg-white p-6 rounded-lg shadow w-full overflow-x-auto">
                 <h2 className="text-xl font-semibold mb-4">Pending Withdraw Requests</h2>
@@ -406,8 +400,6 @@ export default function FranchiseDs() {
                 </table>
               </div>
             )}
-
-            {/* Complete List */}
             {historyTab === "complete" && (
               <div className="bg-white p-6 rounded-lg shadow w-full overflow-x-auto">
                 <h2 className="text-xl font-semibold mb-4">Completed Transactions</h2>
@@ -468,8 +460,6 @@ export default function FranchiseDs() {
             )}
           </div>
         )}
-
-        {/* Profile Tab */}
         {activeTab === "profile" && (
           <div>
             <h1 className="text-2xl font-bold mb-6">Edit Profile</h1>

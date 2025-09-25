@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+
 const API_URL = "http://localhost:8000/api";
 
 function Register() {
@@ -120,6 +121,12 @@ function Register() {
             {loading ? "Registering..." : "Register"}
           </button>
         </form>
+        <p className="text-center text-sm text-gray-600 mt-4">
+          Already have an account?{" "}
+          <Link to="/Login" className="text-blue-600 font-semibold hover:underline">
+            Login Here
+          </Link>
+        </p>
       </div>
     </div>
   );
