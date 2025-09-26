@@ -4,11 +4,7 @@ import { useEffect } from "react";
 
 import Register from "./Components/Register";
 import Login from './Components/Login'
-<<<<<<< HEAD
-// import Forgot from './Components/Forgot'
-=======
 import ForgotResetPassword from './Components/ForgotResetPassword';
->>>>>>> c5ff5efe6c96b54742c29593c8e86a50ae875395
 import Otp from './Components/Otp'
 import Footer from './Components/Footer'
 import Home from './Components/Home'
@@ -29,7 +25,7 @@ axios.interceptors.request.use((config) => {
 
 function Layout({ children }) {
   const location = useLocation();
-  const hideLayout = ["/Register", "/Login", "/ForgotResetPassword", "/Otp"];
+  const hideLayout = ["/Register", "/Login", "/Forgot", "/Otp"];
 
   return (
     <>
@@ -53,11 +49,11 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/Register" element={<Register />} />
           <Route path="/Login" element={<Login />} />
-<<<<<<< HEAD
-          {/* <Route path="/Forgot" element={<Forgot />} /> */}
-=======
-          <Route path="/forgot-reset-password" element={<ForgotResetPassword />} />
->>>>>>> c5ff5efe6c96b54742c29593c8e86a50ae875395
+
+          <Route path="/Forgot" element={<ForgotResetPassword />} />
+
+          
+
           <Route path="/Otp" element={<Otp />} />
           <Route path="/FranchiseDs" element={<FranchiseDs />} />
           <Route path="/UserDs" element={<UserDs />} />

@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-<<<<<<< HEAD
 import { User, CreditCard, ArrowUpCircle, Clock } from "lucide-react";
-=======
-import { User, CreditCard, Clock } from "lucide-react";
-import payImg from "../assets/reverse.png";
-
->>>>>>> c5ff5efe6c96b54742c29593c8e86a50ae875395
 
 export default function FranchiseDs() {
   const [accountSubTab, setAccountSubTab] = useState("view");
@@ -153,10 +147,6 @@ export default function FranchiseDs() {
     <div className="min-h-screen flex flex-col bg-white">
       {/* Center Tabs */}
       <header className="bg-white shadow-md px-4 md:px-8 py-3 flex items-center justify-center">
-<<<<<<< HEAD
-=======
-        {/* Center Tabs */}
->>>>>>> c5ff5efe6c96b54742c29593c8e86a50ae875395
         <nav className="flex flex-wrap justify-center gap-2 sm:gap-4">
           <button
             onClick={() => setActiveTab("account")}
@@ -455,12 +445,8 @@ export default function FranchiseDs() {
                         <th className="border px-4 py-2">Time</th>
                         <th className="border px-4 py-2">QR Code</th>
                         <th className="border px-4 py-2">Action</th>
-<<<<<<< HEAD
                         <th className="border px-4 py-2">#</th>
-=======
-                        <th className="border px-4 py-2">Image</th>
 
->>>>>>> c5ff5efe6c96b54742c29593c8e86a50ae875395
                       </tr>
                     </thead>
                     <tbody>
@@ -493,8 +479,7 @@ export default function FranchiseDs() {
                               Pay Now
                             </button>
                           </td>
-                          
-<<<<<<< HEAD
+                      
               <td
                 className="border px-4 py-2 text-center cursor-pointer"
                 title="Click to add UTR number"
@@ -505,12 +490,7 @@ export default function FranchiseDs() {
               >
                 ↺
               </td>
-=======
-                         <td className="border px-4 py-2 text-center">
-  <img src={payImg} alt="Pay" className="w-8 h-8 mx-auto" />
-</td>
-
->>>>>>> c5ff5efe6c96b54742c29593c8e86a50ae875395
+                   
                         </tr>
                       ))}
                     </tbody>
@@ -571,7 +551,7 @@ export default function FranchiseDs() {
       )}
                 </div>
               )}
-<<<<<<< HEAD
+
 
           {/* History Section */}
           {activeTab === "history" && (
@@ -640,66 +620,8 @@ export default function FranchiseDs() {
                   ))}
                 </tbody>
               </table>
-=======
-              {historyTab === "complete" && (
-                <div className="bg-white p-6 rounded-lg shadow w-full overflow-x-auto">
-                  <h2 className="text-xl font-semibold mb-4">Completed Transactions</h2>
-                  <table className="min-w-full border-collapse border border-gray-300">
-                    <thead>
-                      <tr className="bg-gray-100">
-                        <th className="border px-4 py-2 text-left">#</th>
-                        <th className="border px-4 py-2 text-left">Status</th>
-                        <th className="border px-4 py-2 text-left">UPI ID</th>
-                        <th className="border px-4 py-2 text-left">Transaction ID</th>
-                        <th className="border px-4 py-2 text-left">Date</th>
-                        <th className="border px-4 py-2 text-left">Time</th>
-                        <th className="border px-4 py-2 text-left">From</th>
-                        <th className="border px-4 py-2 text-left">To</th>
-                        <th className="border px-4 py-2 text-left">Amount</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {[
-                        {
-                          id: 1,
-                          status: "Withdraw",
-                          upi: "user@upi",
-                          transactionId: "TXN123456",
-                          date: "2025-09-22",
-                          time: "14:30",
-                          from: "John Doe",
-                          to: "Bank Account",
-                          amount: 5000,
-                        },
-                        {
-                          id: 2,
-                          status: "Deposit",
-                          upi: "recipient@upi",
-                          transactionId: "TXN654321",
-                          date: "2025-09-20",
-                          time: "10:15",
-                          from: "Bank Account",
-                          to: "John Doe",
-                          amount: 2000,
-                        },
-                      ].map((tx, index) => (
-                        <tr key={tx.id} className="hover:bg-gray-50">
-                          <td className="border px-4 py-2">{index + 1}</td>
-                          <td className="border px-4 py-2">{tx.status}</td>
-                          <td className="border px-4 py-2">{tx.upi}</td>
-                          <td className="border px-4 py-2">{tx.transactionId}</td>
-                          <td className="border px-4 py-2">{tx.date}</td>
-                          <td className="border px-4 py-2">{tx.time}</td>
-                          <td className="border px-4 py-2">{tx.from}</td>
-                          <td className="border px-4 py-2">{tx.to}</td>
-                          <td className="border px-4 py-2">₹{tx.amount.toLocaleString()}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
->>>>>>> c5ff5efe6c96b54742c29593c8e86a50ae875395
+
+            
             </div>
           )}
 
