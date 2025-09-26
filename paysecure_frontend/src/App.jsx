@@ -10,8 +10,19 @@ import Footer from './Components/Footer'
 import Home from './Components/Home'
 import Header from "./Components/Header";
 import FranchiseDs from "./Components/FranchiseDs";
-import UserDs from "./Components/UserDs"
 import AdminDs from "./Components/AdminDs";
+import UserDs from "./Components/UserDs"
+
+axios.defaults.withCredentials = true; 
+
+axios.interceptors.request.use((config) => {
+  const csrfToken = document.cookie.split("; ").find(row => row.startsWith("csrftoken="))?.split("=")[1];
+  if (csrfToken) {
+    config.headers["X-CSRFToken"] = csrfToken;
+  }
+  return config;
+});
+
 function Layout({ children }) {
   const location = useLocation();
   const hideLayout = ["/Register", "/Login", "/Forgot", "/Otp"];
@@ -38,7 +49,11 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/Register" element={<Register />} />
           <Route path="/Login" element={<Login />} />
+
           <Route path="/Forgot" element={<ForgotResetPassword />} />
+
+          
+
           <Route path="/Otp" element={<Otp />} />
           <Route path="/FranchiseDs" element={<FranchiseDs />} />
           <Route path="/UserDs" element={<UserDs />} />
