@@ -1,58 +1,129 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 function Otp() {
-  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [username, setUsername] = useState("");
+  const [otp, setOtp] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(0); // countdown timer
 
-  const handleChange = (e, index) => {
-    const value = e.target.value.replace(/[^0-9]/g, "");
-    if (value.length <= 1) {
-      const newOtp = [...otp];
-      newOtp[index] = value;
-      setOtp(newOtp);
+  // Countdown effect
+  useEffect(() => {
+    if (timeLeft <= 0) return;
 
-      if (value !== "" && index < 5) {
-        document.getElementById(`otp-${index + 1}`).focus();
-      }
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [timeLeft]);
+
+  const handleSendOtp = async () => {
+    try {
+      await axios.post(
+        "http://localhost:8000/api/forgot-password/",
+        { username },
+        { withCredentials: true }
+      );
+      alert("OTP sent successfully!");
+      setOtpSent(true);
+      setTimeLeft(300); // 5 minutes countdown
+    } catch (error) {
+      alert(error.response?.data?.detail || "Something went wrong");
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleReset = async (e) => {
     e.preventDefault();
-    const otpValue = otp.join("");
-    if (otpValue.length < 6) {
-      alert("Please enter all 6 digits!");
+    if (timeLeft <= 0) {
+      alert("OTP expired. Please request a new OTP.");
       return;
     }
-    console.log("Entered OTP:", otpValue);
-    alert("OTP Verified Successfully!");
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/reset-password/",
+        { username, otp, new_password: newPassword },
+        { withCredentials: true }
+      );
+      alert(response.data.detail);
+      // Optional: Redirect to login page
+    } catch (error) {
+      alert(error.response?.data?.detail || "Something went wrong");
+    }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-blue-100 px-4">
-      <div className="bg-white shadow-lg rounded-2xl p-6 sm:p-8 w-full max-w-md">
-        <h2 className="text-xl sm:text-2xl font-bold text-center text-blue-600 mb-6">
-          Enter OTP
+      <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
+        <h2 className="text-2xl font-bold text-center text-blue-600 mb-6">
+          Reset Password
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="flex justify-center gap-2 sm:gap-3">
-            {otp.map((digit, index) => (
-              <input
-                key={index}
-                id={`otp-${index}`}
-                type="text"
-                value={digit}
-                onChange={(e) => handleChange(e, index)}
-                maxLength="1"
-                className="w-10 h-10 sm:w-14 sm:h-14 text-center text-lg sm:text-xl font-bold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            ))}
+        <form onSubmit={handleReset} className="space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Username
+            </label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              className="w-full p-3 border border-gray-300 rounded-lg"
+              disabled={otpSent} // lock username after sending OTP
+            />
           </div>
+
+          <div className="flex items-center space-x-2">
+            <button
+              type="button"
+              onClick={handleSendOtp}
+              className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition duration-300"
+              disabled={otpSent}
+            >
+              {otpSent ? "OTP Sent" : "Send OTP"}
+            </button>
+            {otpSent && (
+              <span className="text-sm text-gray-600">
+                Expires in {Math.floor(timeLeft / 60)}:{("0" + (timeLeft % 60)).slice(-2)}
+              </span>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              OTP
+            </label>
+            <input
+              type="text"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              required
+              className="w-full p-3 border border-gray-300 rounded-lg"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              New Password
+            </label>
+            <input
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+              className="w-full p-3 border border-gray-300 rounded-lg"
+            />
+          </div>
+
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 sm:py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300 text-sm sm:text-base"
+            className="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300"
+            disabled={timeLeft <= 0}
           >
-            Verify OTP
+            Reset Password
           </button>
         </form>
       </div>

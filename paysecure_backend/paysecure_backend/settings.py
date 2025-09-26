@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+from corsheaders.defaults import default_headers
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,11 +42,30 @@ CORS_ALLOW_HEADERS = [
     "authorization",
 ]
 
+
+
+
+CSRF_COOKIE_SECURE = False   # only for local dev
+SESSION_COOKIE_SECURE = False  # only for local dev
+CSRF_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_HTTPONLY = False 
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "X-CSRFToken",
+]
+
+
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # increase to 1 hour or more
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),     # refresh token valid for 7 days
-    'ROTATE_REFRESH_TOKENS': True,                  # optional: generate new refresh token on use
-    'BLACKLIST_AFTER_ROTATION': True,               # optional: blacklist old refresh tokens
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=360),  # default 5 min
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),     # default 1 day
+    "ROTATE_REFRESH_TOKENS": True,                   # issue new refresh on use
+    "BLACKLIST_AFTER_ROTATION": True,                # old refresh invalid
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "AUTH_COOKIE": "access",                         # cookie name
+    "AUTH_COOKIE_SECURE": False,                     # True in production (HTTPS)
+    "AUTH_COOKIE_HTTP_ONLY": True,
+    "AUTH_COOKIE_PATH": "/",
+    "AUTH_COOKIE_SAMESITE": "Lax",
 }
 
 # Application definition
@@ -78,6 +98,9 @@ MIDDLEWARE = [
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.SessionAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
@@ -89,7 +112,11 @@ AUTH_USER_MODEL = 'paysecure.CustomUser'
 
 ROOT_URLCONF = 'paysecure_backend.urls'
 
-CSRF_TRUSTED_ORIGINS = ["http://localhost:3000"]
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:5173",   # React dev server
+    "http://127.0.0.1:5173",
+]
 
 TEMPLATES = [
     {

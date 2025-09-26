@@ -10,22 +10,31 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import logout, login
+from rest_framework.permissions import AllowAny
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.http import JsonResponse
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+from rest_framework import status
+from django.contrib.auth.models import User
+from .models import PasswordResetOTP
+import random
+from datetime import datetime, timedelta
 
-# CustomUser = get_user_model()
 
+
+def get_csrf_token(request):
+    return JsonResponse({"detail": "CSRF cookie set"})
 
 class RegisterView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = RegisterSerializer
     permission_classes = [permissions.AllowAny]
     
-    # def perform_create(self, serializer):
-    #     user = serializer.save()
-    #     if user.role == "franchise":
-    #         Franchise.objects.create(user=user)
-
+   
 class LoginView(generics.GenericAPIView):
     serializer_class = LoginSerializer
+    permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -36,187 +45,99 @@ class LoginView(generics.GenericAPIView):
 
         return Response({
             "message": "Login successful",
+            "id": user.id,
             "username": user.username,
             "role": user.role,
         }, status=status.HTTP_200_OK)
 
 
-class LogoutView(generics.GenericAPIView):
-    def post(self, request, *args, **kwargs):
-        logout(request)
-        return Response({"message": "Logout successful"}, status=status.HTTP_200_OK)
 
 
-# class FranchiseProfileView(generics.RetrieveUpdateAPIView):
-#     queryset = Franchise.objects.all()
-#     serializer_class = FranchiseProfileSerializer
-#     permission_classes = [IsFranchise]
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def current_user(request):
+    user = request.user
+    return Response({
+        "id": user.id,
+        "username": user.username,
+        "email": user.email,
+        "role": user.role if hasattr(user, "role") else "user"
+    })
 
-#     def get_object(self):
-#         return Franchise.objects.get(user=self.request.user)
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def logout_view(request):
+    response = Response({"message": "Logged out successfully"}, status=status.HTTP_200_OK)
+    response.delete_cookie("access")
+    response.delete_cookie("refresh")
+    return response
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def whoami(request):
+    user = request.user
+    return Response({
+        "id": user.id,
+        "username": user.username,
+        "email": user.email,
+        "role": user.role
+    })
+
     
-# class FranchiseAccountListView(generics.ListAPIView):
-#     serializer_class = FranchiseAccountSerializer
-#     permission_classes = [IsFranchise]
-
-#     def get_queryset(self):
-#         return FranchiseAccount.objects.filter(franchise__user=self.request.user)
-
-
-# # Franchise adds a new account
-# class FranchiseAccountCreateView(generics.CreateAPIView):
-#     serializer_class = FranchiseAccountCreateSerializer
-#     permission_classes = [IsFranchise]
-
-#     def perform_create(self, serializer):
-#         franchise = Franchise.objects.get(user=self.request.user)
-#         serializer.save(franchise=franchise)
-
-# # ---------------------------
-# # User creates Withdrawal Request
-# # ---------------------------
-# class WithdrawalRequestCreateView(generics.CreateAPIView):
-#     queryset = WithdrawalRequest.objects.all()
-#     serializer_class = WithdrawalRequestSerializer
-#     permission_classes = [IsNormalUser]
-
-#     def perform_create(self, serializer):
-#         account_id = self.request.data.get('franchise_account_id')
-#         if not account_id:
-#             raise serializers.ValidationError({"franchise_account_id": "This field is required."})
-
-#         try:
-#             account = FranchiseAccount.objects.get(id=account_id)
-#         except FranchiseAccount.DoesNotExist:
-#             raise serializers.ValidationError({"franchise_account_id": "Invalid account id."})
-
-#         bank_account = self.request.data.get('bank_account')
-#         ifsc_code = self.request.data.get('ifsc_code')
-#         upi_id = self.request.data.get('upi_id')
-#         qr_code = self.request.data.get('qr_code')
-
-#         serializer.save(
-#             user=self.request.user,
-#             franchise=account.franchise,
-#             franchise_account=account,
-#             bank_account=bank_account,
-#             ifsc_code=ifsc_code,
-#             upi_id=upi_id,
-#             qr_code=qr_code,
-#         )
-
-# class FranchiseAccountDetailView(generics.RetrieveUpdateDestroyAPIView):
-#     """
-#     GET / PUT / DELETE for a single franchise account.
-#     Only the franchise that owns the account can use these.
-#     """
-#     serializer_class = FranchiseAccountSerializer
-#     permission_classes = [IsFranchise]
-
-#     def get_queryset(self):
-#         # Only allow franchise owner to access their own accounts
-#         return FranchiseAccount.objects.filter(franchise__user=self.request.user)
-
-#     def get_object(self):
-#         return get_object_or_404(self.get_queryset(), pk=self.kwargs.get('pk'))
-
-# # ---------------------------
-# # Admin assigns Withdrawal to Franchise
-# # ---------------------------
-# class AssignFranchiseView(APIView):
-#     permission_classes = [IsAdmin]
-
-#     def post(self, request, withdrawal_id, franchise_id):
-#         try:
-#             withdrawal = WithdrawalRequest.objects.get(id=withdrawal_id)
-#             franchise = Franchise.objects.get(id=franchise_id)
-
-#             if withdrawal.status != "pending":
-#                 return Response(
-#                     {"error": f"Cannot assign. Current status: {withdrawal.status}"},
-#                     status=status.HTTP_400_BAD_REQUEST,
-#                 )
-
-#             withdrawal.franchise = franchise
-#             withdrawal.status = "processing"
-#             withdrawal.save()
-
-#             return Response(
-#                 {"message": "Franchise assigned successfully, status set to processing"},
-#                 status=status.HTTP_200_OK,
-#             )
-
-#         except WithdrawalRequest.DoesNotExist:
-#             return Response({"error": "Withdrawal request not found"}, status=status.HTTP_404_NOT_FOUND)
-#         except Franchise.DoesNotExist:
-#             return Response({"error": "Franchise not found"}, status=status.HTTP_404_NOT_FOUND)
-
-
-# # ---------------------------
-# # Franchise marks Withdrawal as Completed
-# # ---------------------------
-# class MarkCompletedView(APIView):
-#     permission_classes = [IsFranchise]
-
-#     def post(self, request, withdrawal_id):
-#         try:
-#             withdrawal = get_object_or_404(WithdrawalRequest, id=withdrawal_id)
-
-#             # Ensure there is an assigned franchise and it belongs to the requester
-#             if not withdrawal.franchise or withdrawal.franchise.user != request.user:
-#                 return Response({"error": "Not authorized"}, status=status.HTTP_403_FORBIDDEN)
-
-#             # Only allow completion when processing
-#             if withdrawal.status != "processing":
-#                 return Response(
-#                     {"error": f"Cannot complete. Current status: {withdrawal.status}"},
-#                     status=status.HTTP_400_BAD_REQUEST,
-#                 )
-
-#             # Use the model helper to clear sensitive fields + set completed_at/status
-#             withdrawal.mark_completed()
-
-#             # Log transaction history (transaction_type is required by model)
-#             TransactionHistory.objects.create(
-#                 user=withdrawal.user,
-#                 franchise=withdrawal.franchise,
-#                 amount=withdrawal.amount,
-#                 transaction_type="withdraw",
-#                 status="completed",
-#             )
-
-#             return Response({"message": "Withdrawal marked as completed"}, status=status.HTTP_200_OK)
-
-#         except WithdrawalRequest.DoesNotExist:
-#             return Response({"error": "Withdrawal request not found"}, status=status.HTTP_404_NOT_FOUND)
-
-# # ---------------------------
-# # Transaction History for a User
-# # ---------------------------
-# class TransactionHistoryView(generics.ListAPIView):
-#     serializer_class = TransactionHistorySerializer
-#     permission_classes = [permissions.IsAuthenticated]
-
-#     def get_queryset(self):
-#         if self.request.user.role == "admin":
-#             return TransactionHistory.objects.all()
-#         return TransactionHistory.objects.filter(user=self.request.user)
-
-
-# class LogoutView(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def post(self, request):
-#         # Blacklist refresh token if needed (optional)
-#         response = Response({"message": "Logout successful"}, status=status.HTTP_205_RESET_CONTENT)
-#         # Clear cookies
-#         response.delete_cookie("access_token")
-#         response.delete_cookie("refresh_token")
-#         return response
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def forgot_password(request):
+    username = request.data.get("username")
+    User = get_user_model()
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return Response({"detail": "User not found"}, status=status.HTTP_404_NOT_FOUND)
     
-# class FranchiseAssignedWithdrawalsView(generics.ListAPIView):
-#     serializer_class = WithdrawalRequestSerializer
-#     permission_classes = [IsFranchise]
+    # Invalidate previous OTPs
+    PasswordResetOTP.objects.filter(user=user, is_verified=False).update(is_verified=True)
+    
+    otp = str(random.randint(100000, 999999))
+    expires_at = timezone.now() + timedelta(minutes=5)
 
-#     def get_queryset(self):
-#         return WithdrawalRequest.objects.filter(franchise__user=self.request.user).exclude(status="completed")
+    # Create new OTP
+    PasswordResetOTP.objects.create(user=user, otp=otp, expires_at=expires_at)
+    
+    print(f"OTP for {username}: {otp}")  # for testing
+    
+    return Response({"detail": "OTP sent successfully"})
+
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def reset_password(request):
+    username = request.data.get("username")
+    otp = request.data.get("otp")
+    new_password = request.data.get("new_password")
+
+
+    User = get_user_model()
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return Response({"detail": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    # Get latest OTP for the user
+    otp_entry = PasswordResetOTP.objects.filter(user=user, otp=otp, is_verified=False).last()
+    print("OTP entry:", otp_entry, "Valid?", otp_entry.is_valid() if otp_entry else "No OTP")
+    if not otp_entry or not otp_entry.is_valid():
+        return Response({"detail": "Invalid or expired OTP"}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Reset password
+    user.set_password(new_password)
+    user.save()
+
+    # Mark OTP as used
+    otp_entry.is_verified = True
+    otp_entry.save()
+
+    return Response({"detail": "Password reset successful"})
+
