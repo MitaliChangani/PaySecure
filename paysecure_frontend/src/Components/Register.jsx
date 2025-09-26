@@ -15,15 +15,15 @@ function Register() {
   const navigate = useNavigate();
 
   useEffect(() => {
-  const role = localStorage.getItem("user_role");
-  if (role) {
-    const lowerRole = role.toLowerCase();
-    if (lowerRole === "franchise") navigate("/FranchiseDs");
-    else if (lowerRole === "user") navigate("/UserDs");
-    else if (lowerRole === "admin") navigate("/AdminDs");
-    else navigate("/");
-  }
-}, [navigate]);
+    const role = localStorage.getItem("user_role");
+    if (role) {
+      const lowerRole = role.toLowerCase();
+      if (lowerRole === "franchise") navigate("/FranchiseDs");
+      else if (lowerRole === "user") navigate("/UserDs");
+      else if (lowerRole === "admin") navigate("/AdminDs");
+      else navigate("/");
+    }
+  }, [navigate]);
 
   async function handleSubmit(e) {
     e.preventDefault();

@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { User, CreditCard, Clock } from "lucide-react";
-import payImg from "../assets/reverse.png";
-
 
 export default function FranchiseDs() {
   const [activeTab, setActiveTab] = useState("account");
@@ -391,8 +389,6 @@ export default function FranchiseDs() {
                         <th className="border px-4 py-2">Time</th>
                         <th className="border px-4 py-2">QR Code</th>
                         <th className="border px-4 py-2">Action</th>
-                        <th className="border px-4 py-2">Image</th>
-
                       </tr>
                     </thead>
                     <tbody>
@@ -423,11 +419,6 @@ export default function FranchiseDs() {
                               Pay Now
                             </button>
                           </td>
-
-                          <td className="border px-4 py-2 text-center">
-                            <img src={payImg} alt="Pay" className="w-8 h-8 mx-auto" />
-                          </td>
-
                         </tr>
                       ))}
                     </tbody>
@@ -455,7 +446,7 @@ export default function FranchiseDs() {
                       {[
                         {
                           id: 1,
-                          status: "Withdraw",
+                          status: "Pay-in",
                           upi: "user@upi",
                           transactionId: "TXN123456",
                           date: "2025-09-22",
@@ -466,7 +457,7 @@ export default function FranchiseDs() {
                         },
                         {
                           id: 2,
-                          status: "Deposit",
+                          status: "Pay-out",
                           upi: "recipient@upi",
                           transactionId: "TXN654321",
                           date: "2025-09-20",
@@ -504,48 +495,39 @@ export default function FranchiseDs() {
                   <User size={48} className="text-gray-600" />
                 </div>
               </div>
-            )}
-            </div>
-          )}
-          {activeTab === "profile" && (
-            <div>
-              <h1 className="text-2xl font-bold mb-6">Edit Profile</h1>
-              <form className="space-y-4 max-w-lg">
+              <form className="space-y-4">
                 <div>
-                  <label className="block text-gray-700">Full Name</label>
                   <input
                     type="text"
                     defaultValue="John Doe"
-                    className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-700">Email</label>
                   <input
                     type="email"
                     defaultValue="johndoe@example.com"
-                    className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
-                <button
-                  type="submit"
-                  className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
-                >
-                  Save Changes
-                </button>
-
-                {/* Reset Password Button */}
-                <button
-                  type="button"
-                  onClick={() => window.location.href = "/forgot-reset-password"}
-                  className="mt-4 ml-2 bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700"
-                >
-                  Reset Password
-                </button>
+                <div className="flex gap-3">
+                  <button
+                    type="submit"
+                    className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+                  >
+                    Save Changes
+                  </button>
+                  <button
+                    type="button"
+                    className="flex-1 bg-red-600 text-white py-2 rounded-lg hover:bg-red-700"
+                  >
+                    Reset Password
+                  </button>
+                </div>
               </form>
             </div>
           )}
-
+        </div>
       </main>
     </div>
   );
