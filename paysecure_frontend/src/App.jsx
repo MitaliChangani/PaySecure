@@ -8,7 +8,7 @@ import Home from './Components/Home'
 import Header from "./Components/Header";
 import FranchiseDs from "./Components/FranchiseDs";
 import UserDs from "./Components/UserDs"
-
+import AdminDs from "./Components/AdminDs";
 function Layout({ children }) {
   const location = useLocation();
   const hideLayout = ["/Register", "/Login", "/Forgot", "/Otp"];
@@ -33,6 +33,7 @@ function App() {
           <Route path="/Otp" element={<Otp />} />
           <Route path="/FranchiseDs" element={<FranchiseDs />} />
           <Route path="/UserDs" element={<UserDs />} />
+          <Route path="/AdminDs" element={<AdminDs />} />
         </Routes>
       </Layout>
     </Router>

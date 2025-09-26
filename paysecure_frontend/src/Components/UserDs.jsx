@@ -67,9 +67,9 @@ export default function UserDs() {
                         {/* Withdraw Tab */}
                         {activeTab === "withdraw" && (
                             <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8 ">
-                                <h1 className="text-2xl font-bold text-center mb-6">Withdraw Money</h1>
+                                <h1 className="text-2xl font-bold text-center mb-6">Pay-out</h1>
                                 <form className="space-y-4 max-w-md mx-auto">
-                                    <input className="input-field" type="number" placeholder="Enter amount to withdraw" />
+                                    <input className="input-field" type="number" placeholder="Enter amount to Pay-out" />
                                     <input className="input-field" type="text" placeholder="Bank Account Holder Name" />
                                     <input className="input-field" type="text" placeholder="Bank Name" />
                                     <input className="input-field" type="text" placeholder="Account Number" />
@@ -86,7 +86,7 @@ export default function UserDs() {
                                     </div>
 
                                     <button className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 w-full">
-                                        Withdraw Request
+                                        Pay-out Request
                                     </button>
                                 </form>
                             </div>
@@ -95,7 +95,7 @@ export default function UserDs() {
                         {/* Payment Tab */}
                         {activeTab === "payment" && (
                             <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8">
-                                <h1 className="text-2xl font-bold text-center mb-6">Make Payment</h1>
+                                <h1 className="text-2xl font-bold text-center mb-6">Pay-in</h1>
                                 <div className="max-w-md mx-auto space-y-4">
                                     <div className="bg-gray-50 border rounded-lg p-4">
                                         <h2 className="text-lg font-semibold mb-2">Bank Details</h2>
@@ -144,7 +144,7 @@ export default function UserDs() {
                                 {/* Pending Table */}
                                 {historyTab === "pending" && (
                                     <div className="bg-white rounded-xl shadow-lg p-6 overflow-x-auto">
-                                        <h2 className="text-xl font-semibold mb-4">Withdraw Requests</h2>
+                                        <h2 className="text-xl font-semibold mb-4">Pay-out Requests</h2>
                                         <table className="min-w-full border border-gray-300 text-sm md:text-base">
                                             <thead>
                                                 <tr className="bg-gray-100">
@@ -212,7 +212,7 @@ export default function UserDs() {
                                                 {[
                                                     {
                                                         id: 1,
-                                                        status: "Withdraw",
+                                                        status: "Pay-out",
                                                         upi: "user@upi",
                                                         transactionId: "TXN123456",
                                                         date: "2025-09-22",
@@ -223,7 +223,7 @@ export default function UserDs() {
                                                     },
                                                     {
                                                         id: 2,
-                                                        status: "Deposit",
+                                                        status: "Pay-in",
                                                         upi: "recipient@upi",
                                                         transactionId: "TXN654321",
                                                         date: "2025-09-20",

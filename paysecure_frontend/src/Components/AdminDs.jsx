@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { User, CreditCard, Clock } from "lucide-react";
 
-export default function FranchiseDs() {
+export default function AdminDs() {
   const [activeTab, setActiveTab] = useState("account");
   const [historyTab, setHistoryTab] = useState("pending");
   const [accountSubTab, setAccountSubTab] = useState("view");
