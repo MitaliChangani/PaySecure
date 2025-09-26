@@ -10,6 +10,7 @@ import Footer from './Components/Footer'
 import Home from './Components/Home'
 import Header from "./Components/Header";
 import FranchiseDs from "./Components/FranchiseDs";
+import AdminDs from "./Components/AdminDs";
 import UserDs from "./Components/UserDs"
 
 axios.defaults.withCredentials = true; 
@@ -52,6 +53,7 @@ function App() {
           <Route path="/Otp" element={<Otp />} />
           <Route path="/FranchiseDs" element={<FranchiseDs />} />
           <Route path="/UserDs" element={<UserDs />} />
+          <Route path="/AdminDs" element={<AdminDs />} />
         </Routes>
       </Layout>
     </Router>

@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { User, CreditCard, Clock } from "lucide-react";
-import payImg from "../assets/reverse.png";
 
-
-export default function FranchiseDs() {
+export default function AdminDs() {
   const [activeTab, setActiveTab] = useState("account");
   const [historyTab, setHistoryTab] = useState("pending");
   const [accountSubTab, setAccountSubTab] = useState("view");
@@ -87,13 +85,50 @@ export default function FranchiseDs() {
     <div className="min-h-screen flex flex-col bg-white">
       {/* ---------- NAVBAR ---------- */}
       <header className="bg-white shadow-md px-4 md:px-8 py-3 flex items-center justify-center">
+
+
+        {/* Center Tabs */}
+        {/* <nav className="hidden md:flex space-x-4 lg:space-x-6">
+          <button
+            onClick={() => setActiveTab("account")}
+            className={`flex items-center px-3 py-1 rounded-lg transition ${activeTab === "account"
+                ? "bg-white text-blue-600"
+                : "hover:bg-blue-500"
+              }`}
+          >
+            <CreditCard size={18} className="mr-1" />
+            Account
+          </button>
+          <button
+            onClick={() => setActiveTab("history")}
+            className={`flex items-center px-3 py-1 rounded-lg transition ${activeTab === "history"
+                ? "bg-white text-blue-600"
+                : "hover:bg-blue-500"
+              }`}
+          >
+            <Clock size={18} className="mr-1" />
+            History
+          </button>
+          <button
+            onClick={() => setActiveTab("profile")}
+            className={`flex items-center px-3 py-1 rounded-lg transition ${activeTab === "profile"
+                ? "bg-white text-blue-600"
+                : "hover:bg-blue-500"
+              }`}
+          >
+            <User size={18} className="mr-1" />
+            Profile
+          </button>
+        </nav> */}
+
+        {/* Center Tabs */}
         {/* Center Tabs */}
         <nav className="flex flex-wrap justify-center gap-2 sm:gap-4">
           <button
             onClick={() => setActiveTab("account")}
             className={`flex items-center px-3 sm:px-4 py-2 rounded-lg transition font-medium text-sm sm:text-base ${activeTab === "account"
-              ? "bg-blue-600 text-white shadow"
-              : "bg-gray-100 text-gray-700 hover:bg-blue-600 hover:text-white"
+                ? "bg-blue-600 text-white shadow"
+                : "bg-gray-100 text-gray-700 hover:bg-blue-600 hover:text-white"
               }`}
           >
 
@@ -104,8 +139,8 @@ export default function FranchiseDs() {
           <button
             onClick={() => setActiveTab("history")}
             className={`flex items-center px-3 sm:px-4 py-2 rounded-lg transition font-medium text-sm sm:text-base ${activeTab === "history"
-              ? "bg-blue-600 text-white shadow"
-              : "bg-gray-100 text-gray-700 hover:bg-blue-600 hover:text-white"
+                ? "bg-blue-600 text-white shadow"
+                : "bg-gray-100 text-gray-700 hover:bg-blue-600 hover:text-white"
               }`}
           >
             <Clock size={18} className="mr-2" />
@@ -115,8 +150,8 @@ export default function FranchiseDs() {
           <button
             onClick={() => setActiveTab("profile")}
             className={`flex items-center px-3 sm:px-4 py-2 rounded-lg transition font-medium text-sm sm:text-base ${activeTab === "profile"
-              ? "bg-blue-600 text-white shadow"
-              : "bg-gray-100 text-gray-700 hover:bg-blue-600 hover:text-white"
+                ? "bg-blue-600 text-white shadow"
+                : "bg-gray-100 text-gray-700 hover:bg-blue-600 hover:text-white"
               }`}
           >
             <User size={18} className="mr-2" />
@@ -354,8 +389,6 @@ export default function FranchiseDs() {
                         <th className="border px-4 py-2">Time</th>
                         <th className="border px-4 py-2">QR Code</th>
                         <th className="border px-4 py-2">Action</th>
-                        <th className="border px-4 py-2">Image</th>
-
                       </tr>
                     </thead>
                     <tbody>
@@ -386,11 +419,6 @@ export default function FranchiseDs() {
                               Pay Now
                             </button>
                           </td>
-                          
-                         <td className="border px-4 py-2 text-center">
-  <img src={payImg} alt="Pay" className="w-8 h-8 mx-auto" />
-</td>
-
                         </tr>
                       ))}
                     </tbody>
@@ -398,63 +426,63 @@ export default function FranchiseDs() {
                 </div>
               )}
               {historyTab === "complete" && (
-                <div className="bg-white p-6 rounded-lg shadow w-full overflow-x-auto">
-                  <h2 className="text-xl font-semibold mb-4">Completed Transactions</h2>
-                  <table className="min-w-full border-collapse border border-gray-300">
-                    <thead>
-                      <tr className="bg-gray-100">
-                        <th className="border px-4 py-2 text-left">#</th>
-                        <th className="border px-4 py-2 text-left">Status</th>
-                        <th className="border px-4 py-2 text-left">UPI ID</th>
-                        <th className="border px-4 py-2 text-left">Transaction ID</th>
-                        <th className="border px-4 py-2 text-left">Date</th>
-                        <th className="border px-4 py-2 text-left">Time</th>
-                        <th className="border px-4 py-2 text-left">From</th>
-                        <th className="border px-4 py-2 text-left">To</th>
-                        <th className="border px-4 py-2 text-left">Amount</th>
+              <div className="bg-white p-6 rounded-lg shadow w-full overflow-x-auto">
+                <h2 className="text-xl font-semibold mb-4">Completed Transactions</h2>
+                <table className="min-w-full border-collapse border border-gray-300">
+                  <thead>
+                    <tr className="bg-gray-100">
+                      <th className="border px-4 py-2 text-left">#</th>
+                      <th className="border px-4 py-2 text-left">Status</th>
+                      <th className="border px-4 py-2 text-left">UPI ID</th>
+                      <th className="border px-4 py-2 text-left">Transaction ID</th>
+                      <th className="border px-4 py-2 text-left">Date</th>
+                      <th className="border px-4 py-2 text-left">Time</th>
+                      <th className="border px-4 py-2 text-left">From</th>
+                      <th className="border px-4 py-2 text-left">To</th>
+                      <th className="border px-4 py-2 text-left">Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      {
+                        id: 1,
+                        status: "Pay-in",
+                        upi: "user@upi",
+                        transactionId: "TXN123456",
+                        date: "2025-09-22",
+                        time: "14:30",
+                        from: "John Doe",
+                        to: "Bank Account",
+                        amount: 5000,
+                      },
+                      {
+                        id: 2,
+                        status: "Pay-out",
+                        upi: "recipient@upi",
+                        transactionId: "TXN654321",
+                        date: "2025-09-20",
+                        time: "10:15",
+                        from: "Bank Account",
+                        to: "John Doe",
+                        amount: 2000,
+                      },
+                    ].map((tx, index) => (
+                      <tr key={tx.id} className="hover:bg-gray-50">
+                        <td className="border px-4 py-2">{index + 1}</td>
+                        <td className="border px-4 py-2">{tx.status}</td>
+                        <td className="border px-4 py-2">{tx.upi}</td>
+                        <td className="border px-4 py-2">{tx.transactionId}</td>
+                        <td className="border px-4 py-2">{tx.date}</td>
+                        <td className="border px-4 py-2">{tx.time}</td>
+                        <td className="border px-4 py-2">{tx.from}</td>
+                        <td className="border px-4 py-2">{tx.to}</td>
+                        <td className="border px-4 py-2">₹{tx.amount.toLocaleString()}</td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {[
-                        {
-                          id: 1,
-                          status: "Withdraw",
-                          upi: "user@upi",
-                          transactionId: "TXN123456",
-                          date: "2025-09-22",
-                          time: "14:30",
-                          from: "John Doe",
-                          to: "Bank Account",
-                          amount: 5000,
-                        },
-                        {
-                          id: 2,
-                          status: "Deposit",
-                          upi: "recipient@upi",
-                          transactionId: "TXN654321",
-                          date: "2025-09-20",
-                          time: "10:15",
-                          from: "Bank Account",
-                          to: "John Doe",
-                          amount: 2000,
-                        },
-                      ].map((tx, index) => (
-                        <tr key={tx.id} className="hover:bg-gray-50">
-                          <td className="border px-4 py-2">{index + 1}</td>
-                          <td className="border px-4 py-2">{tx.status}</td>
-                          <td className="border px-4 py-2">{tx.upi}</td>
-                          <td className="border px-4 py-2">{tx.transactionId}</td>
-                          <td className="border px-4 py-2">{tx.date}</td>
-                          <td className="border px-4 py-2">{tx.time}</td>
-                          <td className="border px-4 py-2">{tx.from}</td>
-                          <td className="border px-4 py-2">{tx.to}</td>
-                          <td className="border px-4 py-2">₹{tx.amount.toLocaleString()}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
             </div>
           )}
 
