@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 
@@ -13,6 +13,17 @@ function Register() {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+  const role = localStorage.getItem("user_role");
+  if (role) {
+    const lowerRole = role.toLowerCase();
+    if (lowerRole === "franchise") navigate("/FranchiseDs");
+    else if (lowerRole === "user") navigate("/UserDs");
+    else if (lowerRole === "admin") navigate("/AdminDs");
+    else navigate("/");
+  }
+}, [navigate]);
 
   async function handleSubmit(e) {
     e.preventDefault();
