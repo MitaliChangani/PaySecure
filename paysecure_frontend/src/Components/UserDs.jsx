@@ -50,8 +50,8 @@ export default function UserDs() {
                             key={tab.key}
                             onClick={() => setActiveTab(tab.key)}
                             className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === tab.key
-                                    ? "bg-[#476EAE] text-white"
-                                    : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                                ? "bg-[#476EAE] text-white"
+                                : "bg-gray-200 text-gray-800 hover:bg-gray-300"
                                 }`}
                         >
                             {tab.icon} {tab.label}
@@ -124,8 +124,8 @@ export default function UserDs() {
                                     <button
                                         onClick={() => setHistoryTab("pending")}
                                         className={`px-4 py-2 rounded-lg font-medium ${historyTab === "pending"
-                                                ? "bg-blue-600 text-white"
-                                                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                                            ? "bg-blue-600 text-white"
+                                            : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                                             }`}
                                     >
                                         Pending
@@ -133,8 +133,8 @@ export default function UserDs() {
                                     <button
                                         onClick={() => setHistoryTab("complete")}
                                         className={`px-4 py-2 rounded-lg font-medium ${historyTab === "complete"
-                                                ? "bg-blue-600 text-white"
-                                                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                                            ? "bg-blue-600 text-white"
+                                            : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                                             }`}
                                     >
                                         Complete

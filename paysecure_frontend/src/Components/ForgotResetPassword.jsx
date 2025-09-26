@@ -74,7 +74,7 @@ function ForgotResetPassword() {
 
       console.log("Reset password response:", response);
       alert(response.data.detail);
-      navigate("/login"); 
+      navigate("/login");
 
       // Reset all states
       setStep(1);

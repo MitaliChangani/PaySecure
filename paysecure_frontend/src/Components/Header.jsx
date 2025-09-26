@@ -33,19 +33,19 @@ export default function Header() {
 
 
   const handleLogout = async () => {
-  try {
-    await axios.post("http://localhost:8000/api/logout/", {}, { withCredentials: true });
+    try {
+      await axios.post("http://localhost:8000/api/logout/", {}, { withCredentials: true });
 
-    localStorage.clear();
-    setIsLoggedIn(false);
-    setUserRole(null);
-    alert("Logged out successfully!");
-    navigate("/Login");
-  } catch (error) {
-    console.error("Logout failed:", error.response?.data || error.message);
-    alert("Logout failed. Please try again.");
-  }
-};
+      localStorage.clear();
+      setIsLoggedIn(false);
+      setUserRole(null);
+      alert("Logged out successfully!");
+      navigate("/Login");
+    } catch (error) {
+      console.error("Logout failed:", error.response?.data || error.message);
+      alert("Logout failed. Please try again.");
+    }
+  };
 
 
   // Get dashboard URL based on role
