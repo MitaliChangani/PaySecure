@@ -423,10 +423,10 @@ export default function FranchiseDs() {
                               Pay Now
                             </button>
                           </td>
-                          
-                         <td className="border px-4 py-2 text-center">
-  <img src={payImg} alt="Pay" className="w-8 h-8 mx-auto" />
-</td>
+
+                          <td className="border px-4 py-2 text-center">
+                            <img src={payImg} alt="Pay" className="w-8 h-8 mx-auto" />
+                          </td>
 
                         </tr>
                       ))}
@@ -504,84 +504,48 @@ export default function FranchiseDs() {
                   <User size={48} className="text-gray-600" />
                 </div>
               </div>
-<<<<<<< HEAD
-              <form className="space-y-4">
+            )}
+            </div>
+          )}
+          {activeTab === "profile" && (
+            <div>
+              <h1 className="text-2xl font-bold mb-6">Edit Profile</h1>
+              <form className="space-y-4 max-w-lg">
                 <div>
+                  <label className="block text-gray-700">Full Name</label>
                   <input
                     type="text"
                     defaultValue="John Doe"
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>
+                  <label className="block text-gray-700">Email</label>
                   <input
                     type="email"
                     defaultValue="johndoe@example.com"
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                    className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
-                <div className="flex gap-3">
-                  <button
-                    type="submit"
-                    className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
-                  >
-                    Save Changes
-                  </button>
-                  <button
-                    type="button"
-                    className="flex-1 bg-red-600 text-white py-2 rounded-lg hover:bg-red-700"
-                  >
-                    Reset Password
-                  </button>
-                </div>
+                <button
+                  type="submit"
+                  className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+                >
+                  Save Changes
+                </button>
+
+                {/* Reset Password Button */}
+                <button
+                  type="button"
+                  onClick={() => window.location.href = "/forgot-reset-password"}
+                  className="mt-4 ml-2 bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700"
+                >
+                  Reset Password
+                </button>
               </form>
             </div>
           )}
-        </div>
-=======
-            )}
-          </div>
-        )}
-        {activeTab === "profile" && (
-          <div>
-            <h1 className="text-2xl font-bold mb-6">Edit Profile</h1>
-            <form className="space-y-4 max-w-lg">
-              <div>
-                <label className="block text-gray-700">Full Name</label>
-                <input
-                  type="text"
-                  defaultValue="John Doe"
-                  className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700">Email</label>
-                <input
-                  type="email"
-                  defaultValue="johndoe@example.com"
-                  className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <button
-                type="submit"
-                className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
-              >
-                Save Changes
-              </button>
 
-              {/* Reset Password Button */}
-              <button
-                type="button"
-                onClick={() => window.location.href = "/forgot-reset-password"}
-                className="mt-4 ml-2 bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700"
-              >
-                Reset Password
-              </button>
-            </form>
-          </div>
-        )}
-
->>>>>>> f4a864551d6581bb51150af1ef058b46b534e30e
       </main>
     </div>
   );
