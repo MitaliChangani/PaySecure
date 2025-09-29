@@ -9,7 +9,6 @@ export default function AccountSection() {
   const [showMore, setShowMore] = useState(false); // ✅ for Wallet view more toggle
   const [showAccounts, setShowAccounts] = useState(false);
 
-
   const [accounts, setAccounts] = useState([
     {
       id: 1,
@@ -22,47 +21,47 @@ export default function AccountSection() {
   ]);
 
   const [transactionHistory, setTransactionHistory] = useState([
-  {
-    id: 1,
-    type: "Pay-in",
-    upi: "user@upi",
-    reqId: "",
-    transactionId: "TXN123456",
-    date: "2025-09-22",
-    time: "14:30",
-    fromName: "John Doe",
-    fromFranchise: "Franchise A", // Added
-    fromAccountn: "1235423",
-    frombankname: "SBI",
-    toName: "Jane Smith", // Added
-    toFranchise: "Franchise B", // Added
-    toAccountn: "123512",
-    toBankn: "SBI",
-    amount: 5000,
-    utrNumber: "",
-    statusResult: "",
-  },
-  {
-    id: 2,
-    type: "Pay-out",
-    upi: "recipient@upi",
-    reqId: "",
-    transactionId: "TXN654321",
-    date: "2025-09-20",
-    time: "10:15",
-    fromName: "John Doe",
-    fromFranchise: "Franchise A", // Added
-    fromAccountn: "1235423",
-    frombankname: "SBI",
-    toName: "Jane Smith", // Added
-    toFranchise: "Franchise B", // Added
-    toAccountn: "123512",
-    toBankn: "SBI",
-    amount: 2000,
-    utrNumber: "",
-    statusResult: "",
-  },
-]);
+    {
+      id: 1,
+      type: "Pay-in",
+      upi: "user@upi",
+      reqId: "",
+      transactionId: "TXN123456",
+      date: "2025-09-22",
+      time: "14:30",
+      fromName: "John Doe",
+      fromFranchise: "Franchise A", // Added
+      fromAccountn: "1235423",
+      frombankname: "SBI",
+      toName: "Jane Smith", // Added
+      toFranchise: "Franchise B", // Added
+      toAccountn: "123512",
+      toBankn: "SBI",
+      amount: 5000,
+      utrNumber: "",
+      statusResult: "",
+    },
+    {
+      id: 2,
+      type: "Pay-out",
+      upi: "recipient@upi",
+      reqId: "",
+      transactionId: "TXN654321",
+      date: "2025-09-20",
+      time: "10:15",
+      fromName: "John Doe",
+      fromFranchise: "Franchise A", // Added
+      fromAccountn: "1235423",
+      frombankname: "SBI",
+      toName: "Jane Smith", // Added
+      toFranchise: "Franchise B", // Added
+      toAccountn: "123512",
+      toBankn: "SBI",
+      amount: 2000,
+      utrNumber: "",
+      statusResult: "",
+    },
+  ]);
   const [withdrawRequests, setWithdrawRequests] = useState([
     {
       id: 1,
@@ -164,7 +163,6 @@ export default function AccountSection() {
     }
   };
 
-
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       {/* ✅ Top Navigation Tabs */}
@@ -207,7 +205,7 @@ export default function AccountSection() {
           {activeTab === "account" && (
             <div className="bg-white rounded-lg shadow p-6">
               <h1 className="text-2xl font-bold mb-6 text-center">
-                Bank Accounts
+                Franchise
               </h1>
 
 
@@ -255,10 +253,10 @@ export default function AccountSection() {
               </div>
               {/* Franchise Button + Accounts List */}
               {accountSubTab === "add" && (
-                <div className="flex flex-col items-center min-h-[70vh] p-6">
+                <div className="flex flex-col items-center justify-start min-h-[70vh] p-6 mt-10">
                   {/* Franchise Button */}
                   <button
-                    className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors mb-6"
+                    className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors mb-8"
                     onClick={() => setShowAccounts(!showAccounts)}
                   >
                     Franchise Name
@@ -266,16 +264,27 @@ export default function AccountSection() {
 
                   {/* Accounts List */}
                   {showAccounts && (
-                    <div className="w-full max-w-md bg-gray-100 p-4 rounded-lg shadow-md">
+                    <div className="w-full max-w-md bg-gray-100 p-6 rounded-lg shadow-md">
                       <h2 className="text-lg font-semibold mb-4 text-center">All Accounts</h2>
-                      <ul className="space-y-2">
+                      <ul className="space-y-4">
                         {accounts.map((account) => (
                           <li
                             key={account.id}
-                            className="p-3 bg-white rounded-lg shadow-sm flex justify-between items-center"
+                            className="p-4 bg-white rounded-lg shadow-sm"
                           >
-                            <span>{account.accountName}</span>
-                            <span className="text-gray-500">{account.accountNumber}</span>
+                            <div className="flex flex-col space-y-2">
+                              <span className="font-medium">Account Holder: {account.accountHolderName}</span>
+                              <span>Account Number: {account.accountNumber}</span>
+                              <span>IFSC Code: {account.ifscCode}</span>
+                              <span>UPI ID: {account.upiId}</span>
+                              {account.qrCode && (
+                                <img
+                                  src={account.qrCode}
+                                  alt="QR Code"
+                                  className="w-24 h-24 object-contain mt-2 border rounded self-center"
+                                />
+                              )}
+                            </div>
                           </li>
                         ))}
                       </ul>
@@ -283,6 +292,7 @@ export default function AccountSection() {
                   )}
                 </div>
               )}
+
               {/* History Tab */}
               {accountSubTab === "history" && (
                 <div className="overflow-x-auto">
@@ -364,7 +374,6 @@ export default function AccountSection() {
                     )}
                   </div>
 
-
                   {/* Transaction Details Table */}
                   {showWalletDetails && (
                     <div className="overflow-x-auto border rounded-lg bg-white p-4">
@@ -439,15 +448,13 @@ export default function AccountSection() {
                 </div>
               )}
 
-
             </div>
           )}
-
 
           {/* ✅ Users Section (Withdraw + Deposit + Wallet + History) */}
           {activeTab === "users" && (
             <div className="bg-white rounded-lg shadow p-6">
-              <h1 className="text-2xl font-bold mb-6">User Requests</h1>
+              <h1 className="text-2xl font-bold mb-6">User</h1>
               <div className="flex flex-wrap gap-2 mb-6">
                 <button
                   className={`px-4 py-2 rounded-lg font-medium ${userSubTab === "withdraw"
@@ -566,7 +573,6 @@ export default function AccountSection() {
                 </div>
               )}
 
-
               {/* Deposit Request */}
               {userSubTab === "deposit" && (
                 <div className="overflow-x-auto">
@@ -668,9 +674,6 @@ export default function AccountSection() {
                   </table>
                 </div>
               )}
-
-
-
 
               {/* Wallet */}
               {userSubTab === "wallet" && (
@@ -807,93 +810,88 @@ export default function AccountSection() {
                 </div>
               )}
 
-
-
             </div>
           )}
 
-
           {/* ✅ Profile Section */}
           {activeTab === "profile" && (
-  <div className="overflow-x-auto mt-4">
-    <h2 className="text-lg font-bold mb-4">Transaction History</h2>
-    <table className="min-w-full border border-gray-300 text-sm">
-      <thead>
-        <tr className="bg-gray-100 text-left">
-          <th className="border px-4 py-2">#</th>
-          <th className="border px-4 py-2">Transaction Id</th>
-          <th className="border px-4 py-2">Req Id</th>
-          <th className="border px-4 py-2">From</th>
-          <th className="border px-4 py-2">To</th>
-          <th className="border px-4 py-2">UTR</th>
-          <th className="border px-4 py-2">Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        {transactionHistory.map((tx, index) => (
-          <tr key={tx.id}>
-            <td className="border px-4 py-2">{index + 1}</td>
-            <td className="border px-4 py-2">{tx.transactionId}</td>
-            <td className="border px-4 py-2">{tx.reqId || "-"}</td>
-            
-            {/* From Section with Nested Table */}
-            <td className="border px-4 py-2 p-0">
-              <table className="min-w-full border-collapse">
+            <div className="overflow-x-auto mt-4">
+              <h2 className="text-lg font-bold mb-4">Transaction History</h2>
+              <table className="min-w-full border border-gray-300 text-sm">
                 <thead>
-                  <tr className="bg-gray-50">
-                    <th className="border px-2 py-1 text-left text-xs">Franchise Name</th>
-                    <th className="border px-2 py-1 text-left text-xs">User Name</th>
-                    <th className="border px-2 py-1 text-left text-xs">Bank</th>
-                    <th className="border px-2 py-1 text-left text-xs">Account Number</th>
+                  <tr className="bg-gray-100 text-left">
+                    <th className="border px-4 py-2">#</th>
+                    <th className="border px-4 py-2">Transaction Id</th>
+                    <th className="border px-4 py-2">Req Id</th>
+                    <th className="border px-4 py-2">From</th>
+                    <th className="border px-4 py-2">To</th>
+                    <th className="border px-4 py-2">UTR</th>
+                    <th className="border px-4 py-2">Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td className="border px-2 py-1 text-xs">{tx.fromFranchise || "-"}</td>
-                    <td className="border px-2 py-1 text-xs">{tx.fromName}</td>
-                    <td className="border px-2 py-1 text-xs">{tx.frombankname}</td>
-                    <td className="border px-2 py-1 text-xs">{tx.fromAccountn}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </td>
-            
-            {/* To Section with Nested Table */}
-            <td className="border px-4 py-2 p-0">
-              <table className="min-w-full border-collapse">
-                <thead>
-                  <tr className="bg-gray-50">
-                    <th className="border px-2 py-1 text-left text-xs">Franchise Name</th>
-                    <th className="border px-2 py-1 text-left text-xs">User Name</th>
-                    <th className="border px-2 py-1 text-left text-xs">Bank</th>
-                    <th className="border px-2 py-1 text-left text-xs">Account Number</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td className="border px-2 py-1 text-xs">{tx.toFranchise || "-"}</td>
-                    <td className="border px-2 py-1 text-xs">{tx.toName || "-"}</td>
-                    <td className="border px-2 py-1 text-xs">{tx.toBankn}</td>
-                    <td className="border px-2 py-1 text-xs">{tx.toAccountn}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </td>
-            
-            <td className="border px-4 py-2">{tx.utrNumber || "-"}</td>
-            <td className={`border px-4 py-2 font-semibold ${
-              tx.statusResult === "Successful" ? "text-green-600" :
-              tx.statusResult === "Failed" ? "text-red-600" : "text-yellow-600"
-            }`}>
-              {tx.statusResult || "Pending"}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-)}
+                  {transactionHistory.map((tx, index) => (
+                    <tr key={tx.id}>
+                      <td className="border px-4 py-2">{index + 1}</td>
+                      <td className="border px-4 py-2">{tx.transactionId}</td>
+                      <td className="border px-4 py-2">{tx.reqId || "-"}</td>
 
+                      {/* From Section with Nested Table */}
+                      <td className="border px-4 py-2 p-0">
+                        <table className="min-w-full border-collapse">
+                          <thead>
+                            <tr className="bg-gray-50">
+                              <th className="border px-2 py-1 text-left text-xs">Franchise Name</th>
+                              <th className="border px-2 py-1 text-left text-xs">User Name</th>
+                              <th className="border px-2 py-1 text-left text-xs">Bank</th>
+                              <th className="border px-2 py-1 text-left text-xs">Account Number</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td className="border px-2 py-1 text-xs">{tx.fromFranchise || "-"}</td>
+                              <td className="border px-2 py-1 text-xs">{tx.fromName}</td>
+                              <td className="border px-2 py-1 text-xs">{tx.frombankname}</td>
+                              <td className="border px-2 py-1 text-xs">{tx.fromAccountn}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+
+                      {/* To Section with Nested Table */}
+                      <td className="border px-4 py-2 p-0">
+                        <table className="min-w-full border-collapse">
+                          <thead>
+                            <tr className="bg-gray-50">
+                              <th className="border px-2 py-1 text-left text-xs">Franchise Name</th>
+                              <th className="border px-2 py-1 text-left text-xs">User Name</th>
+                              <th className="border px-2 py-1 text-left text-xs">Bank</th>
+                              <th className="border px-2 py-1 text-left text-xs">Account Number</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td className="border px-2 py-1 text-xs">{tx.toFranchise || "-"}</td>
+                              <td className="border px-2 py-1 text-xs">{tx.toName || "-"}</td>
+                              <td className="border px-2 py-1 text-xs">{tx.toBankn}</td>
+                              <td className="border px-2 py-1 text-xs">{tx.toAccountn}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+
+                      <td className="border px-4 py-2">{tx.utrNumber || "-"}</td>
+                      <td className={`border px-4 py-2 font-semibold ${tx.statusResult === "Successful" ? "text-green-600" :
+                        tx.statusResult === "Failed" ? "text-red-600" : "text-yellow-600"
+                        }`}>
+                        {tx.statusResult || "Pending"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
 
         </div>
       </main>
