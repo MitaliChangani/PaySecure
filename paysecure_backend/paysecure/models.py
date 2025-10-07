@@ -7,6 +7,7 @@ from django.conf import settings
 
 
 
+
 class CustomUser(AbstractUser):
     ROLE_CHOICES = (
         ('admin', 'Admin'),
@@ -14,7 +15,8 @@ class CustomUser(AbstractUser):
         ('user', 'User'),
     )
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='user')
-
+    email = models.EmailField(unique=True)
+    
     def __str__(self):
         return f"{self.username} ({self.role})"
     
@@ -57,32 +59,38 @@ class Wallet(models.Model):
 
 
 class DepositRequest(models.Model):
-    STATUS_CHOICES = (
-        ('pending', 'Pending'),
-        ('approved', 'Approved'),
-        ('rejected', 'Rejected'),
-        ('completed', 'Completed'),
-    )
-
+    STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("assigned", "Assigned"),
+        ("rejected", "Rejected"),
+        ("pending_verification", "Pending Verification"),
+        ("completed", "Completed"),
+    ]
     user = models.ForeignKey("CustomUser", on_delete=models.CASCADE, related_name="deposit_requests")
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
     franchise_account = models.ForeignKey("BankAccount", on_delete=models.SET_NULL, null=True, blank=True)
-    utr_number = models.CharField(max_length=100, null=True, blank=True)
+    user_utr = models.CharField(max_length=100, null=True, blank=True)
+    user_amount = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+
+    franchise_utr = models.CharField(max_length=100, null=True, blank=True)
+    franchise_amount = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Deposit {self.amount} by {self.user.username} - {self.status}"
+    
+    def mark_completed(self):
+        self.status = "completed"
+        self.save()
+        # Credit wallet
+        wallet, _ = Wallet.objects.get_or_create(owner=self.user, bank_account=None)
+        wallet.balance += self.amount
+        wallet.save()
+
 
 class WithdrawalRequest(models.Model):
-    STATUS_CHOICES = (
-        ("pending", "Pending"),
-        ("assigned", "Assigned"),      # assigned to franchise by admin
-        ("processing", "Processing"),  # franchise in process / paid
-        ("completed", "Completed"),
-        ("rejected", "Rejected"),
-    )
-
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="withdrawal_requests")
     amount = models.DecimalField(max_digits=14, decimal_places=2)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
@@ -128,11 +136,6 @@ class Transaction(models.Model):
     TRANSACTION_TYPE_CHOICES = (
         ("deposit", "Deposit"),
         ("withdraw", "Withdraw"),
-    )
-    STATUS_CHOICES = (
-        ("processing", "Processing"),
-        ("completed", "Completed"),
-        ("failed", "Failed"),
     )
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="transactions")
