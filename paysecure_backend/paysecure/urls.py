@@ -4,6 +4,7 @@ from .views import *
 from .views import get_csrf_token
 from . import views
 
+
 urlpatterns = [
     # path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     # path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
@@ -14,22 +15,30 @@ urlpatterns = [
     path("csrf/", get_csrf_token, name="csrf"),
     path("api/me/", current_user, name="current_user"),
 
-    # # Franchise Profile (view/update their own details)
-    # path("franchise/profile/", FranchiseProfileView.as_view(), name="franchise-profile"),
-    # path("franchise/accounts/", FranchiseAccountListView.as_view(), name="franchise-accounts"),
-    # path("franchise/accounts/add/", FranchiseAccountCreateView.as_view(), name="franchise-add-account"),
-    # path("franchise/accounts/<int:pk>/", FranchiseAccountDetailView.as_view(), name="franchise-account-detail"),
-    # path("franchise/withdrawals/", FranchiseAssignedWithdrawalsView.as_view(), name="franchise-assigned-withdrawals"),
+    path("bank-accounts/", views.BankAccountListCreateView.as_view(), name="bank-accounts"),
+    path("bank-accounts/<int:pk>/", views.BankAccountDetailView.as_view(), name="bank-account-detail"),
 
-    # # User Withdrawal Request
-    # path("withdraw/", WithdrawalRequestCreateView.as_view(), name="withdraw"),
+    # Wallet
+    path("wallets/", views.WalletListView.as_view(), name="wallets"),
 
-    # # Admin assigns withdrawal to franchise
-    # path("withdraw/<int:withdrawal_id>/assign/<int:franchise_id>/", AssignFranchiseView.as_view(), name="assign-franchise"),
-    # path("withdraw/<int:withdrawal_id>/mark-completed/", MarkCompletedView.as_view(), name="mark-completed"),
+    # Franchise Pay-In (Withdrawal Requests from user)
+    path("franchise/payin/", FranchisePayInView.as_view(), name="franchise-payin"),
 
-    # # Transaction History (user sees their own, admin sees all)
-    # path("transactions/", TransactionHistoryView.as_view(), name="transactions"),
+    # Franchise Pay-Out (Deposit Requests from user)
+    path("franchise/payout/", FranchisePayOutView.as_view(), name="franchise-payout"),
+
+    path("franchise/withdrawals/<int:pk>/accept/", views.accept_withdrawal, name="accept-withdrawal"),
+    path("franchise/withdrawals/<int:pk>/complete/", views.complete_withdrawal, name="complete-withdrawal"),
+    path('admin/withdrawals/<int:pk>/assign/', admin_assign_withdrawal, name='admin-assign-withdrawal'),
+    path('franchise/withdrawals/<int:pk>/accept/', accept_assigned_withdrawal, name='accept-assigned-withdrawal'),
+    path('franchise/withdrawals/<int:pk>/complete/', complete_withdrawal, name='complete-withdrawal'),
+
+    # Transactions
+    path("franchise/transactions/", views.TransactionListView.as_view(), name="franchise-transactions"),
+    
+    path("deposit-requests/", DepositRequestCreateView.as_view(), name="deposit-request-create"),
+    path("withdrawal-requests/", WithdrawalRequestCreateView.as_view(), name="withdrawal-request-create"),
+   
     path("logout/", logout_view, name="logout"),
     path('whoami/', whoami, name='whoami'),
     path("forgot-password/", views.forgot_password),

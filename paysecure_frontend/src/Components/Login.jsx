@@ -123,7 +123,7 @@ function Login() {
           <div className="text-right">
             <button
               type="button"
-              onClick={() => navigate("/forgot-reset-password")}
+              onClick={() => navigate("/Forgot")}
               className="text-sm text-blue-600 hover:underline"
             >
               Forgot Password?

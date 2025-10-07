@@ -36,16 +36,18 @@ class BankAccountAdmin(admin.ModelAdmin):
 
 
 class DepositRequestAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'amount', 'status', 'franchise_account', 'utr_number', 'created_at')
-    search_fields = ('user__username', 'franchise_account__bank_name', 'utr_number')
+    list_display = ('id', 'user', 'amount', 'status', 'franchise_account', 'franchise_utr', 'user_utr', 'created_at')
+    search_fields = ('user__username', 'franchise_account__bank_name', 'franchise_utr', 'user_utr')
     list_filter = ('status', 'created_at')
 
 
 
 class WithdrawalRequestAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'amount', 'status', 'assigned_franchise', 'utr_number', 'created_at')
-    search_fields = ('user__username', 'assigned_franchise__username', 'utr_number')
-    list_filter = ('status', 'created_at')
+    list_display = ('id', 'user', 'amount', 'status', 'created_at', 'get_utr')
+
+    def get_utr(self, obj):
+        return obj.utr_number or "N/A"
+    get_utr.short_description = "UTR Number"
 
 
 class TransactionAdmin(admin.ModelAdmin):
