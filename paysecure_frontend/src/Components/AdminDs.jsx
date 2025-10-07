@@ -266,7 +266,7 @@ export default function AccountSection() {
                   {showAccounts && (
                     <div className="w-full max-w-md bg-gray-100 p-6 rounded-lg shadow-md">
                       <h2 className="text-lg font-semibold mb-4 text-center">All Accounts</h2>
-                      <ul className="space-y-4">
+                      <ul className="space-y-4"> 
                         {accounts.map((account) => (
                           <li
                             key={account.id}
