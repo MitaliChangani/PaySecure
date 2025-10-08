@@ -14,7 +14,6 @@ from rest_framework.permissions import AllowAny
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.http import JsonResponse
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework import status
 import random
 from datetime import datetime, timedelta
 
@@ -71,16 +70,16 @@ def logout_view(request):
     response.delete_cookie("refresh")
     return response
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def whoami(request):
-    user = request.user
-    return Response({
-        "id": user.id,
-        "username": user.username,
-        "email": user.email,
-        "role": user.role
-    })
+# @api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+# def whoami(request):
+#     user = request.user
+#     return Response({
+#         "id": user.id,
+#         "username": user.username,
+#         "email": user.email,
+#         "role": user.role
+#     })
 
     
 @api_view(['POST'])
@@ -177,16 +176,16 @@ class FranchisePayOutView(generics.ListAPIView):
 
     
     
-@api_view(["POST"])
-@permission_classes([permissions.IsAuthenticated])
-def accept_withdrawal(request, pk):
-    try:
-        withdrawal = WithdrawalRequest.objects.get(pk=pk, assigned_franchise=request.user)
-    except WithdrawalRequest.DoesNotExist:
-        return Response({"error": "Not found or not assigned to you"}, status=404)
+# @api_view(["POST"])
+# @permission_classes([permissions.IsAuthenticated])
+# def accept_withdrawal(request, pk):
+#     try:
+#         withdrawal = WithdrawalRequest.objects.get(pk=pk, assigned_franchise=request.user)
+#     except WithdrawalRequest.DoesNotExist:
+#         return Response({"error": "Not found or not assigned to you"}, status=404)
 
-    withdrawal.mark_processing()
-    return Response({"success": f"Withdrawal {pk} is now processing."})
+#     withdrawal.mark_processing()
+#     return Response({"success": f"Withdrawal {pk} is now processing."})
 
 
 @api_view(["POST"])
@@ -226,6 +225,15 @@ def admin_assign_withdrawal(request, pk):
         "account_id": account.id
     })
 
+
+class FranchiseWithdrawalListView(generics.ListAPIView):
+    serializer_class = WithdrawalRequestSerializer
+    permission_classes = [IsFranchise]
+
+    def get_queryset(self):
+        return WithdrawalRequest.objects.filter(
+            assigned_franchise=self.request.user
+        ).exclude(status="completed")
 
 
 def assign_to_random_franchise(request_obj):
@@ -273,7 +281,7 @@ def accept_assigned_withdrawal(request, pk):
 @permission_classes([IsFranchise])
 def complete_withdrawal(request, pk):
     try:
-        withdrawal = WithdrawalRequest.objects.get(pk=pk, franchise__user=request.user)
+        withdrawal = WithdrawalRequest.objects.get(pk=pk, assigned_franchise=request.user)
     except WithdrawalRequest.DoesNotExist:
         return Response({"error": "Withdrawal not found"}, status=404)
 
@@ -336,3 +344,89 @@ class WalletListView(generics.ListAPIView):
 
     def get_queryset(self):
         return Wallet.objects.filter(owner=self.request.user)
+    
+#  UTR verification from both side in both requests
+
+# -------------------------
+# UTR Update Views (User & Franchise)
+# -------------------------
+
+class UserDepositUTRUpdateView(generics.UpdateAPIView):
+    serializer_class = DepositRequestSerializer
+    permission_classes = [IsNormalUser]
+
+    def get_object(self):
+        return get_object_or_404(
+            DepositRequest,
+            id=self.kwargs['pk'],
+            user=self.request.user,
+            status="pending"  # only allow updating pending deposits
+        )
+
+    def update(self, request, *args, **kwargs):
+        deposit = self.get_object()
+        deposit.utr_user = request.data.get("utr_user")
+        deposit.save(update_fields=["utr_user"])
+        deposit.verify_and_complete()
+        return Response({"message": "User UTR added and deposit verified."}, status=200)
+
+
+class FranchiseDepositUTRUpdateView(generics.UpdateAPIView):
+    serializer_class = DepositRequestSerializer
+    permission_classes = [IsFranchise]
+
+    def get_object(self):
+        return get_object_or_404(
+            DepositRequest,
+            id=self.kwargs['pk'],
+            franchise__user=self.request.user,
+            status="pending"
+        )
+
+    def update(self, request, *args, **kwargs):
+        deposit = self.get_object()
+        deposit.franchise_utr = request.data.get("franchise_utr") or request.data.get("utr_franchise")
+        deposit.franchise_amount = request.data.get("franchise_amount") or deposit.franchise_amount
+        deposit.save(update_fields=["franchise_utr", "franchise_amount"])
+        deposit.verify_and_complete()
+        return Response({"message": "Franchise UTR added and deposit verified."}, status=200)
+
+
+class UserWithdrawalUTRUpdateView(generics.UpdateAPIView):
+    serializer_class = WithdrawalRequestSerializer
+    permission_classes = [IsNormalUser]
+
+    def get_object(self):
+        return get_object_or_404(
+            WithdrawalRequest,
+            id=self.kwargs['pk'],
+            user=self.request.user,
+            status="pending"
+        )
+
+    def update(self, request, *args, **kwargs):
+        withdrawal = self.get_object()
+        withdrawal.user_utr = request.data.get("user_utr") or request.data.get("utr_user")
+        withdrawal.save(update_fields=["user_utr"])
+        withdrawal.verify_and_complete()
+        return Response({"message": "User UTR added and withdrawal verified."}, status=200)
+
+
+class FranchiseWithdrawalUTRUpdateView(generics.UpdateAPIView):
+    serializer_class = WithdrawalRequestSerializer
+    permission_classes = [IsFranchise]
+
+    def get_object(self):
+        return get_object_or_404(
+            WithdrawalRequest,
+            id=self.kwargs['pk'],
+            franchise__user=self.request.user,
+            status="assigned"  # franchise should only update if assigned
+        )
+
+    def update(self, request, *args, **kwargs):
+        withdrawal = self.get_object()
+        withdrawal.franchise_utr = request.data.get("utr_franchise")
+        withdrawal.save(update_fields=["franchise_utr"])
+        withdrawal.verify_and_complete()
+        return Response({"message": "Franchise UTR added and withdrawal verified."}, status=200)

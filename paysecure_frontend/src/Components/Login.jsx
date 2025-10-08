@@ -6,9 +6,7 @@ import api from "../api/axios";
 
 const API_URL = "http://localhost:8000/api";
 
-axios.defaults.withCredentials = true; // always send cookies
-
-// Attach CSRF token from cookie to every request
+axios.defaults.withCredentials = true;
 axios.interceptors.request.use((config) => {
   const csrfToken = Cookies.get("csrftoken");
   if (csrfToken) {
@@ -41,8 +39,6 @@ function Login() {
     setLoading(true);
 
     try {
-      // await axios.get(`${API_URL}/csrf/`, { withCredentials: true });
-
       const response = await axios.post(
         `${API_URL}/login/`,
         { username, password },

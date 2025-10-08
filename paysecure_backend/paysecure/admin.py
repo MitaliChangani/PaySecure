@@ -46,7 +46,7 @@ class WithdrawalRequestAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'amount', 'status', 'created_at', 'get_utr')
 
     def get_utr(self, obj):
-        return obj.utr_number or "N/A"
+        return obj.user_utr or obj.franchise_utr or "N/A"
     get_utr.short_description = "UTR Number"
 
 

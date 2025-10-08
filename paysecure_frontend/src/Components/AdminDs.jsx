@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 
 export default function AccountSection() {
-  const [activeTab, setActiveTab] = useState("account"); // main tabs
+  const [activeTab, setActiveTab] = useState("account");
   const [accountSubTab, setAccountSubTab] = useState("add");
   const [userSubTab, setUserSubTab] = useState("withdraw");
 
   const [walletBalance, setWalletBalance] = useState(25000);
-  const [showMore, setShowMore] = useState(false); // ✅ for Wallet view more toggle
+  const [showMore, setShowMore] = useState(false);
   const [showAccounts, setShowAccounts] = useState(false);
 
   const [accounts, setAccounts] = useState([
@@ -30,11 +30,11 @@ export default function AccountSection() {
       date: "2025-09-22",
       time: "14:30",
       fromName: "John Doe",
-      fromFranchise: "Franchise A", // Added
+      fromFranchise: "Franchise A",
       fromAccountn: "1235423",
       frombankname: "SBI",
-      toName: "Jane Smith", // Added
-      toFranchise: "Franchise B", // Added
+      toName: "Jane Smith",
+      toFranchise: "Franchise B",
       toAccountn: "123512",
       toBankn: "SBI",
       amount: 5000,
@@ -50,11 +50,11 @@ export default function AccountSection() {
       date: "2025-09-20",
       time: "10:15",
       fromName: "John Doe",
-      fromFranchise: "Franchise A", // Added
+      fromFranchise: "Franchise A",
       fromAccountn: "1235423",
       frombankname: "SBI",
-      toName: "Jane Smith", // Added
-      toFranchise: "Franchise B", // Added
+      toName: "Jane Smith",
+      toFranchise: "Franchise B",
       toAccountn: "123512",
       toBankn: "SBI",
       amount: 2000,
@@ -83,7 +83,7 @@ export default function AccountSection() {
       accountNumber: "9876543210",
       ifsc: "SBIN0005678",
       upiId: "jane@upi",
-      qr: "https://via.placeholder.com/80", // dummy QR
+      qr: "https://via.placeholder.com/80",
       amount: 3000,
       date: "2025-09-25",
       time: "11:45 AM",
@@ -106,8 +106,6 @@ export default function AccountSection() {
       status: "Pending",
     },
   ]);
-
-  // ✅ Add Account
   const handleAddAccount = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -124,7 +122,6 @@ export default function AccountSection() {
     setAccountSubTab("history");
   };
 
-  // ✅ Handle Withdraw/Deposit Status Change
   const handleStatusChange = (type, id, status) => {
     if (type === "withdraw") {
       setWithdrawRequests((prev) =>
@@ -133,7 +130,7 @@ export default function AccountSection() {
         )
       );
       if (status === "Accepted") {
-        setWalletBalance((prev) => prev - 5000); // reduce wallet
+        setWalletBalance((prev) => prev - 5000);
         setTransactionHistory((prev) => [
           ...prev,
           { id: Date.now(), type: "Withdraw", amount: 5000, status },
@@ -149,7 +146,7 @@ export default function AccountSection() {
         )
       );
       if (status === "Accepted" && depositReq) {
-        setWalletBalance((prev) => prev + depositReq.amount); // increase wallet
+        setWalletBalance((prev) => prev + depositReq.amount);
         setTransactionHistory((prev) => [
           ...prev,
           {
@@ -165,7 +162,6 @@ export default function AccountSection() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      {/* ✅ Top Navigation Tabs */}
       <div className="flex justify-center bg-white shadow-sm p-3">
         <div className="flex space-x-4">
           <button
@@ -197,19 +193,13 @@ export default function AccountSection() {
           </button>
         </div>
       </div>
-
-      {/* Main Content */}
       <main className="flex-1 flex items-start justify-center p-4 md:p-8 overflow-y-auto">
         <div className="w-full max-w-6xl">
-          {/* ✅ Account Section */}
           {activeTab === "account" && (
             <div className="bg-white rounded-lg shadow p-6">
               <h1 className="text-2xl font-bold mb-6 text-center">
                 Franchise
               </h1>
-
-
-              {/* Subtabs inside Account */}
               <div className="flex flex-wrap justify-center gap-3 mb-6">
                 <button
                   className={`px-4 py-2 rounded-lg font-medium transition-colors ${accountSubTab === "add"
@@ -251,22 +241,18 @@ export default function AccountSection() {
                   Assign Pay-Out Request
                 </button>
               </div>
-              {/* Franchise Button + Accounts List */}
               {accountSubTab === "add" && (
                 <div className="flex flex-col items-center justify-start min-h-[70vh] p-6 mt-10">
-                  {/* Franchise Button */}
                   <button
                     className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors mb-8"
                     onClick={() => setShowAccounts(!showAccounts)}
                   >
                     Franchise Name
                   </button>
-
-                  {/* Accounts List */}
                   {showAccounts && (
                     <div className="w-full max-w-md bg-gray-100 p-6 rounded-lg shadow-md">
                       <h2 className="text-lg font-semibold mb-4 text-center">All Accounts</h2>
-                      <ul className="space-y-4"> 
+                      <ul className="space-y-4">
                         {accounts.map((account) => (
                           <li
                             key={account.id}
@@ -292,8 +278,6 @@ export default function AccountSection() {
                   )}
                 </div>
               )}
-
-              {/* History Tab */}
               {accountSubTab === "history" && (
                 <div className="overflow-x-auto">
                   <h2 className="text-lg font-bold mb-4">Account History</h2>
@@ -334,12 +318,10 @@ export default function AccountSection() {
 
                 </div>
               )}
-              {/* Wallet Tab */}
               {accountSubTab === "wallet" && (
                 <div>
                   <h2 className="text-lg font-bold mb-4">Wallet</h2>
 
-                  {/* Wallet Summary */}
                   <div className="p-4 border rounded-lg bg-gray-50 mb-4">
                     <p className="text-gray-700 font-semibold">
                       Balance: ₹{walletBalance.toLocaleString()}
@@ -350,16 +332,12 @@ export default function AccountSection() {
                         ? `${transactionHistory[transactionHistory.length - 1].type} ₹${transactionHistory[transactionHistory.length - 1].amount}`
                         : "No transactions yet"}
                     </p>
-
-                    {/* View More Button */}
                     <button
                       onClick={() => setShowWalletDetails((prev) => !prev)}
                       className="mt-2 w-full sm:w-auto bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 text-sm"
                     >
                       {showWalletDetails ? "Hide Details" : "View More"}
                     </button>
-
-                    {/* Details Section */}
                     {showWalletDetails && (
                       <div className="mt-3 p-3 border rounded-lg bg-white text-gray-700 text-sm">
                         <h3 className="font-semibold mb-2">Wallet Details</h3>
@@ -373,8 +351,6 @@ export default function AccountSection() {
                       </div>
                     )}
                   </div>
-
-                  {/* Transaction Details Table */}
                   {showWalletDetails && (
                     <div className="overflow-x-auto border rounded-lg bg-white p-4">
                       {transactionHistory.length > 0 ? (
@@ -407,7 +383,6 @@ export default function AccountSection() {
                   )}
                 </div>
               )}
-              {/* ✅ Assigned Pay-Out Request Tab */}
               {accountSubTab === "assignPayout" && (
                 <div className="overflow-x-auto">
                   <h2 className="text-lg font-bold mb-4">Assigned Pay-Out Requests</h2>
@@ -450,8 +425,6 @@ export default function AccountSection() {
 
             </div>
           )}
-
-          {/* ✅ Users Section (Withdraw + Deposit + Wallet + History) */}
           {activeTab === "users" && (
             <div className="bg-white rounded-lg shadow p-6">
               <h1 className="text-2xl font-bold mb-6">User</h1>
@@ -474,8 +447,6 @@ export default function AccountSection() {
                 >
                   Deposit Requests
                 </button>
-
-                {/* NEW: Wallet */}
                 <button
                   className={`px-4 py-2 rounded-lg font-medium ${userSubTab === "wallet"
                     ? "bg-blue-600 text-white"
@@ -485,8 +456,6 @@ export default function AccountSection() {
                 >
                   Wallet
                 </button>
-
-                {/* NEW: History */}
                 <button
                   className={`px-4 py-2 rounded-lg font-medium ${userSubTab === "history"
                     ? "bg-blue-600 text-white"
@@ -497,8 +466,6 @@ export default function AccountSection() {
                   History
                 </button>
               </div>
-
-              {/* Withdraw Request */}
               {userSubTab === "withdraw" && (
                 <div className="overflow-x-auto">
                   <h2 className="text-lg font-bold mb-4">Withdraw Requests</h2>
@@ -532,7 +499,6 @@ export default function AccountSection() {
                             <td className="border px-4 py-2">{req.time}</td>
                             <td className="border px-4 py-2">{req.status}</td>
                             <td className="border px-4 py-2 text-center">
-                              {/* Show Accept & Reject only if not yet acted upon */}
                               {!isAccepted && !isRejected && (
                                 <div className="flex justify-center items-center gap-2 flex-nowrap">
                                   <button
@@ -553,8 +519,6 @@ export default function AccountSection() {
                                   </button>
                                 </div>
                               )}
-
-                              {/* Show Assign button only if accepted */}
                               {isAccepted && (
                                 <button
                                   onClick={() => handleAssign(req.id)}
@@ -572,8 +536,6 @@ export default function AccountSection() {
                   </table>
                 </div>
               )}
-
-              {/* Deposit Request */}
               {userSubTab === "deposit" && (
                 <div className="overflow-x-auto">
                   <h2 className="text-lg font-bold mb-4">Deposit Requests</h2>
@@ -640,8 +602,6 @@ export default function AccountSection() {
                                 Assign
                               </button>
                             )}
-
-                            {/* Assign Options */}
                             {req.showAssign && (
                               <div className="mt-2 space-y-2">
                                 <h3 className="font-semibold">Select Franchise:</h3>
@@ -674,8 +634,6 @@ export default function AccountSection() {
                   </table>
                 </div>
               )}
-
-              {/* Wallet */}
               {userSubTab === "wallet" && (
                 <div>
                   <h2 className="text-lg font-bold mb-4">Wallet</h2>
@@ -687,16 +645,12 @@ export default function AccountSection() {
                       <span className="font-medium">Balance:</span> ₹
                       {walletBalance.toLocaleString()}
                     </p>
-
-                    {/* View More Button */}
                     <button
                       onClick={() => setShowMore(!showMore)}
                       className="mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                     >
                       {showMore ? "Hide Details" : "View More"}
                     </button>
-
-                    {/* Extra Details */}
                     {showMore && (
                       <div className="mt-4 space-y-2 bg-white border rounded-lg p-4 shadow">
                         <p className="text-gray-700">
@@ -721,8 +675,6 @@ export default function AccountSection() {
                   </div>
                 </div>
               )}
-
-              {/* History */}
               {userSubTab === "history" && (
                 <div className="bg-white rounded-lg shadow p-6 overflow-x-auto">
                   <h1 className="text-2xl font-bold mb-6">Completed Transactions</h1>
@@ -754,8 +706,6 @@ export default function AccountSection() {
                           <td className="border px-4 py-2">{tx.upi}</td>
                           <td className="border px-4 py-2">{tx.date}</td>
                           <td className="border px-4 py-2">{tx.time}</td>
-
-                          {/* From Table */}
                           <td className="border px-4 py-2">
                             <table className="min-w-full border-collapse border border-gray-200">
                               <thead>
@@ -774,8 +724,6 @@ export default function AccountSection() {
                               </tbody>
                             </table>
                           </td>
-
-                          {/* To Table */}
                           <td className="border px-4 py-2">
                             <table className="min-w-full border-collapse border border-gray-200">
                               <thead>
@@ -812,8 +760,6 @@ export default function AccountSection() {
 
             </div>
           )}
-
-          {/* ✅ Profile Section */}
           {activeTab === "profile" && (
             <div className="overflow-x-auto mt-4">
               <h2 className="text-lg font-bold mb-4">Transaction History</h2>
@@ -835,8 +781,6 @@ export default function AccountSection() {
                       <td className="border px-4 py-2">{index + 1}</td>
                       <td className="border px-4 py-2">{tx.transactionId}</td>
                       <td className="border px-4 py-2">{tx.reqId || "-"}</td>
-
-                      {/* From Section with Nested Table */}
                       <td className="border px-4 py-2 p-0">
                         <table className="min-w-full border-collapse">
                           <thead>
@@ -857,8 +801,6 @@ export default function AccountSection() {
                           </tbody>
                         </table>
                       </td>
-
-                      {/* To Section with Nested Table */}
                       <td className="border px-4 py-2 p-0">
                         <table className="min-w-full border-collapse">
                           <thead>
