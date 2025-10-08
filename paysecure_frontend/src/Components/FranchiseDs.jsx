@@ -1,5 +1,24 @@
 import React, { useState } from "react";
-import { User, CreditCard, ArrowUpCircle, Clock } from "lucide-react";
+import { User, Clock, ArrowUpCircle, CreditCard, LayoutDashboard, CheckCircle, ShieldX  } from "lucide-react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+
+const data = [
+  { name: "Mon", amount: 0 },
+  { name: "Tue", amount: 0 },
+  { name: "Wed", amount: 0 },
+  { name: "Thu", amount: 0 },
+  { name: "Fri", amount: 0 },
+  { name: "Sat", amount: 0 },
+  { name: "Sun", amount: 0 },
+];
 
 export default function FranchiseDs() {
   const [accountSubTab, setAccountSubTab] = useState("view");
@@ -148,6 +167,17 @@ export default function FranchiseDs() {
       {/* Center Tabs */}
       <header className="bg-white shadow-md px-4 md:px-8 py-3 flex items-center justify-center">
         <nav className="flex flex-wrap justify-center gap-2 sm:gap-4">
+       <button
+  onClick={() => setActiveTab("dashboard")}
+  className={`flex items-center px-3 sm:px-4 py-2 rounded-lg transition font-medium text-sm sm:text-base ${
+    activeTab === "dashboard"
+      ? "bg-blue-600 text-white shadow"
+      : "bg-gray-100 text-gray-700 hover:bg-blue-600 hover:text-white"
+  }`}
+>
+  <LayoutDashboard size={18} className="mr-2" /> Dashboard
+</button>
+
           <button
             onClick={() => setActiveTab("account")}
             className={`flex items-center px-3 sm:px-4 py-2 rounded-lg transition font-medium text-sm sm:text-base ${activeTab === "account"
@@ -277,6 +307,12 @@ export default function FranchiseDs() {
 
 
               {/* View Accounts */}
+                                    {activeTab === "dashboard" && (
+  <>
+    <PayInDashboard />
+    <PayOutDashboard />
+  </>
+)}
               {accountSubTab === "view" && (
                 <div className="space-y-6">
                   {accounts.map((acc) => (
@@ -921,6 +957,169 @@ function PayoutTable() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+function PayInDashboard() {
+  return (
+    <>
+    <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
+      <h2 className="text-2xl font-semibold mb-4">Pay In</h2>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Left: Transaction Cards */}
+        <div className="flex flex-col gap-4">
+          {/* Success Txn */}
+           <div className="relative flex justify-between items-center rounded-xl p-5 overflow-hidden border border-blue-200 shadow-sm">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-blue-50"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.15)_0%,transparent_70%)]"></div>
+            <div className="relative flex items-center gap-3">
+              <CheckCircle className="text-blue-600" size={26} />
+              <div>
+                <p className="font-semibold text-blue-900">Success Txns</p>
+                <p className="text-xl font-bold text-blue-900 mt-1">
+                  ₹
+                </p>
+              </div>
+            </div>
+            <p className="relative text-gray-700 font-medium">0 Txns</p>
+          </div>
+          {/* Pending Txn */}
+            <div className="relative flex justify-between items-center rounded-xl p-5 overflow-hidden border border-yellow-200 shadow-sm">
+            <div className="absolute inset-0 bg-gradient-to-br from-yellow-100 to-yellow-50"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(234,179,8,0.2)_0%,transparent_70%)]"></div>
+            <div className="relative flex items-center gap-3">
+              <Clock className="text-yellow-700" size={26} />
+              <div>
+                <p className="font-semibold text-yellow-900">Pending Txns</p>
+                <p className="text-xl font-bold text-yellow-900 mt-1">
+                  ₹
+                </p>
+              </div>
+            </div>
+            <p className="relative text-gray-700 font-medium">0 Txns</p>
+          </div>
+
+          {/* Failed Txn */}
+          <div className="relative flex justify-between items-center rounded-xl p-5 overflow-hidden border border-red-200 shadow-sm">
+            <div className="absolute inset-0 bg-gradient-to-br from-red-100 to-red-50"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(239,68,68,0.2)_0%,transparent_70%)]"></div>
+            <div className="relative flex items-center gap-3">
+              <ShieldX className="text-red-600" size={26} />
+              <div>
+                <p className="font-semibold text-red-900">Failed Txns</p>
+                <p className="text-xl font-bold text-red-900 mt-1">₹</p>
+              </div>
+            </div>
+            <p className="relative text-gray-700 font-medium">0 Txns</p>
+          </div>
+        </div>
+
+        {/* Right: Chart */}
+        <div className="bg-white border rounded-xl shadow-sm p-4">
+          <h3 className="text-lg font-semibold mb-4">Pay In</h3>
+          <p className="font-medium text-gray-600 mb-2">Pay In Weekly Report</p>
+          <ResponsiveContainer width="100%" height={200}>
+            <LineChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis
+                label={{
+                  value: "Amount (₹)",
+                  angle: -90,
+                  position: "insideLeft",
+                  style: { textAnchor: "middle" },
+                }}
+              />
+              <Tooltip />
+              <Line type="monotone" dataKey="amount" stroke="#2563eb" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
+    <br />
+    </>
+  );
+}
+function PayOutDashboard() {
+  return (
+    <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
+      <h2 className="text-2xl font-semibold mb-4">Pay Out</h2>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Left Side: Cards */}
+        <div className="flex flex-col gap-4">
+          {/* Success Txn */}
+          <div className="relative flex justify-between items-center rounded-xl p-5 overflow-hidden border border-blue-200 shadow-sm">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-blue-50"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.15)_0%,transparent_70%)]"></div>
+            <div className="relative flex items-center gap-3">
+              <CheckCircle className="text-blue-600" size={26} />
+              <div>
+                <p className="font-semibold text-blue-900">Success Txns</p>
+                <p className="text-xl font-bold text-blue-900 mt-1">
+                  ₹3,86,69,990
+                </p>
+              </div>
+            </div>
+            <p className="relative text-gray-700 font-medium">7646 Txns</p>
+          </div>
+
+          {/* Pending Txn */}
+          <div className="relative flex justify-between items-center rounded-xl p-5 overflow-hidden border border-yellow-200 shadow-sm">
+            <div className="absolute inset-0 bg-gradient-to-br from-yellow-100 to-yellow-50"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(234,179,8,0.2)_0%,transparent_70%)]"></div>
+            <div className="relative flex items-center gap-3">
+              <Clock className="text-yellow-700" size={26} />
+              <div>
+                <p className="font-semibold text-yellow-900">Pending Txns</p>
+                <p className="text-xl font-bold text-yellow-900 mt-1">
+                  ₹6,25,53,270
+                </p>
+              </div>
+            </div>
+            <p className="relative text-gray-700 font-medium">2377 Txns</p>
+          </div>
+
+          {/* Failed Txn */}
+          <div className="relative flex justify-between items-center rounded-xl p-5 overflow-hidden border border-red-200 shadow-sm">
+            <div className="absolute inset-0 bg-gradient-to-br from-red-100 to-red-50"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(239,68,68,0.2)_0%,transparent_70%)]"></div>
+            <div className="relative flex items-center gap-3">
+              <ShieldX className="text-red-600" size={26} />
+              <div>
+                <p className="font-semibold text-red-900">Failed Txns</p>
+                <p className="text-xl font-bold text-red-900 mt-1">₹1,08,470</p>
+              </div>
+            </div>
+            <p className="relative text-gray-700 font-medium">5411 Txns</p>
+          </div>
+        </div>
+
+        {/* Right Side: Chart */}
+        <div className="bg-white border rounded-xl shadow-sm p-4">
+          <h3 className="text-lg font-semibold mb-4">Pay Out</h3>
+          <p className="font-medium text-gray-600 mb-2">Pay Out Weekly Report</p>
+
+          <ResponsiveContainer width="100%" height={200}>
+            <LineChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis
+                label={{
+                  value: "Amount (₹)",
+                  angle: -90,
+                  position: "insideLeft",
+                  style: { textAnchor: "middle" },
+                }}
+              />
+              <Tooltip />
+              <Line type="monotone" dataKey="amount" stroke="#2563eb" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
     </div>
   );
 }
