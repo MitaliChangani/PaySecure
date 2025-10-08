@@ -13,10 +13,95 @@ export default function FranchiseDs() {
   const [utrInput, setUtrInput] = useState("");
   const [amountInput, setamountInput] = useState("");
 
+<<<<<<< HEAD
   // All transactions     
   const [transactions, setTransactions] = useState([]);
   const [withdrawRequests, setWithdrawRequests] = useState([]);
   const [accounts, setAccounts] = useState([]);
+=======
+  // All transactions
+  const [transactions, setTransactions] = useState([
+    {
+      id: 1,
+      type: "Pay-in",
+      upi: "user@upi",
+      transactionId: "TXN123456",
+      reqId: "",
+      date: "2025-09-22",
+      time: "14:30",
+      fromName: "John Doe",
+      fromAccountn: "1235423",
+      frombankname: "SBI",
+      toAccountn: "123512",
+      toBankn: "SBI",
+      amount: 5000,
+      statusResult: "", // Initially empty
+      utrNumber: "",
+    },
+    {
+      id: 2,
+      type: "Pay-out",
+      upi: "recipient@upi",
+      transactionId: "TXN654321",
+      reqId: "",
+      date: "2025-09-20",
+      time: "10:15",
+      fromName: "John Doe",
+      fromAccountn: "1235423",
+      frombankname: "SBI",
+      toAccountn: "123512",
+      toBankn: "SBI",
+      amount: 2000,
+      statusResult: "",
+      utrNumber: "",
+    },
+  ]);
+
+
+
+  const withdrawRequests = [
+    {
+      id: 1,
+      accountName: "John Doe",
+      accountNumber: "123456789012",
+      bankName: "State Bank of India",
+      ifsc: "SBIN0001234",
+      ReqId: "",
+      TnxId: "",
+      upiId: "john@upi",
+      amount: 5000,
+      date: "2025-09-22",
+      time: "10:45 AM",
+      qr: "https://via.placeholder.com/100x100.png?text=QR1",
+    },
+    {
+      id: 2,
+      accountName: "Jane Smith",
+      accountNumber: "987654321098",
+      bankName: "HDFC Bank",
+      ifsc: "HDFC0005678",
+      ReqId: "",
+      TnxId: "",
+      upiId: "jane@upi",
+      amount: 3000,
+      date: "2025-09-21",
+      time: "03:20 PM",
+      qr: "https://via.placeholder.com/100x100.png?text=QR2",
+    },
+  ];
+
+  const [accounts, setAccounts] = useState([
+    {
+      id: 1,
+      accountName: "John Doe",
+      accountNumber: "123456789012",
+      bankName: "State Bank of India",
+      ifsc: "SBIN0001234",
+      upiId: "SBI@upi",
+      QrCode: "",
+    },
+  ]);
+>>>>>>> c5bedd5289026311950a775b4a45d9f8d6daad51
 
   const [newAccount, setNewAccount] = useState({
     accountName: "",
@@ -72,6 +157,7 @@ export default function FranchiseDs() {
       formData.append(key, value);
     });
 
+<<<<<<< HEAD
     try {
       const res = await api.post("/bank-accounts/", formData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -80,6 +166,26 @@ export default function FranchiseDs() {
       setAccountSubTab("view");
     } catch (err) {
       console.error("Error adding account", err);
+=======
+  const handleEditChange = (id, e) => {
+    const updatedAccounts = accounts.map((acc) =>
+      acc.id === id ? { ...acc, [e.target.name]: e.target.value } : acc
+    );
+    setAccounts(updatedAccounts);
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (selectedTx) {
+      setTransactions((prev) =>
+        prev.map((tx) =>
+          tx.id === selectedTx.id
+            ? { ...tx, utrNumber: utrInput, amountInput: amountInput, statusResult: "Successful" }
+            : tx
+        )
+      );
+      setShowModal(false);
+      setUtrInput("");
+>>>>>>> c5bedd5289026311950a775b4a45d9f8d6daad51
     }
   };
 
@@ -198,6 +304,10 @@ export default function FranchiseDs() {
 
               {/* Subtabs */}
               <div className="flex flex-wrap gap-2 mb-6">
+<<<<<<< HEAD
+=======
+                {/* View Button */}
+>>>>>>> c5bedd5289026311950a775b4a45d9f8d6daad51
                 <button
                   className={`px-4 py-2 rounded-lg font-medium ${accountSubTab === "view"
                     ? "bg-blue-600 text-white"
@@ -207,6 +317,11 @@ export default function FranchiseDs() {
                 >
                   View
                 </button>
+<<<<<<< HEAD
+=======
+
+                {/* Add Account Button */}
+>>>>>>> c5bedd5289026311950a775b4a45d9f8d6daad51
                 <button
                   className={`px-4 py-2 rounded-lg font-medium ${accountSubTab === "add"
                     ? "bg-blue-600 text-white"
@@ -215,6 +330,7 @@ export default function FranchiseDs() {
                   onClick={() => setAccountSubTab("add")}
                 >
                   Add Account
+<<<<<<< HEAD
                 </button>
               </div>
 
@@ -236,6 +352,85 @@ export default function FranchiseDs() {
                           </button>
                         </div>
 
+=======
+                </button>
+
+                {/* Activate Button */}
+                <button
+                  className={`px-4 py-2 rounded-lg font-medium ${accountSubTab === "activate"
+                    ? "bg-green-600 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    }`}
+                  onClick={() => setAccountSubTab("activate")}
+                >
+                  Activated Account
+                </button>
+
+                {/* Deactivate Button */}
+                <button
+                  className={`px-4 py-2 rounded-lg font-medium ${accountSubTab === "deactivate"
+                    ? "bg-yellow-500 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    }`}
+                  onClick={() => setAccountSubTab("deactivate")}
+                >
+                  Deactivated Account
+                </button>
+
+                {/* Delete Button */}
+                <button
+                  className={`px-4 py-2 rounded-lg font-medium ${accountSubTab === "delete"
+                    ? "bg-red-600 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    }`}
+                  onClick={() => setAccountSubTab("delete")}
+                >
+                  Deleted Account
+                </button>
+              </div>
+
+
+              {/* View Accounts */}
+              {accountSubTab === "view" && (
+                <div className="space-y-6">
+                  {accounts.map((acc) => (
+                    <div
+                      key={acc.id}
+                      className="border rounded-lg p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+                    >
+                      <div className="flex-1">
+                        <div className="flex justify-between items-center mb-2">
+                          <h2 className="font-semibold">{acc.accountName}</h2>
+                          <div className="flex gap-2">
+                            {/* Edit Button */}
+                            <button
+                              onClick={() =>
+                                editingId === acc.id ? setEditingId(null) : setEditingId(acc.id)
+                              }
+                              className="bg-blue-600 text-white px-3 py-1 rounded-lg"
+                            >
+                              {editingId === acc.id ? "Save" : "Edit"}
+                            </button>
+
+                            {/* Activate Button */}
+                            <button
+                              onClick={() => handleActivate(acc.id)}
+                              className="bg-green-600 text-white px-3 py-1 rounded-lg"
+                            >
+                              Activate
+                            </button>
+
+                            {/* Deactivate Button */}
+                            <button
+                              onClick={() => handleDeactivate(acc.id)}
+                              className="bg-yellow-500 text-white px-3 py-1 rounded-lg"
+                            >
+                              Deactivate
+                            </button>
+                          </div>
+                        </div>
+
+>>>>>>> c5bedd5289026311950a775b4a45d9f8d6daad51
                         <p>
                           <span className="font-semibold">Account Number:</span>{" "}
                           {editingId === acc.id ? (
@@ -302,7 +497,14 @@ export default function FranchiseDs() {
                               accept="image/*"
                               onChange={(e) =>
                                 handleEditChange(acc.id, {
+<<<<<<< HEAD
                                   target: { name: "QrCode", value: URL.createObjectURL(e.target.files[0]) }
+=======
+                                  target: {
+                                    name: "QrCode",
+                                    value: URL.createObjectURL(e.target.files[0]),
+                                  },
+>>>>>>> c5bedd5289026311950a775b4a45d9f8d6daad51
                                 })
                               }
                               className="mt-1"
@@ -319,6 +521,10 @@ export default function FranchiseDs() {
                 </div>
               )}
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> c5bedd5289026311950a775b4a45d9f8d6daad51
               {/* Add Account Form */}
               {accountSubTab === "add" && (
                 <form className="space-y-4 max-w-lg" onSubmit={handleAddAccount}>
