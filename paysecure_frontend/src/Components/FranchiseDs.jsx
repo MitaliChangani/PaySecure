@@ -1,6 +1,24 @@
-import React, { useState, useEffect } from "react";
-import { User, CreditCard, ArrowUpCircle, Clock } from "lucide-react";
-import api from "../api/axios"
+import React, { useState } from "react";
+import { User, Clock, ArrowUpCircle, CreditCard, LayoutDashboard, CheckCircle, ShieldX  } from "lucide-react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+
+const data = [
+  { name: "Mon", amount: 0 },
+  { name: "Tue", amount: 0 },
+  { name: "Wed", amount: 0 },
+  { name: "Thu", amount: 0 },
+  { name: "Fri", amount: 0 },
+  { name: "Sat", amount: 0 },
+  { name: "Sun", amount: 0 },
+];
 
 export default function FranchiseDs() {
   const [accountSubTab, setAccountSubTab] = useState("view");
@@ -12,17 +30,8 @@ export default function FranchiseDs() {
   const [selectedTx, setSelectedTx] = useState(null);
   const [utrInput, setUtrInput] = useState("");
   const [amountInput, setamountInput] = useState("");
-<<<<<<< HEAD
-=======
 
-<<<<<<< HEAD
-  // All transactions     
-  const [transactions, setTransactions] = useState([]);
-  const [withdrawRequests, setWithdrawRequests] = useState([]);
-  const [accounts, setAccounts] = useState([]);
-=======
   // All transactions
->>>>>>> d4c58bdb023ca694926a15aa650a7262244636bf
   const [transactions, setTransactions] = useState([
     {
       id: 1,
@@ -38,7 +47,7 @@ export default function FranchiseDs() {
       toAccountn: "123512",
       toBankn: "SBI",
       amount: 5000,
-      statusResult: "",
+      statusResult: "", // Initially empty
       utrNumber: "",
     },
     {
@@ -59,6 +68,9 @@ export default function FranchiseDs() {
       utrNumber: "",
     },
   ]);
+
+
+
   const withdrawRequests = [
     {
       id: 1,
@@ -101,7 +113,6 @@ export default function FranchiseDs() {
       QrCode: "",
     },
   ]);
->>>>>>> c5bedd5289026311950a775b4a45d9f8d6daad51
 
   const [newAccount, setNewAccount] = useState({
     accountName: "",
@@ -112,61 +123,25 @@ export default function FranchiseDs() {
     QrCode: "",
   });
 
-  useEffect(() => {
-    fetchAccounts();
-    fetchTransactions();
-    fetchWithdrawRequests();
-  }, []);
-
-  const fetchAccounts = async () => {
-    try {
-      const res = await api.get("/bank-accounts/");
-      setAccounts(res.data);
-    } catch (err) {
-      console.error("Error fetching accounts", err);
-    }
-  };
-
-  const fetchTransactions = async () => {
-    try {
-      const res = await api.get("/franchise/transactions/");
-      setTransactions(res.data);
-    } catch (err) {
-      console.error("Error fetching transactions", err);
-    }
-  };
-
-  const fetchWithdrawRequests = async () => {
-    try {
-      const res = await api.get("/franchise/withdrawals/");
-      setWithdrawRequests(res.data);
-    } catch (err) {
-      console.error("Error fetching withdraw requests", err);
-    }
-  };
-
-
   const handleNewChange = (e) => {
     setNewAccount({ ...newAccount, [e.target.name]: e.target.value });
   };
 
-  const handleAddAccount = async (e) => {
+  const handleAddAccount = (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    Object.entries(newAccount).forEach(([key, value]) => {
-      formData.append(key, value);
+    const newId = accounts.length ? accounts[accounts.length - 1].id + 1 : 1;
+    setAccounts([...accounts, { ...newAccount, id: newId }]);
+    setNewAccount({
+      accountName: "",
+      accountNumber: "",
+      bankName: "",
+      ifsc: "",
+      upiId: "",
+      QrCode: "",
     });
+    setAccountSubTab("view");
+  };
 
-<<<<<<< HEAD
-    try {
-      const res = await api.post("/bank-accounts/", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      setAccounts([...accounts, res.data]);
-      setAccountSubTab("view");
-    } catch (err) {
-      console.error("Error adding account", err);
-=======
   const handleEditChange = (id, e) => {
     const updatedAccounts = accounts.map((acc) =>
       acc.id === id ? { ...acc, [e.target.name]: e.target.value } : acc
@@ -185,53 +160,24 @@ export default function FranchiseDs() {
       );
       setShowModal(false);
       setUtrInput("");
->>>>>>> c5bedd5289026311950a775b4a45d9f8d6daad51
     }
   };
-
-
-  const handleEditChange = async (id, e) => {
-    const updated = accounts.map((acc) =>
-      acc.id === id ? { ...acc, [e.target.name]: e.target.value } : acc
-    );
-    setAccounts(updated);
-  };
-
-  const saveAccount = async (acc) => {
-    try {
-      await api.put(`/accounts/${acc.id}/`, acc);
-      setEditingId(null);
-    } catch (err) {
-      console.error("Error saving account", err);
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (selectedTx) {
-      try {
-        const res = await api.post(
-          `/franchise/transactions/${selectedTx.id}/update/`,
-          { utrNumber: utrInput, amount: amountInput, status: "Successful" }
-        );
-        setTransactions((prev) =>
-          prev.map((tx) =>
-            tx.id === selectedTx.id ? { ...tx, ...res.data } : tx
-          )
-        );
-        setShowModal(false);
-        setUtrInput("");
-      } catch (err) {
-        console.error("Error updating transaction", err);
-      }
-    }
-  };
-
-
   return (
     <div className="min-h-screen flex flex-col bg-white">
+      {/* Center Tabs */}
       <header className="bg-white shadow-md px-4 md:px-8 py-3 flex items-center justify-center">
         <nav className="flex flex-wrap justify-center gap-2 sm:gap-4">
+       <button
+  onClick={() => setActiveTab("dashboard")}
+  className={`flex items-center px-3 sm:px-4 py-2 rounded-lg transition font-medium text-sm sm:text-base ${
+    activeTab === "dashboard"
+      ? "bg-blue-600 text-white shadow"
+      : "bg-gray-100 text-gray-700 hover:bg-blue-600 hover:text-white"
+  }`}
+>
+  <LayoutDashboard size={18} className="mr-2" /> Dashboard
+</button>
+
           <button
             onClick={() => setActiveTab("account")}
             className={`flex items-center px-3 sm:px-4 py-2 rounded-lg transition font-medium text-sm sm:text-base ${activeTab === "account"
@@ -242,6 +188,11 @@ export default function FranchiseDs() {
             <CreditCard size={18} className="mr-2" />
             Account
           </button>
+
+
+
+
+          {/* Pay-In Button */}
           <button
             onClick={() => setActiveTab("payin")}
             className={`flex items-center px-3 sm:px-4 py-2 rounded-lg transition font-medium text-sm sm:text-base ${activeTab === "payin"
@@ -252,6 +203,8 @@ export default function FranchiseDs() {
             <CreditCard size={18} className="mr-2" />
             Pay-In
           </button>
+
+          {/* Pay-Out Button */}
           <button
             onClick={() => setActiveTab("payout")}
             className={`flex items-center px-3 sm:px-4 py-2 rounded-lg transition font-medium text-sm sm:text-base ${activeTab === "payout"
@@ -284,19 +237,19 @@ export default function FranchiseDs() {
           </button>
         </nav>
       </header>
+
+
+      {/* ---------- MAIN CONTENT ---------- */}
       <main className="flex-1 flex items-start justify-center p-4 md:p-8 overflow-y-auto">
         <div className="w-full max-w-5xl">
+          {/* Account Section */}
           {activeTab === "account" && (
             <div className="bg-white rounded-lg shadow p-6">
               <h1 className="text-2xl font-bold mb-6">Bank Accounts</h1>
+
+              {/* Subtabs */}
               <div className="flex flex-wrap gap-2 mb-6">
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
                 {/* View Button */}
->>>>>>> c5bedd5289026311950a775b4a45d9f8d6daad51
->>>>>>> d4c58bdb023ca694926a15aa650a7262244636bf
                 <button
                   className={`px-4 py-2 rounded-lg font-medium ${accountSubTab === "view"
                     ? "bg-blue-600 text-white"
@@ -306,14 +259,8 @@ export default function FranchiseDs() {
                 >
                   View
                 </button>
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
 
                 {/* Add Account Button */}
->>>>>>> c5bedd5289026311950a775b4a45d9f8d6daad51
->>>>>>> d4c58bdb023ca694926a15aa650a7262244636bf
                 <button
                   className={`px-4 py-2 rounded-lg font-medium ${accountSubTab === "add"
                     ? "bg-blue-600 text-white"
@@ -322,30 +269,9 @@ export default function FranchiseDs() {
                   onClick={() => setAccountSubTab("add")}
                 >
                   Add Account
-<<<<<<< HEAD
                 </button>
-              </div>
 
-              {/* View Accounts */}
-              {accountSubTab === "view" && (
-                <div className="space-y-6">
-                  {accounts.map((acc) => (
-                    <div key={acc.id} className="border rounded-lg p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex justify-between items-center mb-2">
-                          <h2 className="font-semibold">{acc.accountName}</h2>
-                          <button
-                            onClick={() =>
-                              editingId === acc.id ? setEditingId(null) : setEditingId(acc.id)
-                            }
-                            className="bg-blue-600 text-white px-3 py-1 rounded-lg"
-                          >
-                            {editingId === acc.id ? "Save" : "Edit"}
-                          </button>
-                        </div>
-
-=======
-                </button>
+                {/* Activate Button */}
                 <button
                   className={`px-4 py-2 rounded-lg font-medium ${accountSubTab === "activate"
                     ? "bg-green-600 text-white"
@@ -354,7 +280,9 @@ export default function FranchiseDs() {
                   onClick={() => setAccountSubTab("activate")}
                 >
                   Activated Account
-                </button>\
+                </button>
+
+                {/* Deactivate Button */}
                 <button
                   className={`px-4 py-2 rounded-lg font-medium ${accountSubTab === "deactivate"
                     ? "bg-yellow-500 text-white"
@@ -364,6 +292,8 @@ export default function FranchiseDs() {
                 >
                   Deactivated Account
                 </button>
+
+                {/* Delete Button */}
                 <button
                   className={`px-4 py-2 rounded-lg font-medium ${accountSubTab === "delete"
                     ? "bg-red-600 text-white"
@@ -374,6 +304,15 @@ export default function FranchiseDs() {
                   Deleted Account
                 </button>
               </div>
+
+
+              {/* View Accounts */}
+                                    {activeTab === "dashboard" && (
+  <>
+    <PayInDashboard />
+    <PayOutDashboard />
+  </>
+)}
               {accountSubTab === "view" && (
                 <div className="space-y-6">
                   {accounts.map((acc) => (
@@ -385,6 +324,7 @@ export default function FranchiseDs() {
                         <div className="flex justify-between items-center mb-2">
                           <h2 className="font-semibold">{acc.accountName}</h2>
                           <div className="flex gap-2">
+                            {/* Edit Button */}
                             <button
                               onClick={() =>
                                 editingId === acc.id ? setEditingId(null) : setEditingId(acc.id)
@@ -393,12 +333,16 @@ export default function FranchiseDs() {
                             >
                               {editingId === acc.id ? "Save" : "Edit"}
                             </button>
+
+                            {/* Activate Button */}
                             <button
                               onClick={() => handleActivate(acc.id)}
                               className="bg-green-600 text-white px-3 py-1 rounded-lg"
                             >
                               Activate
                             </button>
+
+                            {/* Deactivate Button */}
                             <button
                               onClick={() => handleDeactivate(acc.id)}
                               className="bg-yellow-500 text-white px-3 py-1 rounded-lg"
@@ -407,11 +351,7 @@ export default function FranchiseDs() {
                             </button>
                           </div>
                         </div>
-<<<<<<< HEAD
-=======
 
->>>>>>> c5bedd5289026311950a775b4a45d9f8d6daad51
->>>>>>> d4c58bdb023ca694926a15aa650a7262244636bf
                         <p>
                           <span className="font-semibold">Account Number:</span>{" "}
                           {editingId === acc.id ? (
@@ -468,6 +408,8 @@ export default function FranchiseDs() {
                             acc.upiId || "Not Added"
                           )}
                         </p>
+
+                        {/* QR Code */}
                         <p className="mt-2">
                           <span className="font-semibold">QR Code:</span>{" "}
                           {editingId === acc.id ? (
@@ -476,14 +418,10 @@ export default function FranchiseDs() {
                               accept="image/*"
                               onChange={(e) =>
                                 handleEditChange(acc.id, {
-<<<<<<< HEAD
-                                  target: { name: "QrCode", value: URL.createObjectURL(e.target.files[0]) }
-=======
                                   target: {
                                     name: "QrCode",
                                     value: URL.createObjectURL(e.target.files[0]),
                                   },
->>>>>>> c5bedd5289026311950a775b4a45d9f8d6daad51
                                 })
                               }
                               className="mt-1"
@@ -499,15 +437,9 @@ export default function FranchiseDs() {
                   ))}
                 </div>
               )}
-<<<<<<< HEAD
-=======
 
-<<<<<<< HEAD
-=======
 
->>>>>>> c5bedd5289026311950a775b4a45d9f8d6daad51
               {/* Add Account Form */}
->>>>>>> d4c58bdb023ca694926a15aa650a7262244636bf
               {accountSubTab === "add" && (
                 <form className="space-y-4 max-w-lg" onSubmit={handleAddAccount}>
                   <div>
@@ -590,6 +522,7 @@ export default function FranchiseDs() {
               )}
             </div>
           )}
+          {/* ✅ Pay-In Section */}
           {activeTab === "payout" && <PayoutTable />}
 
           {activeTab === "payin" && (
@@ -612,6 +545,7 @@ export default function FranchiseDs() {
                     <th className="border px-4 py-2">QR Code</th>
                     <th className="border px-4 py-2">Action</th>
                     <th className="border px-4 py-2">#</th>
+
                   </tr>
                 </thead>
                 <tbody>
@@ -716,6 +650,9 @@ export default function FranchiseDs() {
               )}
             </div>
           )}
+
+
+          {/* History Section */}
           {activeTab === "history" && (
             <div className="bg-white rounded-lg shadow p-6 overflow-x-auto">
               <h1 className="text-2xl font-bold mb-6">Completed Transactions</h1>
@@ -782,8 +719,12 @@ export default function FranchiseDs() {
                   ))}
                 </tbody>
               </table>
+
+
             </div>
           )}
+
+          {/* Profile Section */}
           {activeTab === "profile" && (
             <div className="bg-white rounded-lg shadow p-6 max-w-md mx-auto">
               <h1 className="text-2xl font-bold mb-6 text-center">Edit Profile</h1>
@@ -915,6 +856,8 @@ function PayoutTable() {
               <td className="border px-4 py-2">{tx.upi}</td>
               <td className="border px-4 py-2">{tx.date}</td>
               <td className="border px-4 py-2">{tx.time}</td>
+
+              {/* From column with bank details */}
               <td className="border px-4 py-2">
                 <table>
                   <thead>
@@ -941,6 +884,8 @@ function PayoutTable() {
                   </tbody>
                 </table>
               </td>
+
+
               <td className="border px-4 py-2">₹{tx.amount.toLocaleString()}</td>
               <td
                 className="border px-4 py-2 text-center cursor-pointer"
@@ -956,6 +901,8 @@ function PayoutTable() {
           ))}
         </tbody>
       </table>
+
+      {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-6">
@@ -1010,6 +957,169 @@ function PayoutTable() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+function PayInDashboard() {
+  return (
+    <>
+    <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
+      <h2 className="text-2xl font-semibold mb-4">Pay In</h2>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Left: Transaction Cards */}
+        <div className="flex flex-col gap-4">
+          {/* Success Txn */}
+           <div className="relative flex justify-between items-center rounded-xl p-5 overflow-hidden border border-blue-200 shadow-sm">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-blue-50"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.15)_0%,transparent_70%)]"></div>
+            <div className="relative flex items-center gap-3">
+              <CheckCircle className="text-blue-600" size={26} />
+              <div>
+                <p className="font-semibold text-blue-900">Success Txns</p>
+                <p className="text-xl font-bold text-blue-900 mt-1">
+                  ₹
+                </p>
+              </div>
+            </div>
+            <p className="relative text-gray-700 font-medium">0 Txns</p>
+          </div>
+          {/* Pending Txn */}
+            <div className="relative flex justify-between items-center rounded-xl p-5 overflow-hidden border border-yellow-200 shadow-sm">
+            <div className="absolute inset-0 bg-gradient-to-br from-yellow-100 to-yellow-50"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(234,179,8,0.2)_0%,transparent_70%)]"></div>
+            <div className="relative flex items-center gap-3">
+              <Clock className="text-yellow-700" size={26} />
+              <div>
+                <p className="font-semibold text-yellow-900">Pending Txns</p>
+                <p className="text-xl font-bold text-yellow-900 mt-1">
+                  ₹
+                </p>
+              </div>
+            </div>
+            <p className="relative text-gray-700 font-medium">0 Txns</p>
+          </div>
+
+          {/* Failed Txn */}
+          <div className="relative flex justify-between items-center rounded-xl p-5 overflow-hidden border border-red-200 shadow-sm">
+            <div className="absolute inset-0 bg-gradient-to-br from-red-100 to-red-50"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(239,68,68,0.2)_0%,transparent_70%)]"></div>
+            <div className="relative flex items-center gap-3">
+              <ShieldX className="text-red-600" size={26} />
+              <div>
+                <p className="font-semibold text-red-900">Failed Txns</p>
+                <p className="text-xl font-bold text-red-900 mt-1">₹</p>
+              </div>
+            </div>
+            <p className="relative text-gray-700 font-medium">0 Txns</p>
+          </div>
+        </div>
+
+        {/* Right: Chart */}
+        <div className="bg-white border rounded-xl shadow-sm p-4">
+          <h3 className="text-lg font-semibold mb-4">Pay In</h3>
+          <p className="font-medium text-gray-600 mb-2">Pay In Weekly Report</p>
+          <ResponsiveContainer width="100%" height={200}>
+            <LineChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis
+                label={{
+                  value: "Amount (₹)",
+                  angle: -90,
+                  position: "insideLeft",
+                  style: { textAnchor: "middle" },
+                }}
+              />
+              <Tooltip />
+              <Line type="monotone" dataKey="amount" stroke="#2563eb" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
+    <br />
+    </>
+  );
+}
+function PayOutDashboard() {
+  return (
+    <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
+      <h2 className="text-2xl font-semibold mb-4">Pay Out</h2>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Left Side: Cards */}
+        <div className="flex flex-col gap-4">
+          {/* Success Txn */}
+          <div className="relative flex justify-between items-center rounded-xl p-5 overflow-hidden border border-blue-200 shadow-sm">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-blue-50"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.15)_0%,transparent_70%)]"></div>
+            <div className="relative flex items-center gap-3">
+              <CheckCircle className="text-blue-600" size={26} />
+              <div>
+                <p className="font-semibold text-blue-900">Success Txns</p>
+                <p className="text-xl font-bold text-blue-900 mt-1">
+                  ₹3,86,69,990
+                </p>
+              </div>
+            </div>
+            <p className="relative text-gray-700 font-medium">7646 Txns</p>
+          </div>
+
+          {/* Pending Txn */}
+          <div className="relative flex justify-between items-center rounded-xl p-5 overflow-hidden border border-yellow-200 shadow-sm">
+            <div className="absolute inset-0 bg-gradient-to-br from-yellow-100 to-yellow-50"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(234,179,8,0.2)_0%,transparent_70%)]"></div>
+            <div className="relative flex items-center gap-3">
+              <Clock className="text-yellow-700" size={26} />
+              <div>
+                <p className="font-semibold text-yellow-900">Pending Txns</p>
+                <p className="text-xl font-bold text-yellow-900 mt-1">
+                  ₹6,25,53,270
+                </p>
+              </div>
+            </div>
+            <p className="relative text-gray-700 font-medium">2377 Txns</p>
+          </div>
+
+          {/* Failed Txn */}
+          <div className="relative flex justify-between items-center rounded-xl p-5 overflow-hidden border border-red-200 shadow-sm">
+            <div className="absolute inset-0 bg-gradient-to-br from-red-100 to-red-50"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(239,68,68,0.2)_0%,transparent_70%)]"></div>
+            <div className="relative flex items-center gap-3">
+              <ShieldX className="text-red-600" size={26} />
+              <div>
+                <p className="font-semibold text-red-900">Failed Txns</p>
+                <p className="text-xl font-bold text-red-900 mt-1">₹1,08,470</p>
+              </div>
+            </div>
+            <p className="relative text-gray-700 font-medium">5411 Txns</p>
+          </div>
+        </div>
+
+        {/* Right Side: Chart */}
+        <div className="bg-white border rounded-xl shadow-sm p-4">
+          <h3 className="text-lg font-semibold mb-4">Pay Out</h3>
+          <p className="font-medium text-gray-600 mb-2">Pay Out Weekly Report</p>
+
+          <ResponsiveContainer width="100%" height={200}>
+            <LineChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis
+                label={{
+                  value: "Amount (₹)",
+                  angle: -90,
+                  position: "insideLeft",
+                  style: { textAnchor: "middle" },
+                }}
+              />
+              <Tooltip />
+              <Line type="monotone" dataKey="amount" stroke="#2563eb" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
     </div>
   );
 }
