@@ -27,9 +27,11 @@ urlpatterns = [
     # Franchise Pay-Out (Deposit Requests from user)
     path("franchise/payout/", FranchisePayOutView.as_view(), name="franchise-payout"),
 
-    path("franchise/withdrawals/<int:pk>/accept/", views.accept_withdrawal, name="accept-withdrawal"),
+    # path("franchise/withdrawals/<int:pk>/accept/", views.accept_withdrawal, name="accept-withdrawal"),
     path("franchise/withdrawals/<int:pk>/complete/", views.complete_withdrawal, name="complete-withdrawal"),
     path('admin/withdrawals/<int:pk>/assign/', admin_assign_withdrawal, name='admin-assign-withdrawal'),
+    path("franchise/withdrawals/", FranchiseWithdrawalListView.as_view(), name="franchise-withdrawal-list"),
+
     path('franchise/withdrawals/<int:pk>/accept/', accept_assigned_withdrawal, name='accept-assigned-withdrawal'),
     path('franchise/withdrawals/<int:pk>/complete/', complete_withdrawal, name='complete-withdrawal'),
 
@@ -39,8 +41,15 @@ urlpatterns = [
     path("deposit-requests/", DepositRequestCreateView.as_view(), name="deposit-request-create"),
     path("withdrawal-requests/", WithdrawalRequestCreateView.as_view(), name="withdrawal-request-create"),
    
+    path("deposits/<int:pk>/user-utr/", UserDepositUTRUpdateView.as_view(), name="user-deposit-utr"),
+    path("deposits/<int:pk>/franchise-utr/", FranchiseDepositUTRUpdateView.as_view(), name="franchise-deposit-utr"),
+
+    # Withdrawal UTR match flow
+    path("withdrawals/<int:pk>/user-utr/", UserWithdrawalUTRUpdateView.as_view(), name="user-withdrawal-utr"),
+    path("withdrawals/<int:pk>/franchise-utr/", FranchiseWithdrawalUTRUpdateView.as_view(), name="franchise-withdrawal-utr"),
+   
     path("logout/", logout_view, name="logout"),
-    path('whoami/', whoami, name='whoami'),
+    # path('whoami/', whoami, name='whoami'),
     path("forgot-password/", views.forgot_password),
     path("reset-password/", views.reset_password),
 ]

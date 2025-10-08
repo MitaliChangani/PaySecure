@@ -43,7 +43,11 @@ CORS_ALLOW_HEADERS = [
     "authorization",
 ]
 
-
+SESSION_COOKIE_AGE = 1209600 # 2 weeks
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+CSRF_COOKIE_AGE = 31449600  # 1 years
+CSRF_USE_SESSIONS = False
+SESSION_SAVE_EVERY_REQUEST = True # auto-refresh
 
 
 CSRF_COOKIE_SECURE = False   # only for local dev

@@ -6,6 +6,14 @@ from datetime import datetime, timedelta
 from django.conf import settings 
 
 
+STATUS_CHOICES = [
+    ("pending", "Pending"),
+    ("assigned", "Assigned"),
+    ("processing", "Processing"),
+    ("rejected", "Rejected"),
+    ("pending_verification", "Pending Verification"),
+    ("completed", "Completed"),
+]
 
 
 class CustomUser(AbstractUser):
@@ -29,7 +37,7 @@ class UserProfile(models.Model):
         return f"Profile of {self.user.username}"
 
 
-
+# Franchise bank account
 class BankAccount(models.Model):
     franchise = models.ForeignKey("CustomUser", on_delete=models.CASCADE, related_name="bank_accounts")
     bank_name = models.CharField(max_length=100)
@@ -59,13 +67,13 @@ class Wallet(models.Model):
 
 
 class DepositRequest(models.Model):
-    STATUS_CHOICES = [
-        ("pending", "Pending"),
-        ("assigned", "Assigned"),
-        ("rejected", "Rejected"),
-        ("pending_verification", "Pending Verification"),
-        ("completed", "Completed"),
-    ]
+    # STATUS_CHOICES = [
+    #     ("pending", "Pending"),
+    #     ("assigned", "Assigned"),
+    #     ("rejected", "Rejected"),
+    #     ("pending_verification", "Pending Verification"),
+    #     ("completed", "Completed"),
+    # ]
     user = models.ForeignKey("CustomUser", on_delete=models.CASCADE, related_name="deposit_requests")
     amount = models.DecimalField(max_digits=12, decimal_places=2)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
@@ -80,6 +88,31 @@ class DepositRequest(models.Model):
 
     def __str__(self):
         return f"Deposit {self.amount} by {self.user.username} - {self.status}"
+    
+    def verify_and_complete(self):
+        """
+        Mark deposit as completed if user and franchise entered same UTR and Amount.
+        """
+        if self.user_utr and self.franchise_utr and self.user_amount and self.franchise_amount:
+            if self.user_utr == self.franchise_utr and self.user_amount == self.franchise_amount:
+                self.status = "completed"
+                self.save()
+                # Credit wallet
+                wallet, _ = Wallet.objects.get_or_create(owner=self.user, bank_account=None)
+                wallet.balance += self.amount
+                wallet.save()
+                # Log transaction
+                Transaction.objects.create(
+                    user=self.user,
+                    franchise=self.franchise_account.franchise if self.franchise_account else None,
+                    franchise_account=self.franchise_account,
+                    transaction_type="deposit",
+                    amount=self.amount,
+                    utr_number=self.user_utr,
+                    status="completed",
+                )
+
+    
     
     def mark_completed(self):
         self.status = "completed"
@@ -124,6 +157,31 @@ class WithdrawalRequest(models.Model):
     def mark_processing(self):
         self.status = "processing"
         self.save()
+
+    def verify_and_complete(self):
+        """
+        Mark withdrawal as completed if user and franchise entered same UTR and Amount.
+        """
+        if self.user_utr and self.franchise_utr and self.amount:
+            if str(self.user_utr) == str(self.franchise_utr):
+                self.status = "completed"
+                self.completed_at = timezone.now()
+                self.save()
+                # Deduct wallet
+                wallet, _ = Wallet.objects.get_or_create(owner=self.user, bank_account=None)
+                wallet.balance -= self.amount
+                wallet.save()
+                # Log transaction
+                Transaction.objects.create(
+                    user=self.user,
+                    franchise=self.assigned_franchise,
+                    franchise_account=self.assigned_account,
+                    transaction_type="withdraw",
+                    amount=self.amount,
+                    utr_number=self.user_utr,
+                    status="completed",
+                )
+
 
     def mark_completed(self):
         self.status = "completed"

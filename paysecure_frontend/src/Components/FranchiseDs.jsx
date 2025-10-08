@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { User, CreditCard, ArrowUpCircle, Clock } from "lucide-react";
+import api from "../api/axios"
 
 export default function FranchiseDs() {
   const [accountSubTab, setAccountSubTab] = useState("view");
@@ -11,6 +12,17 @@ export default function FranchiseDs() {
   const [selectedTx, setSelectedTx] = useState(null);
   const [utrInput, setUtrInput] = useState("");
   const [amountInput, setamountInput] = useState("");
+<<<<<<< HEAD
+=======
+
+<<<<<<< HEAD
+  // All transactions     
+  const [transactions, setTransactions] = useState([]);
+  const [withdrawRequests, setWithdrawRequests] = useState([]);
+  const [accounts, setAccounts] = useState([]);
+=======
+  // All transactions
+>>>>>>> d4c58bdb023ca694926a15aa650a7262244636bf
   const [transactions, setTransactions] = useState([
     {
       id: 1,
@@ -89,6 +101,7 @@ export default function FranchiseDs() {
       QrCode: "",
     },
   ]);
+>>>>>>> c5bedd5289026311950a775b4a45d9f8d6daad51
 
   const [newAccount, setNewAccount] = useState({
     accountName: "",
@@ -99,25 +112,61 @@ export default function FranchiseDs() {
     QrCode: "",
   });
 
+  useEffect(() => {
+    fetchAccounts();
+    fetchTransactions();
+    fetchWithdrawRequests();
+  }, []);
+
+  const fetchAccounts = async () => {
+    try {
+      const res = await api.get("/bank-accounts/");
+      setAccounts(res.data);
+    } catch (err) {
+      console.error("Error fetching accounts", err);
+    }
+  };
+
+  const fetchTransactions = async () => {
+    try {
+      const res = await api.get("/franchise/transactions/");
+      setTransactions(res.data);
+    } catch (err) {
+      console.error("Error fetching transactions", err);
+    }
+  };
+
+  const fetchWithdrawRequests = async () => {
+    try {
+      const res = await api.get("/franchise/withdrawals/");
+      setWithdrawRequests(res.data);
+    } catch (err) {
+      console.error("Error fetching withdraw requests", err);
+    }
+  };
+
+
   const handleNewChange = (e) => {
     setNewAccount({ ...newAccount, [e.target.name]: e.target.value });
   };
 
-  const handleAddAccount = (e) => {
+  const handleAddAccount = async (e) => {
     e.preventDefault();
-    const newId = accounts.length ? accounts[accounts.length - 1].id + 1 : 1;
-    setAccounts([...accounts, { ...newAccount, id: newId }]);
-    setNewAccount({
-      accountName: "",
-      accountNumber: "",
-      bankName: "",
-      ifsc: "",
-      upiId: "",
-      QrCode: "",
+    const formData = new FormData();
+    Object.entries(newAccount).forEach(([key, value]) => {
+      formData.append(key, value);
     });
-    setAccountSubTab("view");
-  };
 
+<<<<<<< HEAD
+    try {
+      const res = await api.post("/bank-accounts/", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      setAccounts([...accounts, res.data]);
+      setAccountSubTab("view");
+    } catch (err) {
+      console.error("Error adding account", err);
+=======
   const handleEditChange = (id, e) => {
     const updatedAccounts = accounts.map((acc) =>
       acc.id === id ? { ...acc, [e.target.name]: e.target.value } : acc
@@ -136,8 +185,49 @@ export default function FranchiseDs() {
       );
       setShowModal(false);
       setUtrInput("");
+>>>>>>> c5bedd5289026311950a775b4a45d9f8d6daad51
     }
   };
+
+
+  const handleEditChange = async (id, e) => {
+    const updated = accounts.map((acc) =>
+      acc.id === id ? { ...acc, [e.target.name]: e.target.value } : acc
+    );
+    setAccounts(updated);
+  };
+
+  const saveAccount = async (acc) => {
+    try {
+      await api.put(`/accounts/${acc.id}/`, acc);
+      setEditingId(null);
+    } catch (err) {
+      console.error("Error saving account", err);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (selectedTx) {
+      try {
+        const res = await api.post(
+          `/franchise/transactions/${selectedTx.id}/update/`,
+          { utrNumber: utrInput, amount: amountInput, status: "Successful" }
+        );
+        setTransactions((prev) =>
+          prev.map((tx) =>
+            tx.id === selectedTx.id ? { ...tx, ...res.data } : tx
+          )
+        );
+        setShowModal(false);
+        setUtrInput("");
+      } catch (err) {
+        console.error("Error updating transaction", err);
+      }
+    }
+  };
+
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <header className="bg-white shadow-md px-4 md:px-8 py-3 flex items-center justify-center">
@@ -200,6 +290,13 @@ export default function FranchiseDs() {
             <div className="bg-white rounded-lg shadow p-6">
               <h1 className="text-2xl font-bold mb-6">Bank Accounts</h1>
               <div className="flex flex-wrap gap-2 mb-6">
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+                {/* View Button */}
+>>>>>>> c5bedd5289026311950a775b4a45d9f8d6daad51
+>>>>>>> d4c58bdb023ca694926a15aa650a7262244636bf
                 <button
                   className={`px-4 py-2 rounded-lg font-medium ${accountSubTab === "view"
                     ? "bg-blue-600 text-white"
@@ -209,6 +306,14 @@ export default function FranchiseDs() {
                 >
                   View
                 </button>
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+=======
+
+                {/* Add Account Button */}
+>>>>>>> c5bedd5289026311950a775b4a45d9f8d6daad51
+>>>>>>> d4c58bdb023ca694926a15aa650a7262244636bf
                 <button
                   className={`px-4 py-2 rounded-lg font-medium ${accountSubTab === "add"
                     ? "bg-blue-600 text-white"
@@ -217,6 +322,29 @@ export default function FranchiseDs() {
                   onClick={() => setAccountSubTab("add")}
                 >
                   Add Account
+<<<<<<< HEAD
+                </button>
+              </div>
+
+              {/* View Accounts */}
+              {accountSubTab === "view" && (
+                <div className="space-y-6">
+                  {accounts.map((acc) => (
+                    <div key={acc.id} className="border rounded-lg p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                      <div className="flex-1">
+                        <div className="flex justify-between items-center mb-2">
+                          <h2 className="font-semibold">{acc.accountName}</h2>
+                          <button
+                            onClick={() =>
+                              editingId === acc.id ? setEditingId(null) : setEditingId(acc.id)
+                            }
+                            className="bg-blue-600 text-white px-3 py-1 rounded-lg"
+                          >
+                            {editingId === acc.id ? "Save" : "Edit"}
+                          </button>
+                        </div>
+
+=======
                 </button>
                 <button
                   className={`px-4 py-2 rounded-lg font-medium ${accountSubTab === "activate"
@@ -279,6 +407,11 @@ export default function FranchiseDs() {
                             </button>
                           </div>
                         </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> c5bedd5289026311950a775b4a45d9f8d6daad51
+>>>>>>> d4c58bdb023ca694926a15aa650a7262244636bf
                         <p>
                           <span className="font-semibold">Account Number:</span>{" "}
                           {editingId === acc.id ? (
@@ -343,10 +476,14 @@ export default function FranchiseDs() {
                               accept="image/*"
                               onChange={(e) =>
                                 handleEditChange(acc.id, {
+<<<<<<< HEAD
+                                  target: { name: "QrCode", value: URL.createObjectURL(e.target.files[0]) }
+=======
                                   target: {
                                     name: "QrCode",
                                     value: URL.createObjectURL(e.target.files[0]),
                                   },
+>>>>>>> c5bedd5289026311950a775b4a45d9f8d6daad51
                                 })
                               }
                               className="mt-1"
@@ -362,6 +499,15 @@ export default function FranchiseDs() {
                   ))}
                 </div>
               )}
+<<<<<<< HEAD
+=======
+
+<<<<<<< HEAD
+=======
+
+>>>>>>> c5bedd5289026311950a775b4a45d9f8d6daad51
+              {/* Add Account Form */}
+>>>>>>> d4c58bdb023ca694926a15aa650a7262244636bf
               {accountSubTab === "add" && (
                 <form className="space-y-4 max-w-lg" onSubmit={handleAddAccount}>
                   <div>
