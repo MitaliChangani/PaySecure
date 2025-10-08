@@ -1,5 +1,6 @@
-from rest_framework import generics, permissions, status
+from rest_framework import generics, permissions, status, viewsets
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from rest_framework.views import APIView
 from django.contrib.auth import get_user_model, authenticate
 from .models import *
@@ -137,3 +138,82 @@ def reset_password(request):
 
     return Response({"detail": "Password reset successful"})
 
+# -------------------- FRANCHISE BANK MANAGEMENT --------------------
+
+class FranchiseBankViewSet(viewsets.ModelViewSet):
+    serializer_class = FranchiseBankSerializer
+    permission_classes = [IsFranchise | IsAdmin]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == 'admin':
+            return FranchiseBank.objects.all()
+        elif user.role == 'franchise':
+            return FranchiseBank.objects.filter(franchise=user)
+        return FranchiseBank.objects.none()
+
+    def perform_create(self, serializer):
+        serializer.save(franchise=self.request.user)
+
+    @action(detail=True, methods=['post'])
+    def toggle_active(self, request, pk=None):
+        """Activate/Deactivate a franchise bank"""
+        try:
+            bank = self.get_queryset().get(pk=pk)
+        except FranchiseBank.DoesNotExist:
+            return Response({"error": "Bank account not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        bank.is_active = not bank.is_active
+        bank.save()
+        return Response({
+            "message": f"Bank account is now {'active' if bank.is_active else 'inactive'}."
+        })
+
+
+# -------------------- PAYIN MANAGEMENT --------------------
+
+class PayInRequestViewSet(viewsets.ModelViewSet):
+    serializer_class = PayInRequestSerializer
+    permission_classes = [IsAuthenticated]  # all roles can view, filter in get_queryset
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == 'admin':
+            return PayInRequest.objects.all()
+        elif user.role == 'franchise':
+            return PayInRequest.objects.filter(assigned_franchise=user)
+        elif user.role == 'user':
+            return PayInRequest.objects.filter(user=user)
+        return PayInRequest.objects.none()
+
+    def perform_create(self, serializer):
+        if self.request.user.role != 'user':
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied("Only normal users can create PayIn requests.")
+        
+        payin = serializer.save(user=self.request.user)
+        payin.assign_random_franchise()
+
+
+# -------------------- PAYOUT MANAGEMENT --------------------
+
+class PayOutRequestViewSet(viewsets.ModelViewSet):
+    serializer_class = PayOutRequestSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == 'admin':
+            return PayOutRequest.objects.all()
+        elif user.role == 'franchise':
+            return PayOutRequest.objects.filter(assigned_franchise=user)
+        elif user.role == 'user':
+            return PayOutRequest.objects.filter(user=user)
+        return PayOutRequest.objects.none()
+
+    def perform_create(self, serializer):
+        if self.request.user.role != 'user':
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied("Only normal users can create PayOut requests.")
+        
+        serializer.save(user=self.request.user)

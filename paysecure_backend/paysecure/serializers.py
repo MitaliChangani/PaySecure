@@ -47,3 +47,35 @@ class ResetPasswordSerializer(serializers.Serializer):
     new_password = serializers.CharField()
 
 
+class FranchiseBankSerializer(serializers.ModelSerializer):
+    franchise_name = serializers.CharField(source='franchise.username', read_only=True)
+
+    class Meta:
+        model = FranchiseBank
+        fields = '__all__'
+        read_only_fields = ('franchise', 'created_at', 'updated_at')
+
+
+# -------------------- PAYIN SERIALIZER --------------------
+
+class PayInRequestSerializer(serializers.ModelSerializer):
+    user_name = serializers.CharField(source='user.username', read_only=True)
+    assigned_franchise_name = serializers.CharField(source='assigned_franchise.username', read_only=True)
+
+    class Meta:
+        model = PayInRequest
+        fields = '__all__'
+        read_only_fields = ('assigned_franchise', 'razorpay_link', 'upi_id', 'qr_code', 'status')
+
+
+# -------------------- PAYOUT SERIALIZER --------------------
+
+class PayOutRequestSerializer(serializers.ModelSerializer):
+    user_name = serializers.CharField(source='user.username', read_only=True)
+    assigned_franchise_name = serializers.CharField(source='assigned_franchise.username', read_only=True)
+
+    class Meta:
+        model = PayOutRequest
+        fields = '__all__'
+        read_only_fields = ('assigned_franchise', 'status')
+
