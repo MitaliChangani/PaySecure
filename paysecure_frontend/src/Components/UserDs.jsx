@@ -32,12 +32,16 @@ const data = [
 export default function UserDs() {
   const [activeTab, setActiveTab] = useState("history");
   const [historyTab, setHistoryTab] = useState("pending");
+
+  // ✅ Combined and Cleaned Modal States
   const [showModal, setShowModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
   const [selectedTx, setSelectedTx] = useState(null);
   const [utrInput, setUtrInput] = useState("");
   const [amountInput, setamountInput] = useState("");
+
+  // ✅ Sample Data
   const paymentData = [
     {
       date: "2025-10-08",
@@ -91,6 +95,8 @@ export default function UserDs() {
       status: "Pending",
     },
   ];
+
+  // ✅ Functions
   const handleView = (item) => {
     setSelectedData(item);
     setShowModal(true);
@@ -102,6 +108,8 @@ export default function UserDs() {
     );
     alert("Payment link copied!");
   };
+
+  // ✅ Manual Status Update Submit
   const handleSubmit = (e) => {
     e.preventDefault();
     alert("Manual Status Updated Successfully!");
@@ -109,6 +117,8 @@ export default function UserDs() {
     setUtrInput("");
     setamountInput("");
   };
+
+  // ✅ Add Record Submit
   const handleAddSubmit = (e) => {
     e.preventDefault();
     alert("New Pay-Out Record Added!");
@@ -152,6 +162,8 @@ export default function UserDs() {
             {activeTab === "withdraw" && (
               <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8">
                 <h1 className="text-2xl font-bold text-center mb-6">Pay-Out</h1>
+
+                {/* Buttons Row + Filter */}
                 <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
                   <button className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-medium">
                     All
@@ -168,6 +180,8 @@ export default function UserDs() {
                   <button className="bg-red-100 hover:bg-red-200 text-red-800 px-4 py-2 rounded-lg font-medium">
                     Failed
                   </button>
+
+                  {/* Filter Section */}
                   <div className="flex flex-wrap items-center gap-2 ml-4">
                     <span className="font-medium text-gray-700">Filter By:</span>
                     <input
@@ -181,6 +195,8 @@ export default function UserDs() {
                     <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
                       Apply
                     </button>
+
+                    {/* ✅ NEW Add Button */}
                     <button
                       className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
                       onClick={() => setShowAddModal(true)}
@@ -189,6 +205,8 @@ export default function UserDs() {
                     </button>
                   </div>
                 </div>
+
+                {/* Table Section */}
                 <div className="overflow-x-auto mt-6">
                   <table className="min-w-full border border-gray-300 text-sm">
                     <thead className="bg-gray-100 text-gray-700">
@@ -215,10 +233,10 @@ export default function UserDs() {
                           <td className="border px-4 py-2">{item.customerId}</td>
                           <td
                             className={`border px-4 py-2 font-medium ${item.status === "Successed"
-                              ? "text-green-600"
-                              : item.status === "Pending"
-                                ? "text-yellow-600"
-                                : "text-gray-600"
+                                ? "text-green-600"
+                                : item.status === "Pending"
+                                  ? "text-yellow-600"
+                                  : "text-gray-600"
                               }`}
                           >
                             {item.status}
@@ -231,6 +249,8 @@ export default function UserDs() {
                               View
                             </button>
                           </td>
+
+                          {/* Manual UTR Update */}
                           <td
                             className="border px-4 py-2 text-center cursor-pointer text-blue-600 hover:text-blue-800"
                             title="Click to update UTR manually"
@@ -245,6 +265,8 @@ export default function UserDs() {
                       ))}
                     </tbody>
                   </table>
+
+                  {/* Manual Update Modal */}
                   {showModal && (
                     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                       <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-6">
@@ -302,6 +324,7 @@ export default function UserDs() {
                 </div>
               </div>
             )}
+
             {showAddModal && (
               <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                 <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-6">
@@ -338,9 +361,13 @@ export default function UserDs() {
                 </div>
               </div>
             )}
+
+
             {activeTab === "payment" && (
               <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8">
                 <h1 className="text-2xl font-bold text-center mb-6">Pay-in</h1>
+
+                {/* Buttons Row + Filter */}
                 <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
                   <button className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-medium">
                     All
@@ -357,6 +384,8 @@ export default function UserDs() {
                   <button className="bg-red-100 hover:bg-red-200 text-red-800 px-4 py-2 rounded-lg font-medium">
                     Failed
                   </button>
+
+                  {/* Filter Section */}
                   <div className="flex flex-wrap items-center gap-2 ml-4">
                     <span className="font-medium text-gray-700">Filter By:</span>
                     <input
@@ -372,6 +401,8 @@ export default function UserDs() {
                     </button>
                   </div>
                 </div>
+
+                {/* Table Section */}
                 <div className="overflow-x-auto mt-6">
                   <table className="min-w-full border border-gray-300 text-sm">
                     <thead className="bg-gray-100 text-gray-700">
@@ -419,8 +450,8 @@ export default function UserDs() {
                             className="border px-4 py-2 text-center cursor-pointer text-blue-600 hover:text-blue-800"
                             title="Click to update UTR manually"
                             onClick={() => {
-                              setSelectedTx(item);
-                              setShowModal(true);
+                              setSelectedTx(item);   // ✅ set current row data
+                              setShowModal(true);    // ✅ open modal
                             }}
                           >
                             ↺
@@ -486,6 +517,8 @@ export default function UserDs() {
                 </div>
               </div>
             )}
+
+            {/* Modal */}
             {showModal && selectedData && (
               <div
                 className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
@@ -534,6 +567,9 @@ export default function UserDs() {
                 </div>
               </div>
             )}
+
+
+
             {activeTab === "history" && (
               <div>
                 <h1 className="text-2xl font-bold mb-6">History</h1>
@@ -709,6 +745,7 @@ export default function UserDs() {
           </div>
         </div>
       </main>
+
       <style jsx>{`
                 .input-field {
                     width: 100%;
