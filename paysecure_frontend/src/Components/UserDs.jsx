@@ -101,6 +101,24 @@ export default function UserDs() {
       status: "Pending",
     },
   ];
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (selectedTx) {
+      setTransactions((prev) =>
+        prev.map((tx) =>
+          tx.id === selectedTx.id
+            ? { ...tx, utrNumber: utrInput, amountInput: amountInput, statusResult: "Successful" }
+            : tx
+        )
+      );
+      setShowModal(false);
+      setUtrInput("");
+    }
+  };
+  // const [showModal, setShowModal] = useState(false);
+  const [selectedTx, setSelectedTx] = useState(null);
+  const [utrInput, setUtrInput] = useState("");
+  const [amountInput, setamountInput] = useState("");
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -214,6 +232,7 @@ export default function UserDs() {
                         <th className="border px-4 py-2 text-left">Customer ID</th>
                         <th className="border px-4 py-2 text-left">Status</th>
                         <th className="border px-4 py-2 text-left">Action</th>
+                        <th className="border px-4 py-2 text-left">#</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -243,10 +262,84 @@ export default function UserDs() {
                               View
                             </button>
                           </td>
+                          {/* <td
+                        className="border px-4 py-2 text-center cursor-pointer"
+                        title="Click to add UTR number"
+                        onClick={() => {
+                          setSelectedTx(req);
+                          setShowModal(true);
+                        }}
+                      >
+                        ↺
+                      </td> */}
+                      <td
+  className="border px-4 py-2 text-center cursor-pointer text-blue-600 hover:text-blue-800"
+  title="Click to update UTR manually"
+  onClick={() => {
+    setSelectedTx(item);   // ✅ set current row data
+    setShowModal(true);    // ✅ open modal
+  }}
+>
+  ↺
+</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
+                  {showModal && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                  <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-6">
+                    <h2 className="text-2xl font-semibold text-gray-800 border-b pb-3 mb-4">
+                      Manual Status Update
+                    </h2>
+
+                    <form onSubmit={handleSubmit} className="space-y-5">
+                      <div>
+                        <label className="block text-gray-700 text-sm font-medium mb-1">
+                          UTR Number
+                        </label>
+                        <input
+                          type="text"
+                          value={utrInput}
+                          onChange={(e) => setUtrInput(e.target.value)}
+                          placeholder="Enter UTR Number"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-gray-700 text-sm font-medium mb-1">
+                          Amount
+                        </label>
+                        <input
+                          type="text"
+                          value={amountInput}
+                          onChange={(e) => setamountInput(e.target.value)}
+                          placeholder="Enter Amount"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                          required
+                        />
+                      </div>
+
+                      <div className="flex justify-end gap-3 pt-3">
+                        <button
+                          type="button"
+                          className="px-5 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
+                          onClick={() => setShowModal(false)}
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          className="px-5 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition"
+                        >
+                          Submit
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              )}
                 </div>
               </div>
             )}
