@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { User, Clock, ArrowUpCircle, CreditCard, LayoutDashboard, CheckCircle, ShieldX  } from "lucide-react";
+import { User, Clock, ArrowUpCircle, CreditCard, LayoutDashboard, CheckCircle, ShieldX } from "lucide-react";
 import {
   LineChart,
   Line,
@@ -25,7 +25,10 @@ export default function FranchiseDs() {
   const [editingId, setEditingId] = useState(null);
   const [activeTab, setActiveTab] = useState("account");
   const [historyTab, setHistoryTab] = useState("complete");
+  const [dashboard, setdashboard] = useState("dashboard");
 
+
+  const [showAddModal, setShowAddModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedTx, setSelectedTx] = useState(null);
   const [utrInput, setUtrInput] = useState("");
@@ -68,7 +71,30 @@ export default function FranchiseDs() {
       utrNumber: "",
     },
   ]);
-
+  const paymentData = [
+    {
+      date: "2025-10-08",
+      requestId: "REQ12345",
+      utrNo: "UTR987654321",
+      amount: "₹5000",
+      username: "john_doe",
+      customerId: "CUST001",
+      status: "Successed",
+      transactionId: "TXN99887766",
+      time: "14:30",
+    },
+    {
+      date: "2025-10-07",
+      requestId: "REQ98765",
+      utrNo: "UTR123456789",
+      amount: "₹1200",
+      username: "alex123",
+      customerId: "CUST002",
+      status: "Pending",
+      transactionId: "TXN88776655",
+      time: "11:45",
+    },
+  ];
 
 
   const withdrawRequests = [
@@ -162,21 +188,28 @@ export default function FranchiseDs() {
       setUtrInput("");
     }
   };
+  
+
+  // ✅ Add Record Submit
+  const handleAddSubmit = (e) => {
+    e.preventDefault();
+    alert("New Pay-Out Record Added!");
+    setShowAddModal(false);
+  };
   return (
     <div className="min-h-screen flex flex-col bg-white">
       {/* Center Tabs */}
       <header className="bg-white shadow-md px-4 md:px-8 py-3 flex items-center justify-center">
         <nav className="flex flex-wrap justify-center gap-2 sm:gap-4">
-       <button
-  onClick={() => setActiveTab("dashboard")}
-  className={`flex items-center px-3 sm:px-4 py-2 rounded-lg transition font-medium text-sm sm:text-base ${
-    activeTab === "dashboard"
-      ? "bg-blue-600 text-white shadow"
-      : "bg-gray-100 text-gray-700 hover:bg-blue-600 hover:text-white"
-  }`}
->
-  <LayoutDashboard size={18} className="mr-2" /> Dashboard
-</button>
+          <button
+            onClick={() => setActiveTab("dashboard")}
+            className={`flex items-center px-3 sm:px-4 py-2 rounded-lg transition font-medium text-sm sm:text-base ${activeTab === "dashboard"
+                ? "bg-blue-600 text-white shadow"
+                : "bg-gray-100 text-gray-700 hover:bg-blue-600 hover:text-white"
+              }`}
+          >
+            <LayoutDashboard size={18} className="mr-2" /> Dashboard
+          </button>
 
           <button
             onClick={() => setActiveTab("account")}
@@ -194,7 +227,7 @@ export default function FranchiseDs() {
 
           {/* Pay-In Button */}
           <button
-            onClick={() => setActiveTab("payin")}
+            onClick={() => setActiveTab("payment")}
             className={`flex items-center px-3 sm:px-4 py-2 rounded-lg transition font-medium text-sm sm:text-base ${activeTab === "payin"
               ? "bg-blue-600 text-white shadow"
               : "bg-gray-100 text-gray-700 hover:bg-blue-600 hover:text-white"
@@ -206,7 +239,7 @@ export default function FranchiseDs() {
 
           {/* Pay-Out Button */}
           <button
-            onClick={() => setActiveTab("payout")}
+            onClick={() => setActiveTab("withdraw")}
             className={`flex items-center px-3 sm:px-4 py-2 rounded-lg transition font-medium text-sm sm:text-base ${activeTab === "payout"
               ? "bg-blue-600 text-white shadow"
               : "bg-gray-100 text-gray-700 hover:bg-blue-600 hover:text-white"
@@ -242,7 +275,9 @@ export default function FranchiseDs() {
       {/* ---------- MAIN CONTENT ---------- */}
       <main className="flex-1 flex items-start justify-center p-4 md:p-8 overflow-y-auto">
         <div className="w-full max-w-5xl">
+          {activeTab === "dashboard" && (<><PayInDashboard /><PayOutDashboard /></>)}
           {/* Account Section */}
+
           {activeTab === "account" && (
             <div className="bg-white rounded-lg shadow p-6">
               <h1 className="text-2xl font-bold mb-6">Bank Accounts</h1>
@@ -307,12 +342,7 @@ export default function FranchiseDs() {
 
 
               {/* View Accounts */}
-                                    {activeTab === "dashboard" && (
-  <>
-    <PayInDashboard />
-    <PayOutDashboard />
-  </>
-)}
+
               {accountSubTab === "view" && (
                 <div className="space-y-6">
                   {accounts.map((acc) => (
@@ -522,134 +552,380 @@ export default function FranchiseDs() {
               )}
             </div>
           )}
-          {/* ✅ Pay-In Section */}
-          {activeTab === "payout" && <PayoutTable />}
 
-          {activeTab === "payin" && (
-            <div className="overflow-x-auto">
-              <h1 className="text-2xl font-bold mb-6 text-center">Pay-in Transactions</h1>
-              <table className="min-w-full border-collapse border border-gray-300 text-sm">
-                <thead>
-                  <tr className="bg-gray-100 text-left">
-                    <th className="border px-4 py-2">#</th>
-                    <th className="border px-4 py-2">Account Holder</th>
-                    <th className="border px-4 py-2">Account Number</th>
-                    <th className="border px-4 py-2">Bank Name</th>
-                    <th className="border px-4 py-2">Req. Id</th>
-                    <th className="border px-4 py-2">Tnx. Id</th>
-                    <th className="border px-4 py-2">IFSC</th>
-                    <th className="border px-4 py-2">UPI ID</th>
-                    <th className="border px-4 py-2">Amount</th>
-                    <th className="border px-4 py-2">Date</th>
-                    <th className="border px-4 py-2">Time</th>
-                    <th className="border px-4 py-2">QR Code</th>
-                    <th className="border px-4 py-2">Action</th>
-                    <th className="border px-4 py-2">#</th>
+          {/* ✅ Payment Section */}
+          {activeTab === "payment" && (
+            <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8">
+              <h1 className="text-2xl font-bold text-center mb-6">Pay-in</h1>
 
-                  </tr>
-                </thead>
-                <tbody>
-                  {withdrawRequests.map((req, index) => (
-                    <tr key={req.id} className="hover:bg-gray-50">
-                      <td className="border px-4 py-2">{index + 1}</td>
-                      <td className="border px-4 py-2">{req.accountName}</td>
-                      <td className="border px-4 py-2">{req.accountNumber}</td>
-                      <td className="border px-4 py-2">{req.bankName}</td>
-                      <td className="border px-4 py-2">{req.ReqId}</td>
-                      <td className="border px-4 py-2">{req.TnxId}</td>
-                      <td className="border px-4 py-2">{req.ifsc}</td>
-                      <td className="border px-4 py-2">{req.upiId}</td>
-                      <td className="border px-4 py-2">
-                        ₹{req.amount.toLocaleString()}
-                      </td>
-                      <td className="border px-4 py-2">{req.date}</td>
-                      <td className="border px-4 py-2">{req.time}</td>
-                      <td className="border px-4 py-2 text-center">
-                        <a
-                          href={req.qr}
-                          download={`QR-${req.id}.png`}
-                          className="text-blue-600 underline hover:text-blue-800"
-                        >
-                          Download
-                        </a>
-                      </td>
-                      <td className="border px-4 py-2 text-center">
-                        <button className="bg-green-600 text-white px-4 py-1 rounded-lg hover:bg-green-700">
-                          Pay Now
-                        </button>
-                      </td>
+              {/* Buttons Row + Filter */}
+              <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
+                <button className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-medium">
+                  All
+                </button>
+                <button className="bg-blue-100 hover:bg-blue-200 text-blue-800 px-4 py-2 rounded-lg font-medium">
+                  Initiate
+                </button>
+                <button className="bg-yellow-100 hover:bg-yellow-200 text-yellow-800 px-4 py-2 rounded-lg font-medium">
+                  Pending
+                </button>
+                <button className="bg-green-100 hover:bg-green-200 text-green-800 px-4 py-2 rounded-lg font-medium">
+                  Successed
+                </button>
+                <button className="bg-red-100 hover:bg-red-200 text-red-800 px-4 py-2 rounded-lg font-medium">
+                  Failed
+                </button>
 
-                      <td
-                        className="border px-4 py-2 text-center cursor-pointer"
-                        title="Click to add UTR number"
-                        onClick={() => {
-                          setSelectedTx(req);
-                          setShowModal(true);
-                        }}
-                      >
-                        ↺
-                      </td>
-
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              {showModal && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                  <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-6">
-                    <h2 className="text-2xl font-semibold text-gray-800 border-b pb-3 mb-4">
-                      Manual Status Update
-                    </h2>
-
-                    <form onSubmit={handleSubmit} className="space-y-5">
-                      <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-1">
-                          UTR Number
-                        </label>
-                        <input
-                          type="text"
-                          value={utrInput}
-                          onChange={(e) => setUtrInput(e.target.value)}
-                          placeholder="Enter UTR Number"
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-1">
-                          Amount
-                        </label>
-                        <input
-                          type="text"
-                          value={amountInput}
-                          onChange={(e) => setamountInput(e.target.value)}
-                          placeholder="Enter Amount"
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                          required
-                        />
-                      </div>
-
-                      <div className="flex justify-end gap-3 pt-3">
-                        <button
-                          type="button"
-                          className="px-5 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
-                          onClick={() => setShowModal(false)}
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          type="submit"
-                          className="px-5 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition"
-                        >
-                          Submit
-                        </button>
-                      </div>
-                    </form>
-                  </div>
+                {/* Filter Section */}
+                <div className="flex flex-wrap items-center gap-2 ml-4">
+                  <span className="font-medium text-gray-700">Filter By:</span>
+                  <input
+                    type="date"
+                    className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  />
+                  <input
+                    type="date"
+                    className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  />
+                  <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                    Apply
+                  </button>
                 </div>
-              )}
+              </div>
+
+              {/* Table Section */}
+              <div className="overflow-x-auto mt-6">
+                <table className="min-w-full border border-gray-300 text-sm">
+                  <thead className="bg-gray-100 text-gray-700">
+                    <tr>
+                      <th className="border px-4 py-2 text-left">Date</th>
+                      <th className="border px-4 py-2 text-left">Request ID</th>
+                      <th className="border px-4 py-2 text-left">UTR No.</th>
+                      <th className="border px-4 py-2 text-left">Amount</th>
+                      <th className="border px-4 py-2 text-left">Customer ID</th>
+                      <th className="border px-4 py-2 text-left">Status</th>
+                      <th className="border px-4 py-2 text-left">Action</th>
+                      <th className="border px-4 py-2 text-left">#</th>
+                      <th className="border px-4 py-2 text-left">#</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paymentData.map((item, index) => (
+                      <tr key={index} className="hover:bg-gray-50">
+                        <td className="border px-4 py-2">{item.date}</td>
+                        <td className="border px-4 py-2">{item.requestId}</td>
+                        <td className="border px-4 py-2">{item.utrNo}</td>
+                        <td className="border px-4 py-2">{item.amount}</td>
+                        <td className="border px-4 py-2">{item.customerId}</td>
+                        <td
+                          className={`border px-4 py-2 font-medium ${item.status === "Successed"
+                            ? "text-green-600"
+                            : item.status === "Pending"
+                              ? "text-yellow-600"
+                              : "text-gray-600"
+                            }`}
+                        >
+                          {item.status}
+                        </td>
+                        <td className="border px-4 py-2">
+                          <button
+                            onClick={() => handleView(item)}
+                            className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded-lg"
+                          >
+                            View
+                          </button>
+                        </td>
+
+                        <td
+                          className="border px-4 py-2 text-center cursor-pointer text-blue-600 hover:text-blue-800"
+                          title="Click to update UTR manually"
+                          onClick={() => {
+                            setSelectedTx(item);   // ✅ set current row data
+                            setShowModal(true);    // ✅ open modal
+                          }}
+                        >
+                          ↺
+                        </td>
+                      <td className="border px-4 py-2 text-center">
+  <button
+    onClick={() => handleApprove(item)}
+    className="bg-green-500 hover:bg-green-600 text-white p-1 rounded-full"
+    title="Instant Verify"
+  >
+    ✓
+  </button>
+  <button
+    onClick={() => handleReject(item)}
+    className="bg-red-500 hover:bg-red-600 text-white p-1 rounded-full ml-2"
+    title="Instant Failed"
+  >
+    ✗
+  </button>
+</td>
+
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                {showModal && (
+                  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-6">
+                      <h2 className="text-2xl font-semibold text-gray-800 border-b pb-3 mb-4">
+                        Manual Status Update
+                      </h2>
+
+                      <form onSubmit={handleSubmit} className="space-y-5">
+                        <div>
+                          <label className="block text-gray-700 text-sm font-medium mb-1">
+                            UTR Number
+                          </label>
+                          <input
+                            type="text"
+                            value={utrInput}
+                            onChange={(e) => setUtrInput(e.target.value)}
+                            placeholder="Enter UTR Number"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-gray-700 text-sm font-medium mb-1">
+                            Amount
+                          </label>
+                          <input
+                            type="text"
+                            value={amountInput}
+                            onChange={(e) => setamountInput(e.target.value)}
+                            placeholder="Enter Amount"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                            required
+                          />
+                        </div>
+
+                        <div className="flex justify-end gap-3 pt-3">
+                          <button
+                            type="button"
+                            className="px-5 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
+                            onClick={() => setShowModal(false)}
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="submit"
+                            className="px-5 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition"
+                          >
+                            Submit
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           )}
+           {activeTab === "withdraw" && (
+              <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8">
+                <h1 className="text-2xl font-bold text-center mb-6">Pay-Out</h1>
+
+                {/* Buttons Row + Filter */}
+                <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
+                  <button className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-medium">
+                    All
+                  </button>
+                  <button className="bg-blue-100 hover:bg-blue-200 text-blue-800 px-4 py-2 rounded-lg font-medium">
+                    Initiate
+                  </button>
+                  <button className="bg-yellow-100 hover:bg-yellow-200 text-yellow-800 px-4 py-2 rounded-lg font-medium">
+                    Pending
+                  </button>
+                  <button className="bg-green-100 hover:bg-green-200 text-green-800 px-4 py-2 rounded-lg font-medium">
+                    Successed
+                  </button>
+                  <button className="bg-red-100 hover:bg-red-200 text-red-800 px-4 py-2 rounded-lg font-medium">
+                    Failed
+                  </button>
+
+                  {/* Filter Section */}
+                  <div className="flex flex-wrap items-center gap-2 ml-4">
+                    <span className="font-medium text-gray-700">Filter By:</span>
+                    <input
+                      type="date"
+                      className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    />
+                    <input
+                      type="date"
+                      className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    />
+                    <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                      Apply
+                    </button>
+
+                    {/* ✅ NEW Add Button */}
+                    <button
+                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
+                      onClick={() => setShowAddModal(true)}
+                    >
+                      + Add
+                    </button>
+                  </div>
+                </div>
+
+                {/* Table Section */}
+                <div className="overflow-x-auto mt-6">
+                  <table className="min-w-full border border-gray-300 text-sm">
+                    <thead className="bg-gray-100 text-gray-700">
+                      <tr>
+                        <th className="border px-4 py-2 text-left">Date</th>
+                        <th className="border px-4 py-2 text-left">Request ID</th>
+                        <th className="border px-4 py-2 text-left">UTR No.</th>
+                        <th className="border px-4 py-2 text-left">Amount</th>
+                        <th className="border px-4 py-2 text-left">Transaction by Username</th>
+                        <th className="border px-4 py-2 text-left">Customer ID</th>
+                        <th className="border px-4 py-2 text-left">Status</th>
+                        <th className="border px-4 py-2 text-left">Action</th>
+                        <th className="border px-4 py-2 text-left">#</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {paymentData.map((item, index) => (
+                        <tr key={index} className="hover:bg-gray-50">
+                          <td className="border px-4 py-2">{item.date}</td>
+                          <td className="border px-4 py-2">{item.requestId}</td>
+                          <td className="border px-4 py-2">{item.utrNo}</td>
+                          <td className="border px-4 py-2">{item.amount}</td>
+                          <td className="border px-4 py-2">{item.username}</td>
+                          <td className="border px-4 py-2">{item.customerId}</td>
+                          <td
+                            className={`border px-4 py-2 font-medium ${item.status === "Successed"
+                                ? "text-green-600"
+                                : item.status === "Pending"
+                                  ? "text-yellow-600"
+                                  : "text-gray-600"
+                              }`}
+                          >
+                            {item.status}
+                          </td>
+                          <td className="border px-4 py-2">
+                            <button
+                              onClick={() => handleView(item)}
+                              className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded-lg"
+                            >
+                              View
+                            </button>
+                          </td>
+
+                          {/* Manual UTR Update */}
+                          <td
+                            className="border px-4 py-2 text-center cursor-pointer text-blue-600 hover:text-blue-800"
+                            title="Click to update UTR manually"
+                            onClick={() => {
+                              setSelectedTx(item);
+                              setShowModal(true);
+                            }}
+                          >
+                            ↺
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+
+                  {/* Manual Update Modal */}
+                  {showModal && (
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                      <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-6">
+                        <h2 className="text-2xl font-semibold text-gray-800 border-b pb-3 mb-4">
+                          Manual Status Update
+                        </h2>
+
+                        <form onSubmit={handleSubmit} className="space-y-5">
+                          <div>
+                            <label className="block text-gray-700 text-sm font-medium mb-1">
+                              UTR Number
+                            </label>
+                            <input
+                              type="text"
+                              value={utrInput}
+                              onChange={(e) => setUtrInput(e.target.value)}
+                              placeholder="Enter UTR Number"
+                              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                              required
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-gray-700 text-sm font-medium mb-1">
+                              Amount
+                            </label>
+                            <input
+                              type="text"
+                              value={amountInput}
+                              onChange={(e) => setamountInput(e.target.value)}
+                              placeholder="Enter Amount"
+                              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                              required
+                            />
+                          </div>
+
+                          <div className="flex justify-end gap-3 pt-3">
+                            <button
+                              type="button"
+                              className="px-5 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
+                              onClick={() => setShowModal(false)}
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              type="submit"
+                              className="px-5 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition"
+                            >
+                              Submit
+                            </button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {showAddModal && (
+              <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-6">
+                  <h2 className="text-2xl font-semibold text-gray-800 border-b pb-3 mb-4">
+                    Add New Pay-Out Record
+                  </h2>
+
+                  <form onSubmit={handleAddSubmit} className="grid grid-cols-1 gap-4">
+                    <input type="text" placeholder="Bank Name" className="border rounded-lg px-3 py-2" required />
+                    <input type="text" placeholder="Customer ID" className="border rounded-lg px-3 py-2" required />
+                    <input type="text" placeholder="Account" className="border rounded-lg px-3 py-2" required />
+                    <input type="text" placeholder="UPI" className="border rounded-lg px-3 py-2" required />
+                    <input type="text" placeholder="Account No." className="border rounded-lg px-3 py-2" required />
+                    <input type="text" placeholder="Account Name" className="border rounded-lg px-3 py-2" required />
+                    <input type="text" placeholder="IFSC" className="border rounded-lg px-3 py-2" required />
+                    <input type="number" placeholder="Amount" className="border rounded-lg px-3 py-2" required />
+
+                    <div className="flex justify-end gap-3 mt-4">
+                      <button
+                        type="button"
+                        onClick={() => setShowAddModal(false)}
+                        className="px-5 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="px-5 py-2 rounded-lg bg-green-600 text-white font-medium hover:bg-green-700 transition"
+                      >
+                        Submit
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
 
 
           {/* History Section */}
@@ -770,275 +1046,86 @@ export default function FranchiseDs() {
     </div>
   );
 }
-function PayoutTable() {
-  const [showModal, setShowModal] = useState(false);
-  const [selectedTx, setSelectedTx] = useState(null);
-  const [utrInput, setUtrInput] = useState("");
-  const [amountInput, setamountInput] = useState("");
 
-  const [transactions, setTransactions] = useState([
-    {
-      id: 1,
-      type: "Pay-in",
-      redid: "REQ001",
-      transactionId: "TXN123456",
-      upi: "user@upi",
-      date: "2025-09-22",
-      time: "14:30",
-      fromName: "John Doe",
-      accountNumber: "Account number-123456789012",
-      bankName: "Bank name-SBI",
-      ToAccountnumber: "Account number:123456789",
-      ToBankname: "Bank name-SBI",
-      amount: 5000,
-      statusResult: "",
-      utrNumber: "",
-    },
-    {
-      id: 2,
-      type: "Pay-out",
-      redid: "REQ002",
-      transactionId: "TXN654321",
-      upi: "recipient@upi",
-      date: "2025-09-20",
-      time: "10:15",
-      fromName: "Bank Account",
-      accountNumber: "Account number-987654321098",
-      bankName: "Bank name-HDFC",
-      ToAccountnumber: "Account number:123452789",
-      ToBankname: "Bank name-HDFC",
-      amount: 2000,
-      statusResult: "",
-      utrNumber: "",
-    },
-  ]);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (selectedTx) {
-      setTransactions((prev) =>
-        prev.map((tx) =>
-          tx.id === selectedTx.id
-            ? { ...tx, utrNumber: utrInput, amountInput: amountInput, statusResult: "Successful" }
-            : tx
-        )
-      );
-      setShowModal(false);
-      setUtrInput("");
-    }
-  };
-
-  return (
-    <div className="bg-white p-6 rounded-lg shadow w-full overflow-x-auto">
-      <h1 className="text-2xl font-bold mb-6 text-center">Pay-Out Transactions</h1>
-
-      <table className="min-w-full border-collapse border border-gray-300">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="border px-4 py-2 text-left">#</th>
-            <th className="border px-4 py-2 text-left">Req. ID</th>
-            <th className="border px-4 py-2 text-left">Transaction ID</th>
-            <th className="border px-4 py-2 text-left">UPI ID</th>
-            <th className="border px-4 py-2 text-left">Date</th>
-            <th className="border px-4 py-2 text-left">Time</th>
-            <th className="border px-4 py-2 text-left">From</th>
-            <th className="border px-4 py-2 text-left">To</th>
-            <th className="border px-4 py-2 text-left">Amount</th>
-            <th className="border px-4 py-2 text-center">#</th>
-          </tr>
-        </thead>
-        <tbody>
-          {transactions.map((tx, index) => (
-            <tr key={tx.id} className="hover:bg-gray-50">
-              <td className="border px-4 py-2">{index + 1}</td>
-              <td className="border px-4 py-2">{tx.redid}</td>
-              <td className="border px-4 py-2">{tx.transactionId}</td>
-              <td className="border px-4 py-2">{tx.upi}</td>
-              <td className="border px-4 py-2">{tx.date}</td>
-              <td className="border px-4 py-2">{tx.time}</td>
-
-              {/* From column with bank details */}
-              <td className="border px-4 py-2">
-                <table>
-                  <thead>
-                    <th className="border px-4 py-2 text-center">Name</th>
-                    <th className="border px-4 py-2 text-center">Bank name</th>
-                    <th className="border px-4 py-2 text-center">Account number</th>
-                  </thead>
-                  <tbody>
-                    <td className="border px-4 py-2">{tx.fromName}</td>
-                    <td className="border px-4 py-2">{tx.accountNumber}</td>
-                    <td className="border px-4 py-2">{tx.bankName}</td>
-                  </tbody>
-                </table>
-              </td>
-              <td className="border px-4 py-2">
-                <table>
-                  <thead>
-                    <th className="border px-4 py-2 text-center">Bank name</th>
-                    <th className="border px-4 py-2 text-center">Account number</th>
-                  </thead>
-                  <tbody>
-                    <td className="border px-4 py-2">{tx.ToBankname}</td>
-                    <td className="border px-4 py-2">{tx.ToAccountnumber}</td>
-                  </tbody>
-                </table>
-              </td>
-
-
-              <td className="border px-4 py-2">₹{tx.amount.toLocaleString()}</td>
-              <td
-                className="border px-4 py-2 text-center cursor-pointer"
-                title="Click to add UTR number"
-                onClick={() => {
-                  setSelectedTx(tx);
-                  setShowModal(true);
-                }}
-              >
-                ↺
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-6">
-            <h2 className="text-2xl font-semibold text-gray-800 border-b pb-3 mb-4">
-              Manual Status Update
-            </h2>
-
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div>
-                <label className="block text-gray-700 text-sm font-medium mb-1">
-                  UTR Number
-                </label>
-                <input
-                  type="text"
-                  value={utrInput}
-                  onChange={(e) => setUtrInput(e.target.value)}
-                  placeholder="Enter UTR Number"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700 text-sm font-medium mb-1">
-                  Amount
-                </label>
-                <input
-                  type="text"
-                  value={amountInput}
-                  onChange={(e) => setamountInput(e.target.value)}
-                  placeholder="Enter Amount"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                  required
-                />
-              </div>
-
-              <div className="flex justify-end gap-3 pt-3">
-                <button
-                  type="button"
-                  className="px-5 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
-                  onClick={() => setShowModal(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition"
-                >
-                  Submit
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
 function PayInDashboard() {
   return (
     <>
-    <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
-      <h2 className="text-2xl font-semibold mb-4">Pay In</h2>
+      <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
+        <h2 className="text-2xl font-semibold mb-4">Pay In</h2>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Left: Transaction Cards */}
-        <div className="flex flex-col gap-4">
-          {/* Success Txn */}
-           <div className="relative flex justify-between items-center rounded-xl p-5 overflow-hidden border border-blue-200 shadow-sm">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-blue-50"></div>
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.15)_0%,transparent_70%)]"></div>
-            <div className="relative flex items-center gap-3">
-              <CheckCircle className="text-blue-600" size={26} />
-              <div>
-                <p className="font-semibold text-blue-900">Success Txns</p>
-                <p className="text-xl font-bold text-blue-900 mt-1">
-                  ₹
-                </p>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Left: Transaction Cards */}
+          <div className="flex flex-col gap-4">
+            {/* Success Txn */}
+            <div className="relative flex justify-between items-center rounded-xl p-5 overflow-hidden border border-blue-200 shadow-sm">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-blue-50"></div>
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.15)_0%,transparent_70%)]"></div>
+              <div className="relative flex items-center gap-3">
+                <CheckCircle className="text-blue-600" size={26} />
+                <div>
+                  <p className="font-semibold text-blue-900">Success Txns</p>
+                  <p className="text-xl font-bold text-blue-900 mt-1">
+                    ₹
+                  </p>
+                </div>
               </div>
+              <p className="relative text-gray-700 font-medium">0 Txns</p>
             </div>
-            <p className="relative text-gray-700 font-medium">0 Txns</p>
-          </div>
-          {/* Pending Txn */}
+            {/* Pending Txn */}
             <div className="relative flex justify-between items-center rounded-xl p-5 overflow-hidden border border-yellow-200 shadow-sm">
-            <div className="absolute inset-0 bg-gradient-to-br from-yellow-100 to-yellow-50"></div>
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(234,179,8,0.2)_0%,transparent_70%)]"></div>
-            <div className="relative flex items-center gap-3">
-              <Clock className="text-yellow-700" size={26} />
-              <div>
-                <p className="font-semibold text-yellow-900">Pending Txns</p>
-                <p className="text-xl font-bold text-yellow-900 mt-1">
-                  ₹
-                </p>
+              <div className="absolute inset-0 bg-gradient-to-br from-yellow-100 to-yellow-50"></div>
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(234,179,8,0.2)_0%,transparent_70%)]"></div>
+              <div className="relative flex items-center gap-3">
+                <Clock className="text-yellow-700" size={26} />
+                <div>
+                  <p className="font-semibold text-yellow-900">Pending Txns</p>
+                  <p className="text-xl font-bold text-yellow-900 mt-1">
+                    ₹
+                  </p>
+                </div>
               </div>
+              <p className="relative text-gray-700 font-medium">0 Txns</p>
             </div>
-            <p className="relative text-gray-700 font-medium">0 Txns</p>
+
+            {/* Failed Txn */}
+            <div className="relative flex justify-between items-center rounded-xl p-5 overflow-hidden border border-red-200 shadow-sm">
+              <div className="absolute inset-0 bg-gradient-to-br from-red-100 to-red-50"></div>
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(239,68,68,0.2)_0%,transparent_70%)]"></div>
+              <div className="relative flex items-center gap-3">
+                <ShieldX className="text-red-600" size={26} />
+                <div>
+                  <p className="font-semibold text-red-900">Failed Txns</p>
+                  <p className="text-xl font-bold text-red-900 mt-1">₹</p>
+                </div>
+              </div>
+              <p className="relative text-gray-700 font-medium">0 Txns</p>
+            </div>
           </div>
 
-          {/* Failed Txn */}
-          <div className="relative flex justify-between items-center rounded-xl p-5 overflow-hidden border border-red-200 shadow-sm">
-            <div className="absolute inset-0 bg-gradient-to-br from-red-100 to-red-50"></div>
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(239,68,68,0.2)_0%,transparent_70%)]"></div>
-            <div className="relative flex items-center gap-3">
-              <ShieldX className="text-red-600" size={26} />
-              <div>
-                <p className="font-semibold text-red-900">Failed Txns</p>
-                <p className="text-xl font-bold text-red-900 mt-1">₹</p>
-              </div>
-            </div>
-            <p className="relative text-gray-700 font-medium">0 Txns</p>
+          {/* Right: Chart */}
+          <div className="bg-white border rounded-xl shadow-sm p-4">
+            <h3 className="text-lg font-semibold mb-4">Pay In</h3>
+            <p className="font-medium text-gray-600 mb-2">Pay In Weekly Report</p>
+            <ResponsiveContainer width="100%" height={200}>
+              <LineChart data={data}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis
+                  label={{
+                    value: "Amount (₹)",
+                    angle: -90,
+                    position: "insideLeft",
+                    style: { textAnchor: "middle" },
+                  }}
+                />
+                <Tooltip />
+                <Line type="monotone" dataKey="amount" stroke="#2563eb" />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
-        </div>
-
-        {/* Right: Chart */}
-        <div className="bg-white border rounded-xl shadow-sm p-4">
-          <h3 className="text-lg font-semibold mb-4">Pay In</h3>
-          <p className="font-medium text-gray-600 mb-2">Pay In Weekly Report</p>
-          <ResponsiveContainer width="100%" height={200}>
-            <LineChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis
-                label={{
-                  value: "Amount (₹)",
-                  angle: -90,
-                  position: "insideLeft",
-                  style: { textAnchor: "middle" },
-                }}
-              />
-              <Tooltip />
-              <Line type="monotone" dataKey="amount" stroke="#2563eb" />
-            </LineChart>
-          </ResponsiveContainer>
         </div>
       </div>
-    </div>
-    <br />
+      <br />
     </>
   );
 }
@@ -1122,4 +1209,4 @@ function PayOutDashboard() {
       </div>
     </div>
   );
-}
+}   
