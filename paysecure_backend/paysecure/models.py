@@ -3,7 +3,8 @@ from django.db import models
 from django.utils import timezone
 import uuid
 from datetime import datetime, timedelta
-from django.conf import settings 
+from django.conf import settings
+import random 
 
 
 STATUS_CHOICES = [
@@ -34,180 +35,7 @@ class UserProfile(models.Model):
     address = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return f"Profile of {self.user.username}"
-
-
-# Franchise bank account
-class BankAccount(models.Model):
-    franchise = models.ForeignKey("CustomUser", on_delete=models.CASCADE, related_name="bank_accounts")
-    bank_name = models.CharField(max_length=100)
-    account_number = models.CharField(max_length=50)
-    ifsc_code = models.CharField(max_length=20)
-    upi_id = models.CharField(max_length=100, blank=True, null=True)
-    qr_code = models.ImageField(upload_to="qr_codes/", blank=True, null=True)
-    limit = models.DecimalField(max_digits=12, decimal_places=2, default=0)
-    is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.franchise.username} - {self.bank_name} ({'Active' if self.is_active else 'Inactive'})"
-
-
-class Wallet(models.Model):
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="wallets")
-    bank_account = models.ForeignKey(BankAccount, on_delete=models.CASCADE, null=True, blank=True, related_name="wallets")
-    balance = models.DecimalField(max_digits=14, decimal_places=2, default=0)
-
-    class Meta:
-        unique_together = ("owner", "bank_account")
-
-    def __str__(self):
-        return f"{self.owner.username} - {self.bank_account.bank_name if self.bank_account else 'Main'} ({self.balance})"
-
-
-
-class DepositRequest(models.Model):
-    # STATUS_CHOICES = [
-    #     ("pending", "Pending"),
-    #     ("assigned", "Assigned"),
-    #     ("rejected", "Rejected"),
-    #     ("pending_verification", "Pending Verification"),
-    #     ("completed", "Completed"),
-    # ]
-    user = models.ForeignKey("CustomUser", on_delete=models.CASCADE, related_name="deposit_requests")
-    amount = models.DecimalField(max_digits=12, decimal_places=2)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
-    franchise_account = models.ForeignKey("BankAccount", on_delete=models.SET_NULL, null=True, blank=True)
-    user_utr = models.CharField(max_length=100, null=True, blank=True)
-    user_amount = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-
-    franchise_utr = models.CharField(max_length=100, null=True, blank=True)
-    franchise_amount = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Deposit {self.amount} by {self.user.username} - {self.status}"
-    
-    def verify_and_complete(self):
-        """
-        Mark deposit as completed if user and franchise entered same UTR and Amount.
-        """
-        if self.user_utr and self.franchise_utr and self.user_amount and self.franchise_amount:
-            if self.user_utr == self.franchise_utr and self.user_amount == self.franchise_amount:
-                self.status = "completed"
-                self.save()
-                # Credit wallet
-                wallet, _ = Wallet.objects.get_or_create(owner=self.user, bank_account=None)
-                wallet.balance += self.amount
-                wallet.save()
-                # Log transaction
-                Transaction.objects.create(
-                    user=self.user,
-                    franchise=self.franchise_account.franchise if self.franchise_account else None,
-                    franchise_account=self.franchise_account,
-                    transaction_type="deposit",
-                    amount=self.amount,
-                    utr_number=self.user_utr,
-                    status="completed",
-                )
-
-    
-    
-    def mark_completed(self):
-        self.status = "completed"
-        self.save()
-        # Credit wallet
-        wallet, _ = Wallet.objects.get_or_create(owner=self.user, bank_account=None)
-        wallet.balance += self.amount
-        wallet.save()
-
-
-class WithdrawalRequest(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="withdrawal_requests")
-    amount = models.DecimalField(max_digits=14, decimal_places=2)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
-    assigned_franchise = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="assigned_withdrawals")
-    assigned_account = models.ForeignKey(BankAccount, on_delete=models.SET_NULL, null=True, blank=True)
-    assigned_at = models.DateTimeField(null=True, blank=True)   # when admin assigned to a franchise
-    accepted_by_franchise = models.BooleanField(default=False)
-    franchise_utr = models.CharField(max_length=100, null=True, blank=True)  # UTR provided by franchise when paying
-    user_utr = models.CharField(max_length=100, null=True, blank=True)       # optionally provided by user when they deposit elsewhere
-    created_at = models.DateTimeField(auto_now_add=True)
-    completed_at = models.DateTimeField(null=True, blank=True)
-    # optional bank details provided by user for withdraw if needed:
-    bank_account = models.CharField(max_length=100, null=True, blank=True)
-    ifsc_code = models.CharField(max_length=20, null=True, blank=True)
-    upi_id = models.CharField(max_length=100, null=True, blank=True)
-    qr_code = models.ImageField(upload_to="user_qr/", null=True, blank=True)
-
-    def mark_assigned(self, franchise, account):
-        self.assigned_franchise = franchise
-        self.assigned_account = account
-        self.assigned_at = timezone.now()
-        self.status = "assigned"
-        self.save()
-        
-    def needs_reassignment(self):
-        if self.status == "assigned" and not self.accepted_by_franchise:
-            if timezone.now() > self.assigned_at + timedelta(minutes=5):
-                return True
-        return False
-
-    def mark_processing(self):
-        self.status = "processing"
-        self.save()
-
-    def verify_and_complete(self):
-        """
-        Mark withdrawal as completed if user and franchise entered same UTR and Amount.
-        """
-        if self.user_utr and self.franchise_utr and self.amount:
-            if str(self.user_utr) == str(self.franchise_utr):
-                self.status = "completed"
-                self.completed_at = timezone.now()
-                self.save()
-                # Deduct wallet
-                wallet, _ = Wallet.objects.get_or_create(owner=self.user, bank_account=None)
-                wallet.balance -= self.amount
-                wallet.save()
-                # Log transaction
-                Transaction.objects.create(
-                    user=self.user,
-                    franchise=self.assigned_franchise,
-                    franchise_account=self.assigned_account,
-                    transaction_type="withdraw",
-                    amount=self.amount,
-                    utr_number=self.user_utr,
-                    status="completed",
-                )
-
-
-    def mark_completed(self):
-        self.status = "completed"
-        self.completed_at = timezone.now()
-        self.save()
-
-import uuid
-
-class Transaction(models.Model):
-    TRANSACTION_TYPE_CHOICES = (
-        ("deposit", "Deposit"),
-        ("withdraw", "Withdraw"),
-    )
-
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="transactions")
-    franchise = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="franchise_transactions")
-    franchise_account = models.ForeignKey(BankAccount, on_delete=models.SET_NULL, null=True, blank=True)
-    transaction_type = models.CharField(max_length=20, choices=TRANSACTION_TYPE_CHOICES)
-    amount = models.DecimalField(max_digits=14, decimal_places=2)
-    order_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    transaction_id = models.CharField(max_length=255, null=True, blank=True)  # Razorpay txn id or UTR
-    utr_number = models.CharField(max_length=255, null=True, blank=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="processing")
-    created_at = models.DateTimeField(auto_now_add=True)
-    completed_at = models.DateTimeField(null=True, blank=True)
-    
+        return f"Profile of {self.user.username}"    
     
 class PasswordResetOTP(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -223,4 +51,92 @@ class PasswordResetOTP(models.Model):
     def __str__(self):
         return f"OTP for {self.user.username} - {'Valid' if self.is_valid() else 'Expired'}"
 
+class FranchiseBank(models.Model):
+    franchise = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        limit_choices_to={'role': 'franchise'},
+        related_name='bank_accounts'
+    )
+    bank_name = models.CharField(max_length=100)
+    account_name = models.CharField(max_length=100)
+    account_number = models.CharField(max_length=50)
+    ifsc = models.CharField(max_length=20)
+    upi_id = models.CharField(max_length=100, blank=True, null=True)
+    qr_code = models.ImageField(upload_to='franchise_qr_codes/', blank=True, null=True)
+    min_limit = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    max_limit = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    direct_payment_link = models.URLField(blank=True, null=True)  # Razorpay link
+    is_active = models.BooleanField(default=True)
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.franchise.username} - {self.bank_name}"
+
+
+
+class PayInRequest(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('assigned', 'Assigned'),
+        ('completed', 'Completed'),
+        ('failed', 'Failed'),
+    ]
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, limit_choices_to={'role': 'user'})
+    customer_id = models.CharField(max_length=100)
+    utr_number = models.CharField(max_length=100, blank=True, null=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    assigned_franchise = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, related_name='payin_assigned')
+    razorpay_link = models.URLField(blank=True, null=True)
+    upi_id = models.CharField(max_length=100, blank=True, null=True)
+    qr_code = models.ImageField(upload_to='payin_qrs/', blank=True, null=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"PayIn Request - {self.customer_id} - {self.user.username}"
+
+    def assign_random_franchise(self):
+        from .models import FranchiseBank  # avoid circular import
+
+        # filter only franchises whose limits allow this amount
+        eligible_banks = FranchiseBank.objects.filter(
+            min_limit__lte=self.amount,
+            max_limit__gte=self.amount
+        )
+
+        if eligible_banks.exists():
+            selected_bank = random.choice(eligible_banks)
+            self.assigned_franchise = selected_bank.franchise
+            self.razorpay_link = selected_bank.direct_payment_link
+            self.upi_id = selected_bank.upi_id
+            self.qr_code = selected_bank.qr_code
+            self.status = 'assigned'
+            self.save()
+
+
+class PayOutRequest(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('assigned', 'Assigned'),
+        ('completed', 'Completed'),
+        ('failed', 'Failed'),
+    ]
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, limit_choices_to={'role': 'user'})
+    customer_id = models.CharField(max_length=100)
+    bank_name = models.CharField(max_length=100)
+    account_number = models.CharField(max_length=50)
+    ifsc = models.CharField(max_length=20)
+    upi_id = models.CharField(max_length=100, blank=True, null=True)
+    qr_code = models.ImageField(upload_to='payout_qrs/', blank=True, null=True)
+    account_holder_name = models.CharField(max_length=100)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    assigned_franchise = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, related_name='payout_assigned')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+    def __str__(self):
+        return f"PayOut Request - {self.customer_id} - {self.user.username}"

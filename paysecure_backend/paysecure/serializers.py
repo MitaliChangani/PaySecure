@@ -38,82 +38,6 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ["id", "username", "email", "role"]
-
-class BankAccountSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = BankAccount
-        fields = [
-            "id", "bank_name", "account_number", "ifsc_code",
-            "upi_id", "qr_code", "limit", "is_active", "created_at"
-        ]
-        read_only_fields = ["id", "created_at"]
-
-class WalletSerializer(serializers.ModelSerializer):
-    owner = UserSerializer(read_only=True)
-    bank_account = BankAccountSerializer(read_only=True)
-
-    class Meta:
-        model = Wallet
-        fields = "__all__"
-
-class DepositRequestSerializer(serializers.ModelSerializer):
-    franchise_account = BankAccountSerializer(read_only=True)
-
-    class Meta:
-        model = DepositRequest
-        fields = [
-            "id", "amount", "status", "franchise_account",
-            "user_utr", "user_amount", "franchise_utr", "franchise_amount",
-            "created_at"
-        ]
-        read_only_fields = [
-            "id", "status", "franchise_account", "created_at",
-            "franchise_utr", "franchise_amount"
-        ]
-
-    def create(self, validated_data):
-        """Auto-attach logged-in user"""
-        request = self.context.get("request")
-        if request and hasattr(request, "user"):
-            validated_data["user"] = request.user
-        return super().create(validated_data)
-    
-
-class WithdrawalRequestSerializer(serializers.ModelSerializer):
-    assigned_account = BankAccountSerializer(read_only=True)
-
-    class Meta:
-        model = WithdrawalRequest
-        fields = [
-            "id", "amount", "status", "assigned_franchise", "assigned_account",
-            "accepted_by_franchise", "user_utr", "franchise_utr",
-            "bank_account", "ifsc_code", "upi_id", "qr_code",
-            "created_at", "completed_at"
-        ]
-        read_only_fields = [
-            "id", "status", "assigned_franchise", "assigned_account",
-            "accepted_by_franchise", "created_at", "completed_at", "franchise_utr"
-        ]
-
-    def create(self, validated_data):
-        """Auto-attach logged-in user"""
-        request = self.context.get("request")
-        if request and hasattr(request, "user"):
-            validated_data["user"] = request.user
-        return super().create(validated_data)
-    
-    
-
-class TransactionSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-    franchise = UserSerializer(read_only=True)
-    franchise_account = BankAccountSerializer(read_only=True)
-
-    class Meta:
-        model = Transaction
-        fields = "__all__"
-        
-
 class ForgotPasswordSerializer(serializers.Serializer):
     username = serializers.CharField()
 
@@ -122,4 +46,36 @@ class ResetPasswordSerializer(serializers.Serializer):
     otp = serializers.CharField()
     new_password = serializers.CharField()
 
+
+class FranchiseBankSerializer(serializers.ModelSerializer):
+    franchise_name = serializers.CharField(source='franchise.username', read_only=True)
+
+    class Meta:
+        model = FranchiseBank
+        fields = '__all__'
+        read_only_fields = ('franchise', 'created_at', 'updated_at')
+
+
+# -------------------- PAYIN SERIALIZER --------------------
+
+class PayInRequestSerializer(serializers.ModelSerializer):
+    user_name = serializers.CharField(source='user.username', read_only=True)
+    assigned_franchise_name = serializers.CharField(source='assigned_franchise.username', read_only=True)
+
+    class Meta:
+        model = PayInRequest
+        fields = '__all__'
+        read_only_fields = ('assigned_franchise', 'razorpay_link', 'upi_id', 'qr_code', 'status')
+
+
+# -------------------- PAYOUT SERIALIZER --------------------
+
+class PayOutRequestSerializer(serializers.ModelSerializer):
+    user_name = serializers.CharField(source='user.username', read_only=True)
+    assigned_franchise_name = serializers.CharField(source='assigned_franchise.username', read_only=True)
+
+    class Meta:
+        model = PayOutRequest
+        fields = '__all__'
+        read_only_fields = ('assigned_franchise', 'status')
 
