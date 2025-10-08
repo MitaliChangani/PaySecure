@@ -32,10 +32,16 @@ const data = [
 export default function UserDs() {
   const [activeTab, setActiveTab] = useState("history");
   const [historyTab, setHistoryTab] = useState("pending");
-  const [showModal, setShowModal] = useState(false);
-  const [selectedData, setSelectedData] = useState(null);
 
-  // ✅ moved payment data & handlers here
+  // ✅ Combined and Cleaned Modal States
+  const [showModal, setShowModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [selectedData, setSelectedData] = useState(null);
+  const [selectedTx, setSelectedTx] = useState(null);
+  const [utrInput, setUtrInput] = useState("");
+  const [amountInput, setamountInput] = useState("");
+
+  // ✅ Sample Data
   const paymentData = [
     {
       date: "2025-10-08",
@@ -60,18 +66,6 @@ export default function UserDs() {
       time: "11:45",
     },
   ];
-
-  const handleView = (item) => {
-    setSelectedData(item);
-    setShowModal(true);
-  };
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(
-      selectedData?.paymentLink || "https://example.com/payment-link"
-    );
-    alert("Payment link copied!");
-  };
 
   const withdrawRequests = [
     {
@@ -101,24 +95,35 @@ export default function UserDs() {
       status: "Pending",
     },
   ];
+
+  // ✅ Functions
+  const handleView = (item) => {
+    setSelectedData(item);
+    setShowModal(true);
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(
+      selectedData?.paymentLink || "https://example.com/payment-link"
+    );
+    alert("Payment link copied!");
+  };
+
+  // ✅ Manual Status Update Submit
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (selectedTx) {
-      setTransactions((prev) =>
-        prev.map((tx) =>
-          tx.id === selectedTx.id
-            ? { ...tx, utrNumber: utrInput, amountInput: amountInput, statusResult: "Successful" }
-            : tx
-        )
-      );
-      setShowModal(false);
-      setUtrInput("");
-    }
+    alert("Manual Status Updated Successfully!");
+    setShowModal(false);
+    setUtrInput("");
+    setamountInput("");
   };
-  // const [showModal, setShowModal] = useState(false);
-  const [selectedTx, setSelectedTx] = useState(null);
-  const [utrInput, setUtrInput] = useState("");
-  const [amountInput, setamountInput] = useState("");
+
+  // ✅ Add Record Submit
+  const handleAddSubmit = (e) => {
+    e.preventDefault();
+    alert("New Pay-Out Record Added!");
+    setShowAddModal(false);
+  };
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -154,32 +159,211 @@ export default function UserDs() {
               </>
             )}
 
-            {activeTab === "withdraw" && (
-              <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8 ">
-                <h1 className="text-2xl font-bold text-center mb-6">Pay-out</h1>
-                <form className="space-y-4 max-w-md mx-auto">
-                  <input className="input-field" type="number" placeholder="Enter amount to Pay-out" />
-                  <input className="input-field" type="text" placeholder="Bank Account Holder Name" />
-                  <input className="input-field" type="text" placeholder="Bank Name" />
-                  <input className="input-field" type="text" placeholder="Account Number" />
-                  <input className="input-field" type="text" placeholder="IFSC Code" />
-                  <input className="input-field" type="text" placeholder="UPI ID" />
+           {activeTab === "withdraw" && (
+  <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8">
+    <h1 className="text-2xl font-bold text-center mb-6">Pay-Out</h1>
 
-                  <div>
-                    <label className="block text-gray-700 mb-2">Upload QR Code</label>
-                    <label className="cursor-pointer bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 inline-block">
-                      Choose QR Code
-                      <input type="file" accept="image/*" className="hidden" />
-                    </label>
-                    <span className="ml-3 text-gray-600" id="file-name">No file chosen</span>
-                  </div>
+    {/* Buttons Row + Filter */}
+    <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
+      <button className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-medium">
+        All
+      </button>
+      <button className="bg-blue-100 hover:bg-blue-200 text-blue-800 px-4 py-2 rounded-lg font-medium">
+        Initiate
+      </button>
+      <button className="bg-yellow-100 hover:bg-yellow-200 text-yellow-800 px-4 py-2 rounded-lg font-medium">
+        Pending
+      </button>
+      <button className="bg-green-100 hover:bg-green-200 text-green-800 px-4 py-2 rounded-lg font-medium">
+        Successed
+      </button>
+      <button className="bg-red-100 hover:bg-red-200 text-red-800 px-4 py-2 rounded-lg font-medium">
+        Failed
+      </button>
 
-                  <button className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 w-full">
-                    Pay-out Request
-                  </button>
-                </form>
+      {/* Filter Section */}
+      <div className="flex flex-wrap items-center gap-2 ml-4">
+        <span className="font-medium text-gray-700">Filter By:</span>
+        <input
+          type="date"
+          className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+        <input
+          type="date"
+          className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+        <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
+          Apply
+        </button>
+
+        {/* ✅ NEW Add Button */}
+        <button
+          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
+          onClick={() => setShowAddModal(true)}
+        >
+          + Add
+        </button>
+      </div>
+    </div>
+
+    {/* Table Section */}
+    <div className="overflow-x-auto mt-6">
+      <table className="min-w-full border border-gray-300 text-sm">
+        <thead className="bg-gray-100 text-gray-700">
+          <tr>
+            <th className="border px-4 py-2 text-left">Date</th>
+            <th className="border px-4 py-2 text-left">Request ID</th>
+            <th className="border px-4 py-2 text-left">UTR No.</th>
+            <th className="border px-4 py-2 text-left">Amount</th>
+            <th className="border px-4 py-2 text-left">Transaction by Username</th>
+            <th className="border px-4 py-2 text-left">Customer ID</th>
+            <th className="border px-4 py-2 text-left">Status</th>
+            <th className="border px-4 py-2 text-left">Action</th>
+            <th className="border px-4 py-2 text-left">#</th>
+          </tr>
+        </thead>
+        <tbody>
+          {paymentData.map((item, index) => (
+            <tr key={index} className="hover:bg-gray-50">
+              <td className="border px-4 py-2">{item.date}</td>
+              <td className="border px-4 py-2">{item.requestId}</td>
+              <td className="border px-4 py-2">{item.utrNo}</td>
+              <td className="border px-4 py-2">{item.amount}</td>
+              <td className="border px-4 py-2">{item.username}</td>
+              <td className="border px-4 py-2">{item.customerId}</td>
+              <td
+                className={`border px-4 py-2 font-medium ${
+                  item.status === "Successed"
+                    ? "text-green-600"
+                    : item.status === "Pending"
+                    ? "text-yellow-600"
+                    : "text-gray-600"
+                }`}
+              >
+                {item.status}
+              </td>
+              <td className="border px-4 py-2">
+                <button
+                  onClick={() => handleView(item)}
+                  className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded-lg"
+                >
+                  View
+                </button>
+              </td>
+
+              {/* Manual UTR Update */}
+              <td
+                className="border px-4 py-2 text-center cursor-pointer text-blue-600 hover:text-blue-800"
+                title="Click to update UTR manually"
+                onClick={() => {
+                  setSelectedTx(item);
+                  setShowModal(true);
+                }}
+              >
+                ↺
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Manual Update Modal */}
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-6">
+            <h2 className="text-2xl font-semibold text-gray-800 border-b pb-3 mb-4">
+              Manual Status Update
+            </h2>
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div>
+                <label className="block text-gray-700 text-sm font-medium mb-1">
+                  UTR Number
+                </label>
+                <input
+                  type="text"
+                  value={utrInput}
+                  onChange={(e) => setUtrInput(e.target.value)}
+                  placeholder="Enter UTR Number"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                  required
+                />
               </div>
-            )}
+              <div>
+                <label className="block text-gray-700 text-sm font-medium mb-1">
+                  Amount
+                </label>
+                <input
+                  type="text"
+                  value={amountInput}
+                  onChange={(e) => setamountInput(e.target.value)}
+                  placeholder="Enter Amount"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                  required
+                />
+              </div>
+
+              <div className="flex justify-end gap-3 pt-3">
+                <button
+                  type="button"
+                  className="px-5 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
+                  onClick={() => setShowModal(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition"
+                >
+                  Submit
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  </div>
+)}
+
+{showAddModal && (
+  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-6">
+      <h2 className="text-2xl font-semibold text-gray-800 border-b pb-3 mb-4">
+        Add New Pay-Out Record
+      </h2>
+
+      <form onSubmit={handleAddSubmit} className="grid grid-cols-1 gap-4">
+        <input type="text" placeholder="Bank Name" className="border rounded-lg px-3 py-2" required />
+        <input type="text" placeholder="Customer ID" className="border rounded-lg px-3 py-2" required />
+        <input type="text" placeholder="Account" className="border rounded-lg px-3 py-2" required />
+        <input type="text" placeholder="UPI" className="border rounded-lg px-3 py-2" required />
+        <input type="text" placeholder="Account No." className="border rounded-lg px-3 py-2" required />
+        <input type="text" placeholder="Account Name" className="border rounded-lg px-3 py-2" required />
+        <input type="text" placeholder="IFSC" className="border rounded-lg px-3 py-2" required />
+        <input type="number" placeholder="Amount" className="border rounded-lg px-3 py-2" required />
+
+        <div className="flex justify-end gap-3 mt-4">
+          <button
+            type="button"
+            onClick={() => setShowAddModal(false)}
+            className="px-5 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="px-5 py-2 rounded-lg bg-green-600 text-white font-medium hover:bg-green-700 transition"
+          >
+            Submit
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
+
+
             {activeTab === "payment" && (
               <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8">
                 <h1 className="text-2xl font-bold text-center mb-6">Pay-in</h1>
@@ -262,16 +446,7 @@ export default function UserDs() {
                               View
                             </button>
                           </td>
-                          {/* <td
-                        className="border px-4 py-2 text-center cursor-pointer"
-                        title="Click to add UTR number"
-                        onClick={() => {
-                          setSelectedTx(req);
-                          setShowModal(true);
-                        }}
-                      >
-                        ↺
-                      </td> */}
+                         
                       <td
   className="border px-4 py-2 text-center cursor-pointer text-blue-600 hover:text-blue-800"
   title="Click to update UTR manually"
