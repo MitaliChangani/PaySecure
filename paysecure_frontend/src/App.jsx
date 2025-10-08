@@ -11,9 +11,11 @@ import Home from './Components/Home'
 import Header from "./Components/Header";
 import FranchiseDs from "./Components/FranchiseDs";
 import AdminDs from "./Components/AdminDs";
-import UserDs from "./Components/UserDs"
+// import UserDs from "./Components/UserDs"
+import UserDs from "./Components/UserDs.jsx";
 
-axios.defaults.withCredentials = true; 
+
+axios.defaults.withCredentials = true;
 
 axios.interceptors.request.use((config) => {
   const csrfToken = document.cookie.split("; ").find(row => row.startsWith("csrftoken="))?.split("=")[1];
@@ -51,9 +53,6 @@ function App() {
           <Route path="/Login" element={<Login />} />
 
           <Route path="/Forgot" element={<ForgotResetPassword />} />
-
-          
-
           <Route path="/Otp" element={<Otp />} />
           <Route path="/FranchiseDs" element={<FranchiseDs />} />
           <Route path="/UserDs" element={<UserDs />} />

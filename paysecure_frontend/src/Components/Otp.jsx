@@ -6,9 +6,8 @@ function Otp() {
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [otpSent, setOtpSent] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(0); // countdown timer
+  const [timeLeft, setTimeLeft] = useState(0);
 
-  // Countdown effect
   useEffect(() => {
     if (timeLeft <= 0) return;
 
@@ -28,7 +27,7 @@ function Otp() {
       );
       alert("OTP sent successfully!");
       setOtpSent(true);
-      setTimeLeft(300); // 5 minutes countdown
+      setTimeLeft(300);
     } catch (error) {
       alert(error.response?.data?.detail || "Something went wrong");
     }
@@ -48,7 +47,6 @@ function Otp() {
         { withCredentials: true }
       );
       alert(response.data.detail);
-      // Optional: Redirect to login page
     } catch (error) {
       alert(error.response?.data?.detail || "Something went wrong");
     }
@@ -72,7 +70,7 @@ function Otp() {
               onChange={(e) => setUsername(e.target.value)}
               required
               className="w-full p-3 border border-gray-300 rounded-lg"
-              disabled={otpSent} // lock username after sending OTP
+              disabled={otpSent}
             />
           </div>
 

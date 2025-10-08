@@ -11,15 +11,10 @@ export default function Header() {
   const [userRole, setUserRole] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
-
-  // Check login state on mount
   useEffect(() => {
-    // Initial check
     const role = localStorage.getItem("user_role");
     setIsLoggedIn(!!role);
     setUserRole(role ? role.toLowerCase() : null);
-
-    // Listen for changes in localStorage (e.g., login/logout in other tabs)
     const handleStorageChange = () => {
       const role = localStorage.getItem("user_role");
       setIsLoggedIn(!!role);
@@ -46,9 +41,6 @@ export default function Header() {
       alert("Logout failed. Please try again.");
     }
   };
-
-
-  // Get dashboard URL based on role
   const getDashboardPath = () => {
     if (userRole === "franchise") return "/FranchiseDs";
     if (userRole === "user") return "/UserDs";
@@ -81,14 +73,10 @@ export default function Header() {
             </>
           )}
         </div>
-
-        {/* Mobile Menu Button */}
         <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden p-2 rounded-lg hover:bg-gray-800">
           {menuOpen ? <X size={24} className="text-white" /> : <Menu size={24} className="text-white" />}
         </button>
       </div>
-
-      {/* Mobile Menu */}
       {menuOpen && (
         <div className="md:hidden bg-black shadow-md border-t border-gray-800">
           <nav className="flex flex-col items-center space-y-4 py-4 font-medium text-white">
