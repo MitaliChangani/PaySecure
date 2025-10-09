@@ -79,9 +79,9 @@ class FranchiseBank(models.Model):
 
 class PayInRequest(models.Model):
     STATUS_CHOICES = [
+        ('initiated', 'Initiated'),
         ('pending', 'Pending'),
-        ('assigned', 'Assigned'),
-        ('completed', 'Completed'),
+        ('successful', 'Successful'),
         ('failed', 'Failed'),
     ]
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, limit_choices_to={'role': 'user'})
@@ -94,6 +94,8 @@ class PayInRequest(models.Model):
     qr_code = models.ImageField(upload_to='payin_qrs/', blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    status_history = models.JSONField(default=list, blank=True)
 
     def __str__(self):
         return f"PayIn Request - {self.customer_id} - {self.user.username}"
@@ -137,6 +139,7 @@ class PayOutRequest(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
 
+    status_history = models.JSONField(default=list, blank=True)
 
     def __str__(self):
         return f"PayOut Request - {self.customer_id} - {self.user.username}"

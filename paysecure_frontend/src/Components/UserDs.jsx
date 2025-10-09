@@ -233,10 +233,10 @@ export default function UserDs() {
                           <td className="border px-4 py-2">{item.customerId}</td>
                           <td
                             className={`border px-4 py-2 font-medium ${item.status === "Successed"
-                                ? "text-green-600"
-                                : item.status === "Pending"
-                                  ? "text-yellow-600"
-                                  : "text-gray-600"
+                              ? "text-green-600"
+                              : item.status === "Pending"
+                                ? "text-yellow-600"
+                                : "text-gray-600"
                               }`}
                           >
                             {item.status}
