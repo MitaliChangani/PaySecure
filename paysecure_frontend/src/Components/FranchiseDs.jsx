@@ -18,7 +18,6 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-// ✅ Chart Data
 const data = [
   { name: "Mon", amount: 0 },
   { name: "Tue", amount: 0 },
@@ -39,10 +38,9 @@ export default function FranchiseDs() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedTx, setSelectedTx] = useState(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false); // ✅ Added
   const [utrInput, setUtrInput] = useState("");
   const [amountInput, setAmountInput] = useState("");
-
-  // ✅ Limit Settings
   const [available, setAvailable] = useState(false);
   const [showLimitModal, setShowLimitModal] = useState(false);
   const [startAmount, setStartAmount] = useState("");
@@ -54,7 +52,6 @@ export default function FranchiseDs() {
     setShowLimitModal(false);
   };
 
-  // ✅ Transactions
   const [transactions, setTransactions] = useState([
     {
       id: 1,
@@ -118,7 +115,6 @@ export default function FranchiseDs() {
     },
   ]);
 
-  // ✅ Withdraw Requests
   const withdrawRequests = [
     {
       id: 1,
@@ -150,7 +146,6 @@ export default function FranchiseDs() {
     },
   ];
 
-  // ✅ Accounts
   const [accounts, setAccounts] = useState([
     {
       id: 1,
@@ -205,11 +200,10 @@ export default function FranchiseDs() {
         prev.map((tx) =>
           tx.id === selectedTx.id
             ? {
-                ...tx,
-                utrNumber: utrInput,
-                amountInput: amountInput,
-                statusResult: "Successful",
-              }
+              utrNumber: utrInput,
+              amountInput: amountInput,
+              statusResult: "Successful",
+            }
             : tx
         )
       );
@@ -241,6 +235,12 @@ export default function FranchiseDs() {
       )
     );
     alert("❌ Payment marked as failed!");
+  };
+
+  // ✅ View Button Logic
+  const handleView = (item) => {
+    setSelectedTx(item);
+    setShowDetailsModal(true);
   };
 
 
@@ -641,7 +641,7 @@ export default function FranchiseDs() {
                 </div>
               </div>
 
-              {/* Table Section */}
+              {/* ✅ Responsive Table Section */}
               <div className="overflow-x-auto mt-6">
                 <table className="min-w-full border border-gray-300 text-sm">
                   <thead className="bg-gray-100 text-gray-700">
@@ -667,21 +667,29 @@ export default function FranchiseDs() {
                         <td className="border px-4 py-2">{item.customerId}</td>
                         <td
                           className={`border px-4 py-2 font-medium ${item.status === "Successed"
-                              ? "text-green-600"
-                              : item.status === "Pending"
-                                ? "text-yellow-600"
-                                : item.status === "Failed"
-                                  ? "text-red-600"
-                                  : "text-gray-600"
+                            ? "text-green-600"
+                            : item.status === "Pending"
+                              ? "text-yellow-600"
+                              : item.status === "Failed"
+                                ? "text-red-600"
+                                : "text-gray-600"
                             }`}
                         >
                           {item.status}
                         </td>
 
-                        {/* View Button */}
+                        {/* ✅ Updated View Button */}
                         <td className="border px-4 py-2">
                           <button
-                            onClick={() => handleView(item)}
+                            onClick={() => {
+                              const transactionWithDefaults = {
+                                ...item,
+                                transactionId: item.transactionId || `TXN-${Date.now()}`,
+                                time: item.time || new Date().toLocaleTimeString(),
+                              };
+                              setSelectedTx(transactionWithDefaults);
+                              setShowDetailsModal(true);
+                            }}
                             className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded-lg"
                           >
                             View
@@ -700,22 +708,33 @@ export default function FranchiseDs() {
                           ↺
                         </td>
 
-                        {/* Approve / Reject */}
+                        {/* ✅ Approve / Reject Buttons */}
                         <td className="border px-4 py-2 text-center">
-                          <button
-                            onClick={() => handleApprove(item.requestId)}
-                            className="bg-green-500 hover:bg-green-600 text-white p-1 rounded-full"
-                            title="Instant Verify"
-                          >
-                            ✓
-                          </button>
-                          <button
-                            onClick={() => handleReject(item.requestId)}
-                            className="bg-red-500 hover:bg-red-600 text-white p-1 rounded-full ml-2"
-                            title="Instant Failed"
-                          >
-                            ✗
-                          </button>
+                          {!item.hideButtons && (
+                            <>
+                              <button
+                                onClick={() => {
+                                  const updated = [...paymentData];
+                                  updated[index].hideButtons = true;
+                                  setPaymentData(updated);
+                                }}
+                                className="bg-green-500 hover:bg-green-600 text-white p-1 rounded-full"
+                                title="Instant Verify"
+                              >
+                                ✓
+                              </button>
+                              <button
+                                onClick={() => {
+                                  const updated = paymentData.filter((_, i) => i !== index);
+                                  setPaymentData(updated);
+                                }}
+                                className="bg-red-500 hover:bg-red-600 text-white p-1 rounded-full ml-2"
+                                title="Instant Failed"
+                              >
+                                ✗
+                              </button>
+                            </>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -750,7 +769,7 @@ export default function FranchiseDs() {
                           <input
                             type="text"
                             value={amountInput}
-                            onChange={(e) => setamountInput(e.target.value)}
+                            onChange={(e) => setAmountInput(e.target.value)}
                             placeholder="Enter Amount"
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                             required
@@ -777,8 +796,60 @@ export default function FranchiseDs() {
                   </div>
                 )}
               </div>
+
+              {/* ✅ Transaction Details Modal */}
+              {selectedTx && showDetailsModal && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                  <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md">
+                    <h2 className="text-xl font-bold text-center mb-4">Transaction Details</h2>
+
+                    <div className="space-y-2 text-sm sm:text-base">
+                      <p><strong>UTR No.:</strong> {selectedTx.utrNo}</p>
+                      <p><strong>Amount:</strong> ₹{selectedTx.amount}</p>
+                      <p><strong>Customer ID:</strong> {selectedTx.customerId}</p>
+                      <p><strong>Request ID:</strong> {selectedTx.requestId}</p>
+                      <p><strong>Transaction ID:</strong> {selectedTx.transactionId}</p>
+                      <p><strong>Date:</strong> {selectedTx.date}</p>
+                      <p><strong>Time:</strong> {selectedTx.time}</p>
+
+                      <p>
+                        <strong>Payment Link:</strong>{" "}
+                        <a
+                          href={`https://payment.example.com/${selectedTx.transactionId}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline"
+                        >
+                          {`https://payment.example.com/${selectedTx.transactionId}`}
+                        </a>
+                      </p>
+                    </div>
+
+                    <div className="flex justify-between items-center mt-6">
+                      <button
+                        onClick={() =>
+                          navigator.clipboard.writeText(
+                            `https://payment.example.com/${selectedTx.transactionId}`
+                          )
+                        }
+                        className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium"
+                      >
+                        Copy Link
+                      </button>
+
+                      <button
+                        onClick={() => setShowDetailsModal(false)}
+                        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium"
+                      >
+                        Close
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
+
 
           {activeTab === "withdraw" && (
             <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8">
@@ -786,136 +857,43 @@ export default function FranchiseDs() {
 
               {/* Buttons Row + Filter */}
               <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
-                <button className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-medium">
-                  All
-                </button>
-                <button className="bg-blue-100 hover:bg-blue-200 text-blue-800 px-4 py-2 rounded-lg font-medium">
-                  Initiate
-                </button>
-                <button className="bg-yellow-100 hover:bg-yellow-200 text-yellow-800 px-4 py-2 rounded-lg font-medium">
-                  Pending
-                </button>
-                <button className="bg-green-100 hover:bg-green-200 text-green-800 px-4 py-2 rounded-lg font-medium">
-                  Successed
-                </button>
-                <button className="bg-red-100 hover:bg-red-200 text-red-800 px-4 py-2 rounded-lg font-medium">
-                  Failed
-                </button>
+                <button className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-medium">All</button>
+                <button className="bg-blue-100 hover:bg-blue-200 text-blue-800 px-4 py-2 rounded-lg font-medium">Initiate</button>
+                <button className="bg-yellow-100 hover:bg-yellow-200 text-yellow-800 px-4 py-2 rounded-lg font-medium">Pending</button>
+                <button className="bg-green-100 hover:bg-green-200 text-green-800 px-4 py-2 rounded-lg font-medium">Successed</button>
+                <button className="bg-red-100 hover:bg-red-200 text-red-800 px-4 py-2 rounded-lg font-medium">Failed</button>
 
                 {/* Filter Section */}
                 <div className="flex flex-wrap items-center gap-2 ml-4">
                   <span className="font-medium text-gray-700">Filter By:</span>
-                  <input
-                    type="date"
-                    className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  />
-                  <input
-                    type="date"
-                    className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  />
-                  <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
-                    Apply
-                  </button>
+                  <input type="date" className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                  <input type="date" className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                  <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">Apply</button>
 
-                  {/* ✅ Available Toggle Button */}
+                  {/* Available Toggle */}
                   <div className="flex items-center gap-2">
                     <span className="font-medium text-gray-700">Available:</span>
                     <button
                       onClick={() => {
                         const newState = !available;
                         setAvailable(newState);
-                        if (newState) {
-                          setShowLimitModal(true);
-                        }
+                        if (newState) setShowLimitModal(true);
                       }}
-                      className={`relative w-14 h-7 flex items-center rounded-full transition-colors duration-300 ${available ? "bg-green-500" : "bg-gray-400"
-                        }`}
+                      className={`relative w-14 h-7 flex items-center rounded-full transition-colors duration-300 ${available ? "bg-green-500" : "bg-gray-400"}`}
                     >
                       <span
-                        className={`absolute left-1 top-1 w-5 h-5 bg-white rounded-full shadow transform transition-transform duration-300 ${available ? "translate-x-7" : ""
-                          }`}
+                        className={`absolute left-1 top-1 w-5 h-5 bg-white rounded-full shadow transform transition-transform duration-300 ${available ? "translate-x-7" : ""}`}
                       />
                     </button>
                   </div>
                 </div>
               </div>
-                 <br></br>
 
-          <table className="min-w-full border border-gray-300 text-sm">
-            <thead className="bg-gray-100 text-gray-700">
-              <tr>
-                <th className="border px-4 py-2 text-left">Date</th>
-                <th className="border px-4 py-2 text-left">Request ID</th>
-                <th className="border px-4 py-2 text-left">UTR No.</th>
-                <th className="border px-4 py-2 text-left">Amount</th>
-                <th className="border px-4 py-2 text-left">Customer ID</th>
-                <th className="border px-4 py-2 text-left">Status</th>
-                <th className="border px-4 py-2 text-left">Action</th>
-                <th className="border px-4 py-2 text-left">#</th>
-                <th className="border px-4 py-2 text-left">#</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paymentData.map((item, index) => (
-                <tr key={index} className="hover:bg-gray-50">
-                  <td className="border px-4 py-2">{item.date}</td>
-                  <td className="border px-4 py-2">{item.requestId}</td>
-                  <td className="border px-4 py-2">{item.utrNo}</td>
-                  <td className="border px-4 py-2">{item.amount}</td>
-                  <td className="border px-4 py-2">{item.customerId}</td>
-                  <td
-                    className={`border px-4 py-2 font-medium ${item.status === "Successed"
-                      ? "text-green-600"
-                      : item.status === "Pending"
-                        ? "text-yellow-600"
-                        : "text-gray-600"
-                      }`}
-                  >
-                    {item.status}
-                  </td>
-                  <td className="border px-4 py-2">
-                    <button
-                      onClick={() => handleView(item)}
-                      className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded-lg"
-                    >
-                      View
-                    </button>
-                  </td>
+              <br />
 
-                  <td
-                    className="border px-4 py-2 text-center cursor-pointer text-blue-600 hover:text-blue-800"
-                    title="Click to update UTR manually"
-                    onClick={() => {
-                      setSelectedTx(item);   // ✅ set current row data
-                      setShowModal(true);    // ✅ open modal
-                    }}
-                  >
-                    ↺
-                  </td>
-                  <td className="border px-4 py-2 text-center">
-                    <button
-                      onClick={() => handleApprove(item)}
-                      className="bg-green-500 hover:bg-green-600 text-white p-1 rounded-full"
-                      title="Instant Verify"
-                    >
-                      ✓
-                    </button>
-                    <button
-                      onClick={() => handleReject(item)}
-                      className="bg-red-500 hover:bg-red-600 text-white p-1 rounded-full ml-2"
-                      title="Instant Failed"
-                    >
-                      ✗
-                    </button>
-                  </td>
-
-                </tr>
-              ))}
-            </tbody>
-          </table>
-              {/* ✅ Payout Request Section (after saving limits) */}
-              {startAmount && limitAmount && (
-                <div className="mt-8">
+              {/* ✅ Payout Request Section (only visible when Available = true) */}
+              {available && startAmount && limitAmount && (
+                <div className="mt-8 transition-opacity duration-300">
                   <div className="flex justify-between items-center mb-3">
                     <h2 className="text-xl font-semibold text-gray-800">
                       Payout Request <span className="text-gray-500">({startAmount} - {limitAmount})</span>
@@ -954,21 +932,128 @@ export default function FranchiseDs() {
                         </tr>
                       </tbody>
                     </table>
-    
                   </div>
-                  
                 </div>
-                
               )}
 
-              {/* ✅ Set Amount Limits Modal */}
+              <br />
+
+              {/* ✅ Main Paying Request Table (always visible) */}
+              <div className="w-full overflow-x-auto rounded-lg shadow-sm scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+                <table className="min-w-[700px] sm:min-w-full border border-gray-300 text-xs sm:text-sm">
+                  <thead className="bg-gray-100 text-gray-700">
+                    <tr>
+                      <th className="border px-3 sm:px-4 py-2 text-left">Date</th>
+                      <th className="border px-3 sm:px-4 py-2 text-left">Request ID</th>
+                      <th className="border px-3 sm:px-4 py-2 text-left">UTR No.</th>
+                      <th className="border px-3 sm:px-4 py-2 text-left">Amount</th>
+                      <th className="border px-3 sm:px-4 py-2 text-left">Customer ID</th>
+                      <th className="border px-3 sm:px-4 py-2 text-left">Status</th>
+                      <th className="border px-3 sm:px-4 py-2 text-left">Action</th>
+                      <th className="border px-3 sm:px-4 py-2 text-left">#</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paymentData.map((item, index) => (
+                      <tr key={index} className="hover:bg-gray-50">
+                        <td className="border px-3 sm:px-4 py-2">{item.date}</td>
+                        <td className="border px-3 sm:px-4 py-2">{item.requestId}</td>
+                        <td className="border px-3 sm:px-4 py-2">{item.utrNo}</td>
+                        <td className="border px-3 sm:px-4 py-2">{item.amount}</td>
+                        <td className="border px-3 sm:px-4 py-2">{item.customerId}</td>
+                        <td
+                          className={`border px-3 sm:px-4 py-2 font-medium ${item.status === "Successed"
+                            ? "text-green-600"
+                            : item.status === "Pending"
+                              ? "text-yellow-600"
+                              : "text-gray-600"
+                            }`}
+                        >
+                          {item.status}
+                        </td>
+                        <td className="border px-3 sm:px-4 py-2">
+                          <button
+                            onClick={() => handleView(item)}
+                            className="bg-blue-500 hover:bg-blue-600 text-white text-xs sm:text-sm px-3 py-1 rounded-lg"
+                          >
+                            View
+                          </button>
+                        </td>
+                        <td
+                          className="border px-3 sm:px-4 py-2 text-center cursor-pointer text-blue-600 hover:text-blue-800"
+                          title="Click to update UTR manually"
+                          onClick={() => {
+                            setSelectedTx(item);
+                            setShowModal(true);
+                          }}
+                        >
+                          ↺
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {showModal && (
+                  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-6">
+                      <h2 className="text-2xl font-semibold text-gray-800 border-b pb-3 mb-4">
+                        Manual Status Update
+                      </h2>
+                      <form onSubmit={handleSubmit} className="space-y-5">
+                        <div>
+                          <label className="block text-gray-700 text-sm font-medium mb-1">
+                            UTR Number
+                          </label>
+                          <input
+                            type="text"
+                            value={utrInput}
+                            onChange={(e) => setUtrInput(e.target.value)}
+                            placeholder="Enter UTR Number"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-gray-700 text-sm font-medium mb-1">
+                            Amount
+                          </label>
+                          <input
+                            type="text"
+                            value={amountInput}
+                            onChange={(e) => setAmountInput(e.target.value)}
+                            placeholder="Enter Amount"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                            required
+                          />
+                        </div>
+
+                        <div className="flex justify-end gap-3 pt-3">
+                          <button
+                            type="button"
+                            className="px-5 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
+                            onClick={() => setShowModal(false)}
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="submit"
+                            className="px-5 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition"
+                          >
+                            Submit
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                )}
+              {/* Set Amount Limits Modal */}
               {showLimitModal && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                   <div className="bg-white w-full max-w-md rounded-2xl shadow-xl p-6">
                     <h2 className="text-2xl font-semibold text-gray-800 border-b pb-3 mb-4 text-center">
                       Set Amount Limits
                     </h2>
-
                     <form
                       onSubmit={(e) => {
                         e.preventDefault();
@@ -985,26 +1070,20 @@ export default function FranchiseDs() {
                           type="number"
                           value={startAmount}
                           onChange={(e) => setStartAmount(e.target.value)}
-                          placeholder="Enter Start Amount"
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                           required
                         />
                       </div>
-
                       <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-1">
-                          Enter Limit Amount
-                        </label>
                         <input
                           type="number"
                           value={limitAmount}
-                          onChange={(e) => setLimitAmount(e.target.value)}
                           placeholder="Enter Limit Amount"
+                          onChange={(e) => setLimitAmount(e.target.value)}
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                           required
                         />
                       </div>
-
                       <div className="flex justify-end gap-3 pt-3">
                         <button
                           type="button"
@@ -1024,12 +1103,60 @@ export default function FranchiseDs() {
                   </div>
                 </div>
               )}
+
+              {/* 🧩 Transaction Details Modal */}
+              {selectedTx && showDetailsModal && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                  <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md">
+                    <h2 className="text-xl font-bold text-center mb-4">Transaction Details</h2>
+
+                    <div className="space-y-2 text-sm sm:text-base">
+                      <p><strong>UTR No.:</strong> {selectedTx.utrNo}</p>
+                      <p><strong>Amount:</strong> ₹{selectedTx.amount}</p>
+                      <p><strong>Customer ID:</strong> {selectedTx.customerId}</p>
+                      <p><strong>Request ID:</strong> {selectedTx.requestId}</p>
+                      <p><strong>Transaction ID:</strong> {selectedTx.txnId || "TXN99887766"}</p>
+                      <p><strong>Date:</strong> {selectedTx.date}</p>
+                      <p><strong>Time:</strong> {selectedTx.time || "14:30"}</p>
+                      <p>
+                        <strong>Payment Link:</strong>{" "}
+                        <a
+                          href={selectedTx.paymentLink || "https://example.com/payment-link"}
+                          className="text-blue-600 hover:underline"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {selectedTx.paymentLink || "https://example.com/payment-link"}
+                        </a>
+                      </p>
+                    </div>
+
+                    <div className="flex justify-between items-center mt-6">
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(
+                            selectedTx.paymentLink || "https://example.com/payment-link"
+                          );
+                        }}
+                        className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium"
+                      >
+                        Copy Link
+                      </button>
+
+                      <button
+                        onClick={() => setShowDetailsModal(false)}
+                        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium"
+                      >
+                        Close
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
 
-
-         
           {/* History Section */}
           {activeTab === "history" && (
             <div className="bg-white rounded-lg shadow p-6 overflow-x-auto">

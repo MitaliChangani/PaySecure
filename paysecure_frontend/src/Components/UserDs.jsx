@@ -40,7 +40,16 @@ export default function UserDs() {
   const [selectedTx, setSelectedTx] = useState(null);
   const [utrInput, setUtrInput] = useState("");
   const [amountInput, setamountInput] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [customerId, setCustomerId] = useState("");
 
+  const handleSubmitt = (e) => {
+    e.preventDefault();
+    console.log("Customer ID:", customerId);
+    // 👉 You can call your API here if needed
+    setIsModalOpen(false);
+    setCustomerId("");
+  };
   // ✅ Sample Data
   const paymentData = [
     {
@@ -399,6 +408,43 @@ export default function UserDs() {
                     <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
                       Apply
                     </button>
+                   <button
+        onClick={() => setIsModalOpen(true)}   // 👈 opens modal
+        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
+      >
+        + Request bank details
+      </button>
+       {isModalOpen && (
+  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+    <div className="bg-white rounded-lg shadow-lg w-[90%] max-w-lg p-6 relative">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-semibold">Generate Bank Details</h2>
+        <button
+          onClick={() => setIsModalOpen(false)}
+          className="text-gray-500 hover:text-gray-700 text-xl"
+        >
+          ✕
+        </button>
+      </div>
+
+      {/* ✅ Show the full GenerateBankForm component here */}
+      <GenerateBankForm />
+
+      {/* Footer (Close button at bottom) */}
+      <div className="flex justify-end pt-2">
+        <button
+          type="button"
+          onClick={() => setIsModalOpen(false)}
+          className="border px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 flex items-center gap-2"
+        >
+          Close ↩
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
                   </div>
                 </div>
 
@@ -904,6 +950,120 @@ function PayOutDashboard() {
           </ResponsiveContainer>
         </div>
       </div>
+    </div>
+  );
+}
+function GenerateBankForm() {
+  const [customerId, setCustomerId] = useState("");
+  const [generated, setGenerated] = useState(false);
+  const [bankData, setBankData] = useState({
+    payinId: "",
+    upiId: "",
+    paymentLink: "",
+    qrImage: "",
+  });
+
+  const handleGenerate = (e) => {
+    e.preventDefault();
+    setBankData({
+      payinId: "68e7590c6c691411d3602433",
+      upiId: "UPO@UPI.COM",
+      paymentLink: "https://razorpay.com/",
+      qrImage:
+        "https://api.qrserver.com/v1/create-qr-code/?data=https://razorpay.com/&size=150x150",
+    });
+    setGenerated(true);
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(bankData.paymentLink);
+    alert("Payment link copied!");
+  };
+
+  return (
+    <div>
+      {!generated ? (
+        <form onSubmit={handleGenerate} className="flex gap-3">
+          <input
+            type="text"
+            value={customerId}
+            onChange={(e) => setCustomerId(e.target.value)}
+            placeholder="Customer Id"
+            className="flex-1 border rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+          <button
+            type="submit"
+            className="bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+          >
+            Generate Link 🔗
+          </button>
+        </form>
+      ) : (
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-sm font-medium text-gray-600">
+                Customer Id
+              </label>
+              <input
+                type="text"
+                readOnly
+                value={customerId}
+                className="w-full border rounded-lg px-3 py-2 bg-gray-100"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-600">
+                PayIn Id
+              </label>
+              <input
+                type="text"
+                readOnly
+                value={bankData.payinId}
+                className="w-full border rounded-lg px-3 py-2 bg-gray-100"
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-center">
+            <img
+              src={bankData.qrImage}
+              alt="QR Code"
+              className="w-36 h-36 object-contain"
+            />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-gray-600">UPI ID</label>
+            <input
+              type="text"
+              readOnly
+              value={bankData.upiId}
+              className="w-full border rounded-lg px-3 py-2 bg-gray-100"
+            />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-gray-600">
+              Payment Link
+            </label>
+            <input
+              type="text"
+              readOnly
+              value={bankData.paymentLink}
+              className="w-full border rounded-lg px-3 py-2 bg-gray-100"
+            />
+          </div>
+
+          <button
+            onClick={handleCopy}
+            className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg w-full"
+          >
+            Copy
+          </button>
+        </div>
+      )}
     </div>
   );
 }
