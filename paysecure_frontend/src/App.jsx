@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useEffect } from "react";
-
 import Register from "./Components/Register";
 import Login from './Components/Login'
 import ForgotResetPassword from './Components/ForgotResetPassword';
@@ -11,7 +10,6 @@ import Home from './Components/Home'
 import Header from "./Components/Header";
 import FranchiseDs from "./Components/FranchiseDs";
 import AdminDs from "./Components/AdminDs";
-// import UserDs from "./Components/UserDs"
 import UserDs from "./Components/UserDs.jsx";
 
 
@@ -42,8 +40,6 @@ function App() {
   useEffect(() => {
     axios.get("http://localhost:8000/api/csrf/", { withCredentials: true });
   }, []);
-
-
   return (
     <Router>
       <Layout>
@@ -62,5 +58,4 @@ function App() {
     </Router>
   );
 }
-
 export default App;

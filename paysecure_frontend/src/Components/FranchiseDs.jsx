@@ -17,8 +17,6 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-
-// ✅ Chart Data
 const data = [
   { name: "Mon", amount: 0 },
   { name: "Tue", amount: 0 },
@@ -42,7 +40,6 @@ export default function FranchiseDs() {
   const [utrInput, setUtrInput] = useState("");
   const [amountInput, setAmountInput] = useState("");
 
-  // ✅ Limit Settings
   const [available, setAvailable] = useState(false);
   const [showLimitModal, setShowLimitModal] = useState(false);
   const [startAmount, setStartAmount] = useState("");
@@ -54,7 +51,6 @@ export default function FranchiseDs() {
     setShowLimitModal(false);
   };
 
-  // ✅ Transactions
   const [transactions, setTransactions] = useState([
     {
       id: 1,
@@ -205,14 +201,12 @@ export default function FranchiseDs() {
         prev.map((tx) =>
           tx.id === selectedTx.id
             ? {
-                ...tx,
-                utrNumber: utrInput,
-                amountInput: amountInput,
-                statusResult: "Successful",
-              }
+              utrNumber: utrInput,
+              amountInput: amountInput,
+              statusResult: "Successful",
+            }
             : tx
-        )
-      );
+        ));
       setShowModal(false);
       setUtrInput("");
     }
@@ -667,12 +661,18 @@ export default function FranchiseDs() {
                         <td className="border px-4 py-2">{item.customerId}</td>
                         <td
                           className={`border px-4 py-2 font-medium ${item.status === "Successed"
-                              ? "text-green-600"
-                              : item.status === "Pending"
-                                ? "text-yellow-600"
-                                : item.status === "Failed"
-                                  ? "text-red-600"
-                                  : "text-gray-600"
+                            ? "text-green-600"
+                            : item.status === "Pending"
+                              ? "text-yellow-600"
+                              : item.status === "Failed"
+                                ? "text-red-600"
+                                : "text-gray-600"
+                                  ? "text-green-600"
+                                  : item.status === "Pending"
+                                    ? "text-yellow-600"
+                                    : item.status === "Failed"
+                                      ? "text-red-600"
+                                      : "text-gray-600"
                             }`}
                         >
                           {item.status}
@@ -839,80 +839,80 @@ export default function FranchiseDs() {
                   </div>
                 </div>
               </div>
-                 <br></br>
+              <br></br>
 
-          <table className="min-w-full border border-gray-300 text-sm">
-            <thead className="bg-gray-100 text-gray-700">
-              <tr>
-                <th className="border px-4 py-2 text-left">Date</th>
-                <th className="border px-4 py-2 text-left">Request ID</th>
-                <th className="border px-4 py-2 text-left">UTR No.</th>
-                <th className="border px-4 py-2 text-left">Amount</th>
-                <th className="border px-4 py-2 text-left">Customer ID</th>
-                <th className="border px-4 py-2 text-left">Status</th>
-                <th className="border px-4 py-2 text-left">Action</th>
-                <th className="border px-4 py-2 text-left">#</th>
-                <th className="border px-4 py-2 text-left">#</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paymentData.map((item, index) => (
-                <tr key={index} className="hover:bg-gray-50">
-                  <td className="border px-4 py-2">{item.date}</td>
-                  <td className="border px-4 py-2">{item.requestId}</td>
-                  <td className="border px-4 py-2">{item.utrNo}</td>
-                  <td className="border px-4 py-2">{item.amount}</td>
-                  <td className="border px-4 py-2">{item.customerId}</td>
-                  <td
-                    className={`border px-4 py-2 font-medium ${item.status === "Successed"
-                      ? "text-green-600"
-                      : item.status === "Pending"
-                        ? "text-yellow-600"
-                        : "text-gray-600"
-                      }`}
-                  >
-                    {item.status}
-                  </td>
-                  <td className="border px-4 py-2">
-                    <button
-                      onClick={() => handleView(item)}
-                      className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded-lg"
-                    >
-                      View
-                    </button>
-                  </td>
+              <table className="min-w-full border border-gray-300 text-sm">
+                <thead className="bg-gray-100 text-gray-700">
+                  <tr>
+                    <th className="border px-4 py-2 text-left">Date</th>
+                    <th className="border px-4 py-2 text-left">Request ID</th>
+                    <th className="border px-4 py-2 text-left">UTR No.</th>
+                    <th className="border px-4 py-2 text-left">Amount</th>
+                    <th className="border px-4 py-2 text-left">Customer ID</th>
+                    <th className="border px-4 py-2 text-left">Status</th>
+                    <th className="border px-4 py-2 text-left">Action</th>
+                    <th className="border px-4 py-2 text-left">#</th>
+                    <th className="border px-4 py-2 text-left">#</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paymentData.map((item, index) => (
+                    <tr key={index} className="hover:bg-gray-50">
+                      <td className="border px-4 py-2">{item.date}</td>
+                      <td className="border px-4 py-2">{item.requestId}</td>
+                      <td className="border px-4 py-2">{item.utrNo}</td>
+                      <td className="border px-4 py-2">{item.amount}</td>
+                      <td className="border px-4 py-2">{item.customerId}</td>
+                      <td
+                        className={`border px-4 py-2 font-medium ${item.status === "Successed"
+                          ? "text-green-600"
+                          : item.status === "Pending"
+                            ? "text-yellow-600"
+                            : "text-gray-600"
+                          }`}
+                      >
+                        {item.status}
+                      </td>
+                      <td className="border px-4 py-2">
+                        <button
+                          onClick={() => handleView(item)}
+                          className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded-lg"
+                        >
+                          View
+                        </button>
+                      </td>
 
-                  <td
-                    className="border px-4 py-2 text-center cursor-pointer text-blue-600 hover:text-blue-800"
-                    title="Click to update UTR manually"
-                    onClick={() => {
-                      setSelectedTx(item);   // ✅ set current row data
-                      setShowModal(true);    // ✅ open modal
-                    }}
-                  >
-                    ↺
-                  </td>
-                  <td className="border px-4 py-2 text-center">
-                    <button
-                      onClick={() => handleApprove(item)}
-                      className="bg-green-500 hover:bg-green-600 text-white p-1 rounded-full"
-                      title="Instant Verify"
-                    >
-                      ✓
-                    </button>
-                    <button
-                      onClick={() => handleReject(item)}
-                      className="bg-red-500 hover:bg-red-600 text-white p-1 rounded-full ml-2"
-                      title="Instant Failed"
-                    >
-                      ✗
-                    </button>
-                  </td>
+                      <td
+                        className="border px-4 py-2 text-center cursor-pointer text-blue-600 hover:text-blue-800"
+                        title="Click to update UTR manually"
+                        onClick={() => {
+                          setSelectedTx(item);   // ✅ set current row data
+                          setShowModal(true);    // ✅ open modal
+                        }}
+                      >
+                        ↺
+                      </td>
+                      <td className="border px-4 py-2 text-center">
+                        <button
+                          onClick={() => handleApprove(item)}
+                          className="bg-green-500 hover:bg-green-600 text-white p-1 rounded-full"
+                          title="Instant Verify"
+                        >
+                          ✓
+                        </button>
+                        <button
+                          onClick={() => handleReject(item)}
+                          className="bg-red-500 hover:bg-red-600 text-white p-1 rounded-full ml-2"
+                          title="Instant Failed"
+                        >
+                          ✗
+                        </button>
+                      </td>
 
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
               {/* ✅ Payout Request Section (after saving limits) */}
               {startAmount && limitAmount && (
                 <div className="mt-8">
@@ -954,12 +954,105 @@ export default function FranchiseDs() {
                         </tr>
                       </tbody>
                     </table>
-    
+
                   </div>
-                  
+
                 </div>
-                
+
               )}
+              <br />
+
+              {/* ✅ Table Section */}
+              {/* ✅ Responsive Scrollable Table Container */}
+              <div className="w-full overflow-x-auto rounded-lg shadow-sm scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+                <table className="min-w-[700px] sm:min-w-full border border-gray-300 text-xs sm:text-sm">
+                  <thead className="bg-gray-100 text-gray-700">
+                    <tr>
+                      <th className="border px-3 sm:px-4 py-2 text-left">Date</th>
+                      <th className="border px-3 sm:px-4 py-2 text-left">Request ID</th>
+                      <th className="border px-3 sm:px-4 py-2 text-left">UTR No.</th>
+                      <th className="border px-3 sm:px-4 py-2 text-left">Amount</th>
+                      <th className="border px-3 sm:px-4 py-2 text-left">Customer ID</th>
+                      <th className="border px-3 sm:px-4 py-2 text-left">Status</th>
+                      <th className="border px-3 sm:px-4 py-2 text-left">Action</th>
+                      <th className="border px-3 sm:px-4 py-2 text-left">#</th>
+                      <th className="border px-3 sm:px-4 py-2 text-left">#</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {paymentData.map((item, index) => (
+                      <tr key={index} className="hover:bg-gray-50">
+                        <td className="border px-3 sm:px-4 py-2">{item.date}</td>
+                        <td className="border px-3 sm:px-4 py-2">{item.requestId}</td>
+                        <td className="border px-3 sm:px-4 py-2">{item.utrNo}</td>
+                        <td className="border px-3 sm:px-4 py-2">{item.amount}</td>
+                        <td className="border px-3 sm:px-4 py-2">{item.customerId}</td>
+
+                        <td
+                          className={`border px-3 sm:px-4 py-2 font-medium ${item.status === "Successed"
+                              ? "text-green-600"
+                              : item.status === "Pending"
+                                ? "text-yellow-600"
+                                : "text-gray-600"
+                            }`}
+                        >
+                          {item.status}
+                        </td>
+
+                        <td className="border px-3 sm:px-4 py-2">
+                          <button
+                            onClick={() => handleView(item)}
+                            className="bg-blue-500 hover:bg-blue-600 text-white text-xs sm:text-sm px-3 py-1 rounded-lg"
+                          >
+                            View
+                          </button>
+                        </td>
+
+                        <td
+                          className="border px-3 sm:px-4 py-2 text-center cursor-pointer text-blue-600 hover:text-blue-800"
+                          title="Click to update UTR manually"
+                          onClick={() => {
+                            setSelectedTx(item);
+                            setShowModal(true);
+                          }}
+                        >
+                          ↺
+                        </td>
+
+                        {/* ✅ Action Buttons */}
+                        <td className="border px-3 sm:px-4 py-2 text-center">
+                          {!item.hideButtons && (
+                            <>
+                              <button
+                                onClick={() => {
+                                  const updatedData = [...paymentData];
+                                  updatedData[index].hideButtons = true;
+                                  setPaymentData(updatedData);
+                                }}
+                                className="bg-green-500 hover:bg-green-600 text-white p-1 sm:p-1.5 rounded-full"
+                                title="Instant Verify"
+                              >
+                                ✓
+                              </button>
+                              <button
+                                onClick={() => {
+                                  const updatedData = paymentData.filter((_, i) => i !== index);
+                                  setPaymentData(updatedData);
+                                }}
+                                className="bg-red-500 hover:bg-red-600 text-white p-1 sm:p-1.5 rounded-full ml-2"
+                                title="Instant Failed"
+                              >
+                                ✗
+                              </button>
+                            </>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
 
               {/* ✅ Set Amount Limits Modal */}
               {showLimitModal && (
@@ -973,6 +1066,9 @@ export default function FranchiseDs() {
                       onSubmit={(e) => {
                         e.preventDefault();
                         alert(`Amount limits set:\nStart: ₹${startAmount}\nLimit: ₹${limitAmount}`);
+                        alert(
+                          `Amount limits set:\nStart: ₹${startAmount}\nLimit: ₹${limitAmount}`
+                        );
                         setShowLimitModal(false);
                       }}
                       className="space-y-5"
@@ -992,13 +1088,9 @@ export default function FranchiseDs() {
                       </div>
 
                       <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-1">
-                          Enter Limit Amount
-                        </label>
                         <input
                           type="number"
                           value={limitAmount}
-                          onChange={(e) => setLimitAmount(e.target.value)}
                           placeholder="Enter Limit Amount"
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                           required
@@ -1026,10 +1118,6 @@ export default function FranchiseDs() {
               )}
             </div>
           )}
-
-
-
-         
           {/* History Section */}
           {activeTab === "history" && (
             <div className="bg-white rounded-lg shadow p-6 overflow-x-auto">
