@@ -172,9 +172,10 @@ class FranchiseBankViewSet(viewsets.ModelViewSet):
 
 # -------------------- PAYIN MANAGEMENT --------------------
 
+# -------------------- PAYIN MANAGEMENT --------------------
 class PayInRequestViewSet(viewsets.ModelViewSet):
     serializer_class = PayInRequestSerializer
-    permission_classes = [IsAuthenticated]  # all roles can view, filter in get_queryset
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
@@ -190,13 +191,36 @@ class PayInRequestViewSet(viewsets.ModelViewSet):
         if self.request.user.role != 'user':
             from rest_framework.exceptions import PermissionDenied
             raise PermissionDenied("Only normal users can create PayIn requests.")
-        
+
         payin = serializer.save(user=self.request.user)
         payin.assign_random_franchise()
 
+    def update(self, request, *args, **kwargs):
+        """Custom update to allow users/franchise to add UTR and amount manually"""
+        instance = self.get_object()
+        user = request.user
+
+        if user.role == 'user':
+            # Users can only update UTR and amount
+            allowed_fields = ['utr_number', 'amount']
+        elif user.role == 'franchise':
+            # Franchise can update UTR, amount, and status
+            allowed_fields = ['utr_number', 'amount', 'status']
+        else:
+            # Admin can update all fields
+            allowed_fields = None  # no restriction
+
+        data = request.data.copy()
+        if allowed_fields is not None:
+            data = {key: value for key, value in data.items() if key in allowed_fields}
+
+        serializer = self.get_serializer(instance, data=data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
 
 # -------------------- PAYOUT MANAGEMENT --------------------
-
 class PayOutRequestViewSet(viewsets.ModelViewSet):
     serializer_class = PayOutRequestSerializer
     permission_classes = [IsAuthenticated]
@@ -215,5 +239,29 @@ class PayOutRequestViewSet(viewsets.ModelViewSet):
         if self.request.user.role != 'user':
             from rest_framework.exceptions import PermissionDenied
             raise PermissionDenied("Only normal users can create PayOut requests.")
-        
+
         serializer.save(user=self.request.user)
+
+    def update(self, request, *args, **kwargs):
+        """Custom update to allow users/franchise to add UTR and amount manually"""
+        instance = self.get_object()
+        user = request.user
+
+        if user.role == 'user':
+            # Users can only update UTR and amount
+            allowed_fields = ['utr_number', 'amount']
+        elif user.role == 'franchise':
+            # Franchise can update UTR, amount, and status
+            allowed_fields = ['utr_number', 'amount', 'status']
+        else:
+            # Admin can update all fields
+            allowed_fields = None  # no restriction
+
+        data = request.data.copy()
+        if allowed_fields is not None:
+            data = {key: value for key, value in data.items() if key in allowed_fields}
+
+        serializer = self.get_serializer(instance, data=data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
