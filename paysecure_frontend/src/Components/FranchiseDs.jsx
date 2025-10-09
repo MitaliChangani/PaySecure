@@ -633,7 +633,7 @@ export default function FranchiseDs() {
                 </div>
               </div>
 
-              {/* Table Section */}
+              {/* ✅ Responsive Table Section */}
               <div className="overflow-x-auto mt-6">
                 <table className="min-w-full border border-gray-300 text-sm">
                   <thead className="bg-gray-100 text-gray-700">
@@ -692,22 +692,35 @@ export default function FranchiseDs() {
                           ↺
                         </td>
 
-                        {/* Approve / Reject */}
+                        {/* ✅ Approve / Reject Buttons with Logic */}
                         <td className="border px-4 py-2 text-center">
-                          <button
-                            onClick={() => handleApprove(item.requestId)}
-                            className="bg-green-500 hover:bg-green-600 text-white p-1 rounded-full"
-                            title="Instant Verify"
-                          >
-                            ✓
-                          </button>
-                          <button
-                            onClick={() => handleReject(item.requestId)}
-                            className="bg-red-500 hover:bg-red-600 text-white p-1 rounded-full ml-2"
-                            title="Instant Failed"
-                          >
-                            ✗
-                          </button>
+                          {!item.hideButtons && (
+                            <>
+                              <button
+                                onClick={() => {
+                                  // ✅ When clicking ✓ → hide both buttons for this row
+                                  const updated = [...paymentData];
+                                  updated[index].hideButtons = true;
+                                  setPaymentData(updated);
+                                }}
+                                className="bg-green-500 hover:bg-green-600 text-white p-1 rounded-full"
+                                title="Instant Verify"
+                              >
+                                ✓
+                              </button>
+                              <button
+                                onClick={() => {
+                                  // ❌ When clicking ✗ → remove the entire row
+                                  const updated = paymentData.filter((_, i) => i !== index);
+                                  setPaymentData(updated);
+                                }}
+                                className="bg-red-500 hover:bg-red-600 text-white p-1 rounded-full ml-2"
+                                title="Instant Failed"
+                              >
+                                ✗
+                              </button>
+                            </>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -772,228 +785,203 @@ export default function FranchiseDs() {
             </div>
           )}
 
+
           {activeTab === "withdraw" && (
-            <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8">
-              <h1 className="text-2xl font-bold text-center mb-6">Pay-Out</h1>
+  <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8">
+    <h1 className="text-2xl font-bold text-center mb-6">Pay-Out</h1>
 
-              {/* Buttons Row + Filter */}
-              <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
-                <button className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-medium">
-                  All
-                </button>
-                <button className="bg-blue-100 hover:bg-blue-200 text-blue-800 px-4 py-2 rounded-lg font-medium">
-                  Initiate
-                </button>
-                <button className="bg-yellow-100 hover:bg-yellow-200 text-yellow-800 px-4 py-2 rounded-lg font-medium">
-                  Pending
-                </button>
-                <button className="bg-green-100 hover:bg-green-200 text-green-800 px-4 py-2 rounded-lg font-medium">
-                  Successed
-                </button>
-                <button className="bg-red-100 hover:bg-red-200 text-red-800 px-4 py-2 rounded-lg font-medium">
-                  Failed
-                </button>
+    {/* Buttons Row + Filter */}
+    <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
+      <button className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-medium">
+        All
+      </button>
+      <button className="bg-blue-100 hover:bg-blue-200 text-blue-800 px-4 py-2 rounded-lg font-medium">
+        Initiate
+      </button>
+      <button className="bg-yellow-100 hover:bg-yellow-200 text-yellow-800 px-4 py-2 rounded-lg font-medium">
+        Pending
+      </button>
+      <button className="bg-green-100 hover:bg-green-200 text-green-800 px-4 py-2 rounded-lg font-medium">
+        Successed
+      </button>
+      <button className="bg-red-100 hover:bg-red-200 text-red-800 px-4 py-2 rounded-lg font-medium">
+        Failed
+      </button>
 
-                {/* Filter Section */}
-                <div className="flex flex-wrap items-center gap-2 ml-4">
-                  <span className="font-medium text-gray-700">Filter By:</span>
-                  <input
-                    type="date"
-                    className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  />
-                  <input
-                    type="date"
-                    className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  />
-                  <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
-                    Apply
-                  </button>
+      {/* Filter Section */}
+      <div className="flex flex-wrap items-center gap-2 ml-4">
+        <span className="font-medium text-gray-700">Filter By:</span>
+        <input
+          type="date"
+          className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+        <input
+          type="date"
+          className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+        <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
+          Apply
+        </button>
 
-                  {/* ✅ Available Toggle Button */}
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium text-gray-700">Available:</span>
-                    <button
-                      onClick={() => {
-                        const newState = !available;
-                        setAvailable(newState);
-                        if (newState) {
-                          setShowLimitModal(true);
-                        }
-                      }}
-                      className={`relative w-14 h-7 flex items-center rounded-full transition-colors duration-300 ${available ? "bg-green-500" : "bg-gray-400"
-                        }`}
-                    >
-                      <span
-                        className={`absolute left-1 top-1 w-5 h-5 bg-white rounded-full shadow transform transition-transform duration-300 ${available ? "translate-x-7" : ""
-                          }`}
-                      />
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <br />
-
-              {/* ✅ Table Section */}
-              {/* ✅ Responsive Scrollable Table Container */}
-<div className="w-full overflow-x-auto rounded-lg shadow-sm scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
-  <table className="min-w-[700px] sm:min-w-full border border-gray-300 text-xs sm:text-sm">
-    <thead className="bg-gray-100 text-gray-700">
-      <tr>
-        <th className="border px-3 sm:px-4 py-2 text-left">Date</th>
-        <th className="border px-3 sm:px-4 py-2 text-left">Request ID</th>
-        <th className="border px-3 sm:px-4 py-2 text-left">UTR No.</th>
-        <th className="border px-3 sm:px-4 py-2 text-left">Amount</th>
-        <th className="border px-3 sm:px-4 py-2 text-left">Customer ID</th>
-        <th className="border px-3 sm:px-4 py-2 text-left">Status</th>
-        <th className="border px-3 sm:px-4 py-2 text-left">Action</th>
-        <th className="border px-3 sm:px-4 py-2 text-left">#</th>
-        <th className="border px-3 sm:px-4 py-2 text-left">#</th>
-      </tr>
-    </thead>
-
-    <tbody>
-      {paymentData.map((item, index) => (
-        <tr key={index} className="hover:bg-gray-50">
-          <td className="border px-3 sm:px-4 py-2">{item.date}</td>
-          <td className="border px-3 sm:px-4 py-2">{item.requestId}</td>
-          <td className="border px-3 sm:px-4 py-2">{item.utrNo}</td>
-          <td className="border px-3 sm:px-4 py-2">{item.amount}</td>
-          <td className="border px-3 sm:px-4 py-2">{item.customerId}</td>
-
-          <td
-            className={`border px-3 sm:px-4 py-2 font-medium ${
-              item.status === "Successed"
-                ? "text-green-600"
-                : item.status === "Pending"
-                ? "text-yellow-600"
-                : "text-gray-600"
+        {/* ✅ Available Toggle Button */}
+        <div className="flex items-center gap-2">
+          <span className="font-medium text-gray-700">Available:</span>
+          <button
+            onClick={() => {
+              const newState = !available;
+              setAvailable(newState);
+              if (newState) setShowLimitModal(true);
+            }}
+            className={`relative w-14 h-7 flex items-center rounded-full transition-colors duration-300 ${
+              available ? "bg-green-500" : "bg-gray-400"
             }`}
           >
-            {item.status}
-          </td>
+            <span
+              className={`absolute left-1 top-1 w-5 h-5 bg-white rounded-full shadow transform transition-transform duration-300 ${
+                available ? "translate-x-7" : ""
+              }`}
+            />
+          </button>
+        </div>
+      </div>
 
-          <td className="border px-3 sm:px-4 py-2">
-            <button
-              onClick={() => handleView(item)}
-              className="bg-blue-500 hover:bg-blue-600 text-white text-xs sm:text-sm px-3 py-1 rounded-lg"
-            >
-              View
-            </button>
-          </td>
+    </div>
 
-          <td
-            className="border px-3 sm:px-4 py-2 text-center cursor-pointer text-blue-600 hover:text-blue-800"
-            title="Click to update UTR manually"
-            onClick={() => {
-              setSelectedTx(item);
-              setShowModal(true);
+    <br />
+
+    {/* ✅ Table Section */}
+    <div className="w-full overflow-x-auto rounded-lg shadow-sm scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+      <table className="min-w-[700px] sm:min-w-full border border-gray-300 text-xs sm:text-sm">
+        <thead className="bg-gray-100 text-gray-700">
+          <tr>
+            <th className="border px-3 sm:px-4 py-2 text-left">Date</th>
+            <th className="border px-3 sm:px-4 py-2 text-left">Request ID</th>
+            <th className="border px-3 sm:px-4 py-2 text-left">UTR No.</th>
+            <th className="border px-3 sm:px-4 py-2 text-left">Amount</th>
+            <th className="border px-3 sm:px-4 py-2 text-left">Customer ID</th>
+            <th className="border px-3 sm:px-4 py-2 text-left">Status</th>
+            <th className="border px-3 sm:px-4 py-2 text-left">Action</th>
+            <th className="border px-3 sm:px-4 py-2 text-left">#</th>
+            {/* ✅ Removed last column */}
+          </tr>
+        </thead>
+
+        <tbody>
+          {paymentData.map((item, index) => (
+            <tr key={index} className="hover:bg-gray-50">
+              <td className="border px-3 sm:px-4 py-2">{item.date}</td>
+              <td className="border px-3 sm:px-4 py-2">{item.requestId}</td>
+              <td className="border px-3 sm:px-4 py-2">{item.utrNo}</td>
+              <td className="border px-3 sm:px-4 py-2">{item.amount}</td>
+              <td className="border px-3 sm:px-4 py-2">{item.customerId}</td>
+
+              <td
+                className={`border px-3 sm:px-4 py-2 font-medium ${
+                  item.status === "Successed"
+                    ? "text-green-600"
+                    : item.status === "Pending"
+                    ? "text-yellow-600"
+                    : "text-gray-600"
+                }`}
+              >
+                {item.status}
+              </td>
+
+              <td className="border px-3 sm:px-4 py-2">
+                <button
+                  onClick={() => handleView(item)}
+                  className="bg-blue-500 hover:bg-blue-600 text-white text-xs sm:text-sm px-3 py-1 rounded-lg"
+                >
+                  View
+                </button>
+              </td>
+
+              <td
+                className="border px-3 sm:px-4 py-2 text-center cursor-pointer text-blue-600 hover:text-blue-800"
+                title="Click to update UTR manually"
+                onClick={() => {
+                  setSelectedTx(item);
+                  setShowModal(true);
+                }}
+              >
+                ↺
+              </td>
+
+              {/* ✅ Removed last column with right/wrong buttons */}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    {/* ✅ Set Amount Limits Modal */}
+    {showLimitModal && (
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div className="bg-white w-full max-w-md rounded-2xl shadow-xl p-6">
+          <h2 className="text-2xl font-semibold text-gray-800 border-b pb-3 mb-4 text-center">
+            Set Amount Limits
+          </h2>
+
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              alert(
+                `Amount limits set:\nStart: ₹${startAmount}\nLimit: ₹${limitAmount}`
+              );
+              setShowLimitModal(false);
             }}
+            className="space-y-5"
           >
-            ↺
-          </td>
-
-          {/* ✅ Action Buttons */}
-          <td className="border px-3 sm:px-4 py-2 text-center">
-            {!item.hideButtons && (
-              <>
-                <button
-                  onClick={() => {
-                    const updatedData = [...paymentData];
-                    updatedData[index].hideButtons = true;
-                    setPaymentData(updatedData);
-                  }}
-                  className="bg-green-500 hover:bg-green-600 text-white p-1 sm:p-1.5 rounded-full"
-                  title="Instant Verify"
-                >
-                  ✓
-                </button>
-                <button
-                  onClick={() => {
-                    const updatedData = paymentData.filter((_, i) => i !== index);
-                    setPaymentData(updatedData);
-                  }}
-                  className="bg-red-500 hover:bg-red-600 text-white p-1 sm:p-1.5 rounded-full ml-2"
-                  title="Instant Failed"
-                >
-                  ✗
-                </button>
-              </>
-            )}
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
-
-              {/* ✅ Set Amount Limits Modal */}
-              {showLimitModal && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                  <div className="bg-white w-full max-w-md rounded-2xl shadow-xl p-6">
-                    <h2 className="text-2xl font-semibold text-gray-800 border-b pb-3 mb-4 text-center">
-                      Set Amount Limits
-                    </h2>
-
-                    <form
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        alert(
-                          `Amount limits set:\nStart: ₹${startAmount}\nLimit: ₹${limitAmount}`
-                        );
-                        setShowLimitModal(false);
-                      }}
-                      className="space-y-5"
-                    >
-                      <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-1">
-                          Enter Start Amount
-                        </label>
-                        <input
-                          type="number"
-                          value={startAmount}
-                          onChange={(e) => setStartAmount(e.target.value)}
-                          placeholder="Enter Start Amount"
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                          required
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-1">
-                          Enter Limit Amount
-                        </label>
-                        <input
-                          type="number"
-                          value={limitAmount}
-                          onChange={(e) => setLimitAmount(e.target.value)}
-                          placeholder="Enter Limit Amount"
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                          required
-                        />
-                      </div>
-
-                      <div className="flex justify-end gap-3 pt-3">
-                        <button
-                          type="button"
-                          onClick={() => setShowLimitModal(false)}
-                          className="px-5 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          type="submit"
-                          className="px-5 py-2 rounded-lg bg-green-600 text-white font-medium hover:bg-green-700 transition"
-                        >
-                          Save
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              )}
+            <div>
+              <label className="block text-gray-700 text-sm font-medium mb-1">
+                Enter Start Amount
+              </label>
+              <input
+                type="number"
+                value={startAmount}
+                onChange={(e) => setStartAmount(e.target.value)}
+                placeholder="Enter Start Amount"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                required
+              />
             </div>
-          )}
+
+            <div>
+              <label className="block text-gray-700 text-sm font-medium mb-1">
+                Enter Limit Amount
+              </label>
+              <input
+                type="number"
+                value={limitAmount}
+                onChange={(e) => setLimitAmount(e.target.value)}
+                placeholder="Enter Limit Amount"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                required
+              />
+            </div>
+
+            <div className="flex justify-end gap-3 pt-3">
+              <button
+                type="button"
+                onClick={() => setShowLimitModal(false)}
+                className="px-5 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-5 py-2 rounded-lg bg-green-600 text-white font-medium hover:bg-green-700 transition"
+              >
+                Save
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    )}
+  </div>
+)}
+
 
           {activeTab === "history" && (
             <div className="bg-white rounded-lg shadow p-6 overflow-x-auto">
