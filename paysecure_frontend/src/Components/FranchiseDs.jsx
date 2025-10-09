@@ -35,6 +35,7 @@ export default function FranchiseDs() {
   const [historyTab, setHistoryTab] = useState("complete");
   const [dashboard, setDashboard] = useState("dashboard");
 
+  const [filterStatus, setFilterStatus] = useState("All");
   const [showAddModal, setShowAddModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedTx, setSelectedTx] = useState(null);
@@ -608,21 +609,41 @@ export default function FranchiseDs() {
 
               {/* Buttons Row + Filter */}
               <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
-                <button className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-medium">
+                <button
+                  className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "All" ? "bg-gray-300" : "bg-gray-200 hover:bg-gray-300"}`}
+                  onClick={() => setFilterStatus("All")}
+                >
                   All
                 </button>
-                <button className="bg-blue-100 hover:bg-blue-200 text-blue-800 px-4 py-2 rounded-lg font-medium">
+
+                <button
+                  className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Initiate" ? "bg-blue-200" : "bg-blue-100 hover:bg-blue-200"}`}
+                  onClick={() => setFilterStatus("Initiate")}
+                >
                   Initiate
                 </button>
-                <button className="bg-yellow-100 hover:bg-yellow-200 text-yellow-800 px-4 py-2 rounded-lg font-medium">
+
+                <button
+                  className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Pending" ? "bg-yellow-200" : "bg-yellow-100 hover:bg-yellow-200"}`}
+                  onClick={() => setFilterStatus("Pending")}
+                >
                   Pending
                 </button>
-                <button className="bg-green-100 hover:bg-green-200 text-green-800 px-4 py-2 rounded-lg font-medium">
+
+                <button
+                  className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Successed" ? "bg-green-200" : "bg-green-100 hover:bg-green-200"}`}
+                  onClick={() => setFilterStatus("Successed")}
+                >
                   Successed
                 </button>
-                <button className="bg-red-100 hover:bg-red-200 text-red-800 px-4 py-2 rounded-lg font-medium">
+
+                <button
+                  className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Failed" ? "bg-red-200" : "bg-red-100 hover:bg-red-200"}`}
+                  onClick={() => setFilterStatus("Failed")}
+                >
                   Failed
                 </button>
+
 
                 {/* Filter Section */}
                 <div className="flex flex-wrap items-center gap-2 ml-4">
@@ -650,95 +671,105 @@ export default function FranchiseDs() {
                       <th className="border px-4 py-2 text-left">Request ID</th>
                       <th className="border px-4 py-2 text-left">UTR No.</th>
                       <th className="border px-4 py-2 text-left">Amount</th>
+                      <th className="border px-4 py-2 text-left">Transaction by Username</th>
                       <th className="border px-4 py-2 text-left">Customer ID</th>
                       <th className="border px-4 py-2 text-left">Status</th>
                       <th className="border px-4 py-2 text-left">Action</th>
-                      <th className="border px-4 py-2 text-left">#</th>
-                      <th className="border px-4 py-2 text-left">#</th>
+
+                      {/* Show Quick Action + Approve/Reject only for these filters */}
+                      {["All", "Initiate", "Pending"].includes(filterStatus) && (
+                        <>
+                          <th className="border px-4 py-2 text-left">#</th>
+                          <th className="border px-4 py-2 text-left">#</th>
+                        </>
+                      )}
                     </tr>
                   </thead>
+
                   <tbody>
-                    {paymentData.map((item, index) => (
-                      <tr key={index} className="hover:bg-gray-50">
-                        <td className="border px-4 py-2">{item.date}</td>
-                        <td className="border px-4 py-2">{item.requestId}</td>
-                        <td className="border px-4 py-2">{item.utrNo}</td>
-                        <td className="border px-4 py-2">{item.amount}</td>
-                        <td className="border px-4 py-2">{item.customerId}</td>
-                        <td
-                          className={`border px-4 py-2 font-medium ${item.status === "Successed"
-                            ? "text-green-600"
-                            : item.status === "Pending"
-                              ? "text-yellow-600"
-                              : item.status === "Failed"
-                                ? "text-red-600"
-                                : "text-gray-600"
-                            }`}
-                        >
-                          {item.status}
-                        </td>
-
-                        {/* ✅ Updated View Button */}
-                        <td className="border px-4 py-2">
-                          <button
-                            onClick={() => {
-                              const transactionWithDefaults = {
-                                ...item,
-                                transactionId: item.transactionId || `TXN-${Date.now()}`,
-                                time: item.time || new Date().toLocaleTimeString(),
-                              };
-                              setSelectedTx(transactionWithDefaults);
-                              setShowDetailsModal(true);
-                            }}
-                            className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded-lg"
+                    {paymentData
+                      .filter(item => filterStatus === "All" || item.status === filterStatus)
+                      .map((item, index) => (
+                        <tr key={index} className="hover:bg-gray-50">
+                          <td className="border px-4 py-2">{item.date}</td>
+                          <td className="border px-4 py-2">{item.requestId}</td>
+                          <td className="border px-4 py-2">{item.utrNo}</td>
+                          <td className="border px-4 py-2">{item.amount}</td>
+                          <td className="border px-4 py-2">{item.username}</td>
+                          <td className="border px-4 py-2">{item.customerId}</td>
+                          <td
+                            className={`border px-4 py-2 font-medium ${item.status === "Successed"
+                              ? "text-green-600"
+                              : item.status === "Pending"
+                                ? "text-yellow-600"
+                                : item.status === "Failed"
+                                  ? "text-red-600"
+                                  : "text-gray-600"
+                              }`}
                           >
-                            View
-                          </button>
-                        </td>
+                            {item.status}
+                          </td>
 
-                        {/* Manual Update */}
-                        <td
-                          className="border px-4 py-2 text-center cursor-pointer text-blue-600 hover:text-blue-800"
-                          title="Click to update UTR manually"
-                          onClick={() => {
-                            setSelectedTx(item);
-                            setShowModal(true);
-                          }}
-                        >
-                          ↺
-                        </td>
+                          {/* View Button */}
+                          <td className="border px-4 py-2">
+                            <button
+                              onClick={() => handleView(item)}
+                              className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded-lg"
+                            >
+                              View
+                            </button>
+                          </td>
 
-                        {/* ✅ Approve / Reject Buttons */}
-                        <td className="border px-4 py-2 text-center">
-                          {!item.hideButtons && (
+                          {/* Quick Action + Approve/Reject (only for All, Initiate, Pending) */}
+                          {["All", "Initiate", "Pending"].includes(filterStatus) && (
                             <>
-                              <button
+                              {/* Manual UTR Update */}
+                              <td
+                                className="border px-4 py-2 text-center cursor-pointer text-blue-600 hover:text-blue-800"
+                                title="Click to update UTR manually"
                                 onClick={() => {
-                                  const updated = [...paymentData];
-                                  updated[index].hideButtons = true;
-                                  setPaymentData(updated);
+                                  setSelectedTx(item);
+                                  setShowModal(true);
                                 }}
-                                className="bg-green-500 hover:bg-green-600 text-white p-1 rounded-full"
-                                title="Instant Verify"
                               >
-                                ✓
-                              </button>
-                              <button
-                                onClick={() => {
-                                  const updated = paymentData.filter((_, i) => i !== index);
-                                  setPaymentData(updated);
-                                }}
-                                className="bg-red-500 hover:bg-red-600 text-white p-1 rounded-full ml-2"
-                                title="Instant Failed"
-                              >
-                                ✗
-                              </button>
+                                ↺
+                              </td>
+
+                              {/* Approve / Reject Buttons */}
+                              <td className="border px-4 py-2 text-center">
+                                {!item.hideButtons && (
+                                  <>
+                                    <button
+                                      onClick={() => {
+                                        const updated = [...paymentData];
+                                        updated[index].hideButtons = true;
+                                        setPaymentData(updated);
+                                      }}
+                                      className="bg-green-500 hover:bg-green-600 text-white p-1 rounded-full ml-1"
+                                      title="Instant Verify"
+                                    >
+                                      ✓
+                                    </button>
+                                    <button
+                                      onClick={() => {
+                                        const updated = paymentData.filter((_, i) => i !== index);
+                                        setPaymentData(updated);
+                                      }}
+                                      className="bg-red-500 hover:bg-red-600 text-white p-1 rounded-full ml-1"
+                                      title="Instant Failed"
+                                    >
+                                      ✗
+                                    </button>
+                                  </>
+                                )}
+                              </td>
                             </>
                           )}
-                        </td>
-                      </tr>
-                    ))}
+                        </tr>
+                      ))}
                   </tbody>
+
+
                 </table>
 
                 {/* Manual Update Modal */}
@@ -857,11 +888,41 @@ export default function FranchiseDs() {
 
               {/* Buttons Row + Filter */}
               <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
-                <button className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-medium">All</button>
-                <button className="bg-blue-100 hover:bg-blue-200 text-blue-800 px-4 py-2 rounded-lg font-medium">Initiate</button>
-                <button className="bg-yellow-100 hover:bg-yellow-200 text-yellow-800 px-4 py-2 rounded-lg font-medium">Pending</button>
-                <button className="bg-green-100 hover:bg-green-200 text-green-800 px-4 py-2 rounded-lg font-medium">Successed</button>
-                <button className="bg-red-100 hover:bg-red-200 text-red-800 px-4 py-2 rounded-lg font-medium">Failed</button>
+                <button
+                  className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "All" ? "bg-gray-300" : "bg-gray-200 hover:bg-gray-300"}`}
+                  onClick={() => setFilterStatus("All")}
+                >
+                  All
+                </button>
+
+                <button
+                  className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Initiate" ? "bg-blue-200" : "bg-blue-100 hover:bg-blue-200"}`}
+                  onClick={() => setFilterStatus("Initiate")}
+                >
+                  Initiate
+                </button>
+
+                <button
+                  className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Pending" ? "bg-yellow-200" : "bg-yellow-100 hover:bg-yellow-200"}`}
+                  onClick={() => setFilterStatus("Pending")}
+                >
+                  Pending
+                </button>
+
+                <button
+                  className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Successed" ? "bg-green-200" : "bg-green-100 hover:bg-green-200"}`}
+                  onClick={() => setFilterStatus("Successed")}
+                >
+                  Successed
+                </button>
+
+                <button
+                  className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Failed" ? "bg-red-200" : "bg-red-100 hover:bg-red-200"}`}
+                  onClick={() => setFilterStatus("Failed")}
+                >
+                  Failed
+                </button>
+
 
                 {/* Filter Section */}
                 <div className="flex flex-wrap items-center gap-2 ml-4">
@@ -907,32 +968,153 @@ export default function FranchiseDs() {
                   </div>
 
                   {/* Example Table for Payout Requests */}
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full border border-gray-300 text-sm">
-                      <thead className="bg-gray-100 text-gray-700">
-                        <tr>
-                          <th className="border px-4 py-2 text-left">Request ID</th>
-                          <th className="border px-4 py-2 text-left">User</th>
-                          <th className="border px-4 py-2 text-left">Amount</th>
-                          <th className="border px-4 py-2 text-left">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr className="hover:bg-gray-50">
-                          <td className="border px-4 py-2">REQ1001</td>
-                          <td className="border px-4 py-2">John Doe</td>
-                          <td className="border px-4 py-2">₹500</td>
-                          <td className="border px-4 py-2 text-green-600 font-medium">Success</td>
-                        </tr>
-                        <tr className="hover:bg-gray-50">
-                          <td className="border px-4 py-2">REQ1002</td>
-                          <td className="border px-4 py-2">Jane Smith</td>
-                          <td className="border px-4 py-2">₹150</td>
-                          <td className="border px-4 py-2 text-yellow-600 font-medium">Pending</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
+                <div className="p-6 bg-white rounded-xl shadow-md">
+  <h2 className="text-xl font-semibold text-gray-900 mb-4 text-center sm:text-left">
+    Payout Request
+  </h2>
+
+  <div className="overflow-x-auto rounded-lg shadow border border-gray-300">
+    <table className="min-w-full text-sm text-gray-800 border-collapse">
+      <tbody>
+        {/* Bank Name */}
+        <tr className="bg-gray-100">
+          <th className="border px-4 py-3 text-left font-semibold text-gray-900 w-1/3">
+            Bank Name
+          </th>
+          <td className="border px-4 py-3 flex items-center gap-2">
+            <span className="font-medium text-gray-900">HDFC Bank</span>
+            <button
+              className="text-gray-500 hover:text-black transition"
+              onClick={() => navigator.clipboard.writeText("HDFC Bank")}
+              title="Copy Bank Name"
+            >
+              📋
+            </button>
+          </td>
+        </tr>
+
+        {/* Account Name */}
+        <tr>
+          <th className="border px-4 py-3 text-left font-semibold text-gray-900 bg-gray-100">
+            Account Name
+          </th>
+          <td className="border px-4 py-3 flex items-center gap-2">
+            <span>John Doe</span>
+            <button
+              className="text-gray-500 hover:text-black transition"
+              onClick={() => navigator.clipboard.writeText("John Doe")}
+              title="Copy Account Name"
+            >
+              📋
+            </button>
+          </td>
+        </tr>
+
+        {/* Account Number */}
+        <tr className="bg-gray-100">
+          <th className="border px-4 py-3 text-left font-semibold text-gray-900">
+            Account Number
+          </th>
+          <td className="border px-4 py-3 flex items-center gap-2">
+            <span>3232321</span>
+            <button
+              className="text-gray-500 hover:text-black transition"
+              onClick={() => navigator.clipboard.writeText("3232321")}
+              title="Copy Account Number"
+            >
+              📋
+            </button>
+          </td>
+        </tr>
+
+        {/* IFSC */}
+        <tr>
+          <th className="border px-4 py-3 text-left font-semibold text-gray-900 bg-gray-100">
+            IFSC
+          </th>
+          <td className="border px-4 py-3 flex items-center gap-2">
+            <span>HDFC000123</span>
+            <button
+              className="text-gray-500 hover:text-black transition"
+              onClick={() => navigator.clipboard.writeText("HDFC000123")}
+              title="Copy IFSC"
+            >
+              📋
+            </button>
+          </td>
+        </tr>
+
+        {/* UPI */}
+        <tr className="bg-gray-100">
+          <th className="border px-4 py-3 text-left font-semibold text-gray-900">
+            UPI
+          </th>
+          <td className="border px-4 py-3 flex items-center gap-2">
+            <span>john@hdfc</span>
+            <button
+              className="text-gray-500 hover:text-black transition"
+              onClick={() => navigator.clipboard.writeText("john@hdfc")}
+              title="Copy UPI"
+            >
+              📋
+            </button>
+          </td>
+        </tr>
+
+        {/* Time */}
+        <tr>
+          <th className="border px-4 py-3 text-left font-semibold text-gray-900 bg-gray-100">
+            Time
+          </th>
+          <td className="border px-4 py-3 text-gray-700">
+            2025-10-09 14:05:54
+          </td>
+        </tr>
+
+        {/* Amount */}
+        <tr className="bg-gray-100">
+          <th className="border px-4 py-3 text-left font-semibold text-gray-900">
+            Amount
+          </th>
+          <td className="border px-4 py-3 font-semibold text-gray-900">
+            ₹1700/-
+          </td>
+        </tr>
+
+        {/* QR */}
+        <tr>
+          <th className="border px-4 py-3 text-left font-semibold text-gray-900 bg-gray-100">
+            QR
+          </th>
+          <td className="border px-4 py-3 text-center">
+            <button
+              className="border border-gray-700 hover:bg-gray-900 hover:text-white text-gray-900 px-3 py-1 rounded-md text-xs transition"
+              onClick={() => alert("QR downloaded!")}
+            >
+              ⬇️ Download
+            </button>
+          </td>
+        </tr>
+
+        {/* Action */}
+        <tr className="bg-gray-100">
+          <th className="border px-4 py-3 text-left font-semibold text-gray-900">
+            Action
+          </th>
+          <td className="border px-4 py-3 text-center">
+            <button className="bg-gray-900 hover:bg-black text-white px-4 py-1.5 rounded-md text-xs transition shadow">
+              Pay
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+
+
                 </div>
               )}
 
@@ -943,110 +1125,123 @@ export default function FranchiseDs() {
                 <table className="min-w-[700px] sm:min-w-full border border-gray-300 text-xs sm:text-sm">
                   <thead className="bg-gray-100 text-gray-700">
                     <tr>
-                      <th className="border px-3 sm:px-4 py-2 text-left">Date</th>
-                      <th className="border px-3 sm:px-4 py-2 text-left">Request ID</th>
-                      <th className="border px-3 sm:px-4 py-2 text-left">UTR No.</th>
-                      <th className="border px-3 sm:px-4 py-2 text-left">Amount</th>
-                      <th className="border px-3 sm:px-4 py-2 text-left">Customer ID</th>
-                      <th className="border px-3 sm:px-4 py-2 text-left">Status</th>
-                      <th className="border px-3 sm:px-4 py-2 text-left">Action</th>
-                      <th className="border px-3 sm:px-4 py-2 text-left">#</th>
+                      <th className="border px-4 py-2 text-left">Date</th>
+                      <th className="border px-4 py-2 text-left">Request ID</th>
+                      <th className="border px-4 py-2 text-left">UTR No.</th>
+                      <th className="border px-4 py-2 text-left">Amount</th>
+                      <th className="border px-4 py-2 text-left">Transaction by Username</th>
+                      <th className="border px-4 py-2 text-left">Customer ID</th>
+                      <th className="border px-4 py-2 text-left">Status</th>
+                      <th className="border px-4 py-2 text-left">Action</th>
+                      {["All", "Initiate"].includes(filterStatus) && (
+                        <th className="border px-4 py-2 text-left">#</th>
+                      )}
                     </tr>
                   </thead>
+
                   <tbody>
-                    {paymentData.map((item, index) => (
-                      <tr key={index} className="hover:bg-gray-50">
-                        <td className="border px-3 sm:px-4 py-2">{item.date}</td>
-                        <td className="border px-3 sm:px-4 py-2">{item.requestId}</td>
-                        <td className="border px-3 sm:px-4 py-2">{item.utrNo}</td>
-                        <td className="border px-3 sm:px-4 py-2">{item.amount}</td>
-                        <td className="border px-3 sm:px-4 py-2">{item.customerId}</td>
-                        <td
-                          className={`border px-3 sm:px-4 py-2 font-medium ${item.status === "Successed"
-                            ? "text-green-600"
-                            : item.status === "Pending"
-                              ? "text-yellow-600"
-                              : "text-gray-600"
-                            }`}
-                        >
-                          {item.status}
-                        </td>
-                        <td className="border px-3 sm:px-4 py-2">
-                          <button
-                            onClick={() => handleView(item)}
-                            className="bg-blue-500 hover:bg-blue-600 text-white text-xs sm:text-sm px-3 py-1 rounded-lg"
+                    {paymentData
+                      .filter(item => filterStatus === "All" || item.status === filterStatus)
+                      .map((item, index) => (
+                        <tr key={index} className="hover:bg-gray-50">
+                          <td className="border px-4 py-2">{item.date}</td>
+                          <td className="border px-4 py-2">{item.requestId}</td>
+                          <td className="border px-4 py-2">{item.utrNo}</td>
+                          <td className="border px-4 py-2">{item.amount}</td>
+                          <td className="border px-4 py-2">{item.username}</td>
+                          <td className="border px-4 py-2">{item.customerId}</td>
+                          <td
+                            className={`border px-4 py-2 font-medium ${item.status === "Successed"
+                              ? "text-green-600"
+                              : item.status === "Pending"
+                                ? "text-yellow-600"
+                                : item.status === "Failed"
+                                  ? "text-red-600"
+                                  : "text-gray-600"
+                              }`}
                           >
-                            View
-                          </button>
-                        </td>
-                        <td
-                          className="border px-3 sm:px-4 py-2 text-center cursor-pointer text-blue-600 hover:text-blue-800"
-                          title="Click to update UTR manually"
-                          onClick={() => {
-                            setSelectedTx(item);
-                            setShowModal(true);
-                          }}
-                        >
-                          ↺
-                        </td>
-                      </tr>
-                    ))}
+                            {item.status}
+                          </td>
+                          <td className="border px-4 py-2">
+                            <button
+                              onClick={() => handleView(item)}
+                              className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded-lg"
+                            >
+                              View
+                            </button>
+                          </td>
+
+                          {["All", "Initiate"].includes(filterStatus) && (
+                            <td
+                              className="border px-4 py-2 text-center cursor-pointer text-blue-600 hover:text-blue-800"
+                              title="Click to update UTR manually"
+                              onClick={() => {
+                                setSelectedTx(item);
+                                setShowModal(true);
+                              }}
+                            >
+                              ↺
+                            </td>
+                          )}
+                        </tr>
+                      ))}
                   </tbody>
+
                 </table>
               </div>
               {showModal && (
-                  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                    <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-6">
-                      <h2 className="text-2xl font-semibold text-gray-800 border-b pb-3 mb-4">
-                        Manual Status Update
-                      </h2>
-                      <form onSubmit={handleSubmit} className="space-y-5">
-                        <div>
-                          <label className="block text-gray-700 text-sm font-medium mb-1">
-                            UTR Number
-                          </label>
-                          <input
-                            type="text"
-                            value={utrInput}
-                            onChange={(e) => setUtrInput(e.target.value)}
-                            placeholder="Enter UTR Number"
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                            required
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-gray-700 text-sm font-medium mb-1">
-                            Amount
-                          </label>
-                          <input
-                            type="text"
-                            value={amountInput}
-                            onChange={(e) => setAmountInput(e.target.value)}
-                            placeholder="Enter Amount"
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                            required
-                          />
-                        </div>
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                  <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-6">
+                    <h2 className="text-2xl font-semibold text-gray-800 border-b pb-3 mb-4">
+                      Manual Status Update
+                    </h2>
+                    <form onSubmit={handleSubmit} className="space-y-5">
+                      <div>
+                        <label className="block text-gray-700 text-sm font-medium mb-1">
+                          UTR Number
+                        </label>
+                        <input
+                          type="text"
+                          value={utrInput}
+                          onChange={(e) => setUtrInput(e.target.value)}
+                          placeholder="Enter UTR Number"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-gray-700 text-sm font-medium mb-1">
+                          Amount
+                        </label>
+                        <input
+                          type="text"
+                          value={amountInput}
+                          onChange={(e) => setAmountInput(e.target.value)}
+                          placeholder="Enter Amount"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                          required
+                        />
+                      </div>
 
-                        <div className="flex justify-end gap-3 pt-3">
-                          <button
-                            type="button"
-                            className="px-5 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
-                            onClick={() => setShowModal(false)}
-                          >
-                            Cancel
-                          </button>
-                          <button
-                            type="submit"
-                            className="px-5 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition"
-                          >
-                            Submit
-                          </button>
-                        </div>
-                      </form>
-                    </div>
+                      <div className="flex justify-end gap-3 pt-3">
+                        <button
+                          type="button"
+                          className="px-5 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
+                          onClick={() => setShowModal(false)}
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          className="px-5 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition"
+                        >
+                          Submit
+                        </button>
+                      </div>
+                    </form>
                   </div>
-                )}
+                </div>
+              )}
               {/* Set Amount Limits Modal */}
               {showLimitModal && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -1271,8 +1466,8 @@ export default function FranchiseDs() {
             </div>
           )}
         </div>
-      </main>
-    </div>
+      </main >
+    </div >
   );
 }
 

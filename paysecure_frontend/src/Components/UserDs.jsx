@@ -32,8 +32,7 @@ const data = [
 export default function UserDs() {
   const [activeTab, setActiveTab] = useState("history");
   const [historyTab, setHistoryTab] = useState("pending");
-
-  // ✅ Combined and Cleaned Modal States
+  const [filterStatus, setFilterStatus] = useState("All");
   const [showModal, setShowModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
@@ -46,11 +45,9 @@ export default function UserDs() {
   const handleSubmitt = (e) => {
     e.preventDefault();
     console.log("Customer ID:", customerId);
-    // 👉 You can call your API here if needed
     setIsModalOpen(false);
     setCustomerId("");
   };
-  // ✅ Sample Data
   const paymentData = [
     {
       date: "2025-10-08",
@@ -104,8 +101,6 @@ export default function UserDs() {
       status: "Pending",
     },
   ];
-
-  // ✅ Functions
   const handleView = (item) => {
     setSelectedData(item);
     setShowModal(true);
@@ -117,8 +112,6 @@ export default function UserDs() {
     );
     alert("Payment link copied!");
   };
-
-  // ✅ Manual Status Update Submit
   const handleSubmit = (e) => {
     e.preventDefault();
     alert("Manual Status Updated Successfully!");
@@ -126,8 +119,6 @@ export default function UserDs() {
     setUtrInput("");
     setamountInput("");
   };
-
-  // ✅ Add Record Submit
   const handleAddSubmit = (e) => {
     e.preventDefault();
     alert("New Pay-Out Record Added!");
@@ -171,26 +162,41 @@ export default function UserDs() {
             {activeTab === "withdraw" && (
               <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8">
                 <h1 className="text-2xl font-bold text-center mb-6">Pay-Out</h1>
-
-                {/* Buttons Row + Filter */}
                 <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
-                  <button className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-medium">
+                  <button
+                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "All" ? "bg-gray-300" : "bg-gray-200 hover:bg-gray-300"}`}
+                    onClick={() => setFilterStatus("All")}
+                  >
                     All
                   </button>
-                  <button className="bg-blue-100 hover:bg-blue-200 text-blue-800 px-4 py-2 rounded-lg font-medium">
+
+                  <button
+                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Initiate" ? "bg-blue-200" : "bg-blue-100 hover:bg-blue-200"}`}
+                    onClick={() => setFilterStatus("Initiate")}
+                  >
                     Initiate
                   </button>
-                  <button className="bg-yellow-100 hover:bg-yellow-200 text-yellow-800 px-4 py-2 rounded-lg font-medium">
+
+                  <button
+                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Pending" ? "bg-yellow-200" : "bg-yellow-100 hover:bg-yellow-200"}`}
+                    onClick={() => setFilterStatus("Pending")}
+                  >
                     Pending
                   </button>
-                  <button className="bg-green-100 hover:bg-green-200 text-green-800 px-4 py-2 rounded-lg font-medium">
+
+                  <button
+                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Successed" ? "bg-green-200" : "bg-green-100 hover:bg-green-200"}`}
+                    onClick={() => setFilterStatus("Successed")}
+                  >
                     Successed
                   </button>
-                  <button className="bg-red-100 hover:bg-red-200 text-red-800 px-4 py-2 rounded-lg font-medium">
+
+                  <button
+                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Failed" ? "bg-red-200" : "bg-red-100 hover:bg-red-200"}`}
+                    onClick={() => setFilterStatus("Failed")}
+                  >
                     Failed
                   </button>
-
-                  {/* Filter Section */}
                   <div className="flex flex-wrap items-center gap-2 ml-4">
                     <span className="font-medium text-gray-700">Filter By:</span>
                     <input
@@ -204,8 +210,6 @@ export default function UserDs() {
                     <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
                       Apply
                     </button>
-
-                    {/* ✅ NEW Add Button */}
                     <button
                       className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
                       onClick={() => setShowAddModal(true)}
@@ -214,8 +218,6 @@ export default function UserDs() {
                     </button>
                   </div>
                 </div>
-
-                {/* Table Section */}
                 <div className="overflow-x-auto mt-6">
                   <table className="min-w-full border border-gray-300 text-sm">
                     <thead className="bg-gray-100 text-gray-700">
@@ -228,54 +230,61 @@ export default function UserDs() {
                         <th className="border px-4 py-2 text-left">Customer ID</th>
                         <th className="border px-4 py-2 text-left">Status</th>
                         <th className="border px-4 py-2 text-left">Action</th>
-                        <th className="border px-4 py-2 text-left">#</th>
+                        {["All", "Initiate"].includes(filterStatus) && (
+                          <th className="border px-4 py-2 text-left">#</th>
+                        )}
                       </tr>
                     </thead>
+
                     <tbody>
-                      {paymentData.map((item, index) => (
-                        <tr key={index} className="hover:bg-gray-50">
-                          <td className="border px-4 py-2">{item.date}</td>
-                          <td className="border px-4 py-2">{item.requestId}</td>
-                          <td className="border px-4 py-2">{item.utrNo}</td>
-                          <td className="border px-4 py-2">{item.amount}</td>
-                          <td className="border px-4 py-2">{item.username}</td>
-                          <td className="border px-4 py-2">{item.customerId}</td>
-                          <td
-                            className={`border px-4 py-2 font-medium ${item.status === "Successed"
-                              ? "text-green-600"
-                              : item.status === "Pending"
-                                ? "text-yellow-600"
-                                : "text-gray-600"
-                              }`}
-                          >
-                            {item.status}
-                          </td>
-                          <td className="border px-4 py-2">
-                            <button
-                              onClick={() => handleView(item)}
-                              className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded-lg"
+                      {paymentData
+                        .filter(item => filterStatus === "All" || item.status === filterStatus)
+                        .map((item, index) => (
+                          <tr key={index} className="hover:bg-gray-50">
+                            <td className="border px-4 py-2">{item.date}</td>
+                            <td className="border px-4 py-2">{item.requestId}</td>
+                            <td className="border px-4 py-2">{item.utrNo}</td>
+                            <td className="border px-4 py-2">{item.amount}</td>
+                            <td className="border px-4 py-2">{item.username}</td>
+                            <td className="border px-4 py-2">{item.customerId}</td>
+                            <td
+                              className={`border px-4 py-2 font-medium ${item.status === "Successed"
+                                ? "text-green-600"
+                                : item.status === "Pending"
+                                  ? "text-yellow-600"
+                                  : item.status === "Failed"
+                                    ? "text-red-600"
+                                    : "text-gray-600"
+                                }`}
                             >
-                              View
-                            </button>
-                          </td>
+                              {item.status}
+                            </td>
+                            <td className="border px-4 py-2">
+                              <button
+                                onClick={() => handleView(item)}
+                                className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded-lg"
+                              >
+                                View
+                              </button>
+                            </td>
 
-                          {/* Manual UTR Update */}
-                          <td
-                            className="border px-4 py-2 text-center cursor-pointer text-blue-600 hover:text-blue-800"
-                            title="Click to update UTR manually"
-                            onClick={() => {
-                              setSelectedTx(item);
-                              setShowModal(true);
-                            }}
-                          >
-                            ↺
-                          </td>
-                        </tr>
-                      ))}
+                            {["All", "Initiate"].includes(filterStatus) && (
+                              <td
+                                className="border px-4 py-2 text-center cursor-pointer text-blue-600 hover:text-blue-800"
+                                title="Click to update UTR manually"
+                                onClick={() => {
+                                  setSelectedTx(item);
+                                  setShowModal(true);
+                                }}
+                              >
+                                ↺
+                              </td>
+                            )}
+                          </tr>
+                        ))}
                     </tbody>
-                  </table>
 
-                  {/* Manual Update Modal */}
+                  </table>
                   {showModal && (
                     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                       <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-6">
@@ -375,26 +384,41 @@ export default function UserDs() {
             {activeTab === "payment" && (
               <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8">
                 <h1 className="text-2xl font-bold text-center mb-6">Pay-in</h1>
-
-                {/* Buttons Row + Filter */}
                 <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
-                  <button className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-medium">
+                  <button
+                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "All" ? "bg-gray-300" : "bg-gray-200 hover:bg-gray-300"}`}
+                    onClick={() => setFilterStatus("All")}
+                  >
                     All
                   </button>
-                  <button className="bg-blue-100 hover:bg-blue-200 text-blue-800 px-4 py-2 rounded-lg font-medium">
+
+                  <button
+                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Initiate" ? "bg-blue-200" : "bg-blue-100 hover:bg-blue-200"}`}
+                    onClick={() => setFilterStatus("Initiate")}
+                  >
                     Initiate
                   </button>
-                  <button className="bg-yellow-100 hover:bg-yellow-200 text-yellow-800 px-4 py-2 rounded-lg font-medium">
+
+                  <button
+                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Pending" ? "bg-yellow-200" : "bg-yellow-100 hover:bg-yellow-200"}`}
+                    onClick={() => setFilterStatus("Pending")}
+                  >
                     Pending
                   </button>
-                  <button className="bg-green-100 hover:bg-green-200 text-green-800 px-4 py-2 rounded-lg font-medium">
+
+                  <button
+                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Successed" ? "bg-green-200" : "bg-green-100 hover:bg-green-200"}`}
+                    onClick={() => setFilterStatus("Successed")}
+                  >
                     Successed
                   </button>
-                  <button className="bg-red-100 hover:bg-red-200 text-red-800 px-4 py-2 rounded-lg font-medium">
+
+                  <button
+                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Failed" ? "bg-red-200" : "bg-red-100 hover:bg-red-200"}`}
+                    onClick={() => setFilterStatus("Failed")}
+                  >
                     Failed
                   </button>
-
-                  {/* Filter Section */}
                   <div className="flex flex-wrap items-center gap-2 ml-4">
                     <span className="font-medium text-gray-700">Filter By:</span>
                     <input
@@ -408,47 +432,40 @@ export default function UserDs() {
                     <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
                       Apply
                     </button>
-                   <button
-        onClick={() => setIsModalOpen(true)}   // 👈 opens modal
-        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
-      >
-        + Request bank details
-      </button>
-       {isModalOpen && (
-  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-    <div className="bg-white rounded-lg shadow-lg w-[90%] max-w-lg p-6 relative">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">Generate Bank Details</h2>
-        <button
-          onClick={() => setIsModalOpen(false)}
-          className="text-gray-500 hover:text-gray-700 text-xl"
-        >
-          ✕
-        </button>
-      </div>
-
-      {/* ✅ Show the full GenerateBankForm component here */}
-      <GenerateBankForm />
-
-      {/* Footer (Close button at bottom) */}
-      <div className="flex justify-end pt-2">
-        <button
-          type="button"
-          onClick={() => setIsModalOpen(false)}
-          className="border px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 flex items-center gap-2"
-        >
-          Close ↩
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+                    <button
+                      onClick={() => setIsModalOpen(true)}   // 👈 opens modal
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
+                    >
+                      + Request bank details
+                    </button>
+                    {isModalOpen && (
+                      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+                        <div className="bg-white rounded-lg shadow-lg w-[90%] max-w-lg p-6 relative">
+                          <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-lg font-semibold">Generate Bank Details</h2>
+                            <button
+                              onClick={() => setIsModalOpen(false)}
+                              className="text-gray-500 hover:text-gray-700 text-xl"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                          <GenerateBankForm />
+                          <div className="flex justify-end pt-2">
+                            <button
+                              type="button"
+                              onClick={() => setIsModalOpen(false)}
+                              className="border px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 flex items-center gap-2"
+                            >
+                              Close ↩
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
                   </div>
                 </div>
-
-                {/* Table Section */}
                 <div className="overflow-x-auto mt-6">
                   <table className="min-w-full border border-gray-300 text-sm">
                     <thead className="bg-gray-100 text-gray-700">
@@ -461,49 +478,58 @@ export default function UserDs() {
                         <th className="border px-4 py-2 text-left">Customer ID</th>
                         <th className="border px-4 py-2 text-left">Status</th>
                         <th className="border px-4 py-2 text-left">Action</th>
-                        <th className="border px-4 py-2 text-left">#</th>
+                        {["All", "Initiate"].includes(filterStatus) && (
+                          <th className="border px-4 py-2 text-left">#</th>
+                        )}
                       </tr>
                     </thead>
-                    <tbody>
-                      {paymentData.map((item, index) => (
-                        <tr key={index} className="hover:bg-gray-50">
-                          <td className="border px-4 py-2">{item.date}</td>
-                          <td className="border px-4 py-2">{item.requestId}</td>
-                          <td className="border px-4 py-2">{item.utrNo}</td>
-                          <td className="border px-4 py-2">{item.amount}</td>
-                          <td className="border px-4 py-2">{item.username}</td>
-                          <td className="border px-4 py-2">{item.customerId}</td>
-                          <td
-                            className={`border px-4 py-2 font-medium ${item.status === "Successed"
-                              ? "text-green-600"
-                              : item.status === "Pending"
-                                ? "text-yellow-600"
-                                : "text-gray-600"
-                              }`}
-                          >
-                            {item.status}
-                          </td>
-                          <td className="border px-4 py-2">
-                            <button
-                              onClick={() => handleView(item)}
-                              className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded-lg"
-                            >
-                              View
-                            </button>
-                          </td>
 
-                          <td
-                            className="border px-4 py-2 text-center cursor-pointer text-blue-600 hover:text-blue-800"
-                            title="Click to update UTR manually"
-                            onClick={() => {
-                              setSelectedTx(item);   // ✅ set current row data
-                              setShowModal(true);    // ✅ open modal
-                            }}
-                          >
-                            ↺
-                          </td>
-                        </tr>
-                      ))}
+                    <tbody>
+                      {paymentData
+                        .filter(item => filterStatus === "All" || item.status === filterStatus)
+                        .map((item, index) => (
+                          <tr key={index} className="hover:bg-gray-50">
+                            <td className="border px-4 py-2">{item.date}</td>
+                            <td className="border px-4 py-2">{item.requestId}</td>
+                            <td className="border px-4 py-2">{item.utrNo}</td>
+                            <td className="border px-4 py-2">{item.amount}</td>
+                            <td className="border px-4 py-2">{item.username}</td>
+                            <td className="border px-4 py-2">{item.customerId}</td>
+                            <td
+                              className={`border px-4 py-2 font-medium ${item.status === "Successed"
+                                ? "text-green-600"
+                                : item.status === "Pending"
+                                  ? "text-yellow-600"
+                                  : item.status === "Failed"
+                                    ? "text-red-600"
+                                    : "text-gray-600"
+                                }`}
+                            >
+                              {item.status}
+                            </td>
+                            <td className="border px-4 py-2">
+                              <button
+                                onClick={() => handleView(item)}
+                                className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded-lg"
+                              >
+                                View
+                              </button>
+                            </td>
+
+                            {["All", "Initiate"].includes(filterStatus) && (
+                              <td
+                                className="border px-4 py-2 text-center cursor-pointer text-blue-600 hover:text-blue-800"
+                                title="Click to update UTR manually"
+                                onClick={() => {
+                                  setSelectedTx(item);
+                                  setShowModal(true);
+                                }}
+                              >
+                                ↺
+                              </td>
+                            )}
+                          </tr>
+                        ))}
                     </tbody>
                   </table>
                   {showModal && (
@@ -563,8 +589,6 @@ export default function UserDs() {
                 </div>
               </div>
             )}
-
-            {/* Modal */}
             {showModal && selectedData && (
               <div
                 className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
@@ -613,9 +637,6 @@ export default function UserDs() {
                 </div>
               </div>
             )}
-
-
-
             {activeTab === "history" && (
               <div>
                 <h1 className="text-2xl font-bold mb-6">History</h1>

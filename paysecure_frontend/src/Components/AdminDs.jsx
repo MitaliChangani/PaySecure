@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 export default function AccountSection() {
   const [activeTab, setActiveTab] = useState("account");
   const [accountSubTab, setAccountSubTab] = useState("add");
