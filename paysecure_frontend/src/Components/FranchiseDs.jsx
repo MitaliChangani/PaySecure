@@ -1,6 +1,13 @@
-// ✅ Existing imports
 import React, { useState } from "react";
-import { User, Clock, ArrowUpCircle, CreditCard, LayoutDashboard, CheckCircle, ShieldX } from "lucide-react";
+import {
+  User,
+  Clock,
+  ArrowUpCircle,
+  CreditCard,
+  LayoutDashboard,
+  CheckCircle,
+  ShieldX,
+} from "lucide-react";
 import {
   LineChart,
   Line,
@@ -10,8 +17,6 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-
-// ✅ Chart Data
 const data = [
   { name: "Mon", amount: 0 },
   { name: "Tue", amount: 0 },
@@ -27,15 +32,13 @@ export default function FranchiseDs() {
   const [editingId, setEditingId] = useState(null);
   const [activeTab, setActiveTab] = useState("account");
   const [historyTab, setHistoryTab] = useState("complete");
-  const [dashboard, setdashboard] = useState("dashboard");
+  const [dashboard, setDashboard] = useState("dashboard");
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedTx, setSelectedTx] = useState(null);
   const [utrInput, setUtrInput] = useState("");
-  const [amountInput, setamountInput] = useState("");
-
-  // ✅ Add this new section here
+  const [amountInput, setAmountInput] = useState("");
   const [available, setAvailable] = useState(false);
   const [showLimitModal, setShowLimitModal] = useState(false);
   const [startAmount, setStartAmount] = useState("");
@@ -46,8 +49,6 @@ export default function FranchiseDs() {
     alert(`Amount limits set:\nStart: ₹${startAmount}\nLimit: ₹${limitAmount}`);
     setShowLimitModal(false);
   };
-
-  // ✅ All Transactions
   const [transactions, setTransactions] = useState([
     {
       id: 1,
@@ -84,8 +85,7 @@ export default function FranchiseDs() {
       utrNumber: "",
     },
   ]);
-
-  const paymentData = [
+  const [paymentData, setPaymentData] = useState([
     {
       date: "2025-10-08",
       requestId: "REQ12345",
@@ -108,8 +108,9 @@ export default function FranchiseDs() {
       transactionId: "TXN88776655",
       time: "11:45",
     },
-  ];
+  ]);
 
+  // ✅ Withdraw Requests
   const withdrawRequests = [
     {
       id: 1,
@@ -141,6 +142,7 @@ export default function FranchiseDs() {
     },
   ];
 
+  // ✅ Accounts
   const [accounts, setAccounts] = useState([
     {
       id: 1,
@@ -194,7 +196,12 @@ export default function FranchiseDs() {
       setTransactions((prev) =>
         prev.map((tx) =>
           tx.id === selectedTx.id
-            ? { ...tx, utrNumber: utrInput, amountInput: amountInput, statusResult: "Successful" }
+            ? {
+              ...tx,
+              utrNumber: utrInput,
+              amountInput: amountInput,
+              statusResult: "Successful",
+            }
             : tx
         )
       );
@@ -208,6 +215,26 @@ export default function FranchiseDs() {
     alert("New Pay-Out Record Added!");
     setShowAddModal(false);
   };
+
+  // ✅ Approve / Reject Payment Functions
+  const handleApprove = (requestId) => {
+    setPaymentData((prev) =>
+      prev.map((item) =>
+        item.requestId === requestId ? { ...item, status: "Successed" } : item
+      )
+    );
+    alert("✅ Payment approved successfully!");
+  };
+
+  const handleReject = (requestId) => {
+    setPaymentData((prev) =>
+      prev.map((item) =>
+        item.requestId === requestId ? { ...item, status: "Failed" } : item
+      )
+    );
+    alert("❌ Payment marked as failed!");
+  };
+
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -635,11 +662,15 @@ export default function FranchiseDs() {
                             ? "text-green-600"
                             : item.status === "Pending"
                               ? "text-yellow-600"
-                              : "text-gray-600"
+                              : item.status === "Failed"
+                                ? "text-red-600"
+                                : "text-gray-600"
                             }`}
                         >
                           {item.status}
                         </td>
+
+                        {/* View Button */}
                         <td className="border px-4 py-2">
                           <button
                             onClick={() => handleView(item)}
@@ -649,44 +680,47 @@ export default function FranchiseDs() {
                           </button>
                         </td>
 
+                        {/* Manual Update */}
                         <td
                           className="border px-4 py-2 text-center cursor-pointer text-blue-600 hover:text-blue-800"
                           title="Click to update UTR manually"
                           onClick={() => {
-                            setSelectedTx(item);   // ✅ set current row data
-                            setShowModal(true);    // ✅ open modal
+                            setSelectedTx(item);
+                            setShowModal(true);
                           }}
                         >
                           ↺
                         </td>
+
+                        {/* Approve / Reject */}
                         <td className="border px-4 py-2 text-center">
                           <button
-                            onClick={() => handleApprove(item)}
+                            onClick={() => handleApprove(item.requestId)}
                             className="bg-green-500 hover:bg-green-600 text-white p-1 rounded-full"
                             title="Instant Verify"
                           >
                             ✓
                           </button>
                           <button
-                            onClick={() => handleReject(item)}
+                            onClick={() => handleReject(item.requestId)}
                             className="bg-red-500 hover:bg-red-600 text-white p-1 rounded-full ml-2"
                             title="Instant Failed"
                           >
                             ✗
                           </button>
                         </td>
-
                       </tr>
                     ))}
                   </tbody>
                 </table>
+
+                {/* Manual Update Modal */}
                 {showModal && (
                   <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                     <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-6">
                       <h2 className="text-2xl font-semibold text-gray-800 border-b pb-3 mb-4">
                         Manual Status Update
                       </h2>
-
                       <form onSubmit={handleSubmit} className="space-y-5">
                         <div>
                           <label className="block text-gray-700 text-sm font-medium mb-1">
@@ -737,7 +771,8 @@ export default function FranchiseDs() {
               </div>
             </div>
           )}
-          {activeTab === "withdraw" && (
+
+         {activeTab === "withdraw" && (
   <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8">
     <h1 className="text-2xl font-bold text-center mb-6">Pay-Out</h1>
 
@@ -799,12 +834,106 @@ export default function FranchiseDs() {
       </div>
     </div>
 
-    {/* ✅ Payout Request Section (after saving limits) */}
-    {startAmount && limitAmount && (
+    <br />
+
+    {/* ✅ Table Section */}
+    <table className="min-w-full border border-gray-300 text-sm">
+      <thead className="bg-gray-100 text-gray-700">
+        <tr>
+          <th className="border px-4 py-2 text-left">Date</th>
+          <th className="border px-4 py-2 text-left">Request ID</th>
+          <th className="border px-4 py-2 text-left">UTR No.</th>
+          <th className="border px-4 py-2 text-left">Amount</th>
+          <th className="border px-4 py-2 text-left">Customer ID</th>
+          <th className="border px-4 py-2 text-left">Status</th>
+          <th className="border px-4 py-2 text-left">Action</th>
+          <th className="border px-4 py-2 text-left">#</th>
+          <th className="border px-4 py-2 text-left">#</th>
+        </tr>
+      </thead>
+      <tbody>
+        {paymentData.map((item, index) => (
+          <tr key={index} className="hover:bg-gray-50">
+            <td className="border px-4 py-2">{item.date}</td>
+            <td className="border px-4 py-2">{item.requestId}</td>
+            <td className="border px-4 py-2">{item.utrNo}</td>
+            <td className="border px-4 py-2">{item.amount}</td>
+            <td className="border px-4 py-2">{item.customerId}</td>
+            <td
+              className={`border px-4 py-2 font-medium ${
+                item.status === "Successed"
+                  ? "text-green-600"
+                  : item.status === "Pending"
+                  ? "text-yellow-600"
+                  : "text-gray-600"
+              }`}
+            >
+              {item.status}
+            </td>
+            <td className="border px-4 py-2">
+              <button
+                onClick={() => handleView(item)}
+                className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded-lg"
+              >
+                View
+              </button>
+            </td>
+
+            <td
+              className="border px-4 py-2 text-center cursor-pointer text-blue-600 hover:text-blue-800"
+              title="Click to update UTR manually"
+              onClick={() => {
+                setSelectedTx(item);
+                setShowModal(true);
+              }}
+            >
+              ↺
+            </td>
+
+            {/* ✅ Action Buttons with logic */}
+            <td className="border px-4 py-2 text-center">
+              {!item.hideButtons && (
+                <>
+                  <button
+                    onClick={() => {
+                      // ✅ When click on green button — hide both buttons for this row
+                      const updatedData = [...paymentData];
+                      updatedData[index].hideButtons = true;
+                      setPaymentData(updatedData);
+                    }}
+                    className="bg-green-500 hover:bg-green-600 text-white p-1 rounded-full"
+                    title="Instant Verify"
+                  >
+                    ✓
+                  </button>
+                  <button
+                    onClick={() => {
+                      // ✅ When click on red button — remove row
+                      const updatedData = paymentData.filter((_, i) => i !== index);
+                      setPaymentData(updatedData);
+                    }}
+                    className="bg-red-500 hover:bg-red-600 text-white p-1 rounded-full ml-2"
+                    title="Instant Failed"
+                  >
+                    ✗
+                  </button>
+                </>
+              )}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+
+    {/* ✅ Payout Request Section (only visible when available is ON) */}
+    {available && startAmount && limitAmount && (
       <div className="mt-8">
         <div className="flex justify-between items-center mb-3">
           <h2 className="text-xl font-semibold text-gray-800">
-            Payout Request <span className="text-gray-500">({startAmount} - {limitAmount})</span>
+            Payout Request{" "}
+            <span className="text-gray-500">
+              ({startAmount} - {limitAmount})
+            </span>
           </h2>
           <button
             onClick={() => setShowLimitModal(true)}
@@ -830,13 +959,17 @@ export default function FranchiseDs() {
                 <td className="border px-4 py-2">REQ1001</td>
                 <td className="border px-4 py-2">John Doe</td>
                 <td className="border px-4 py-2">₹500</td>
-                <td className="border px-4 py-2 text-green-600 font-medium">Success</td>
+                <td className="border px-4 py-2 text-green-600 font-medium">
+                  Success
+                </td>
               </tr>
               <tr className="hover:bg-gray-50">
                 <td className="border px-4 py-2">REQ1002</td>
                 <td className="border px-4 py-2">Jane Smith</td>
                 <td className="border px-4 py-2">₹150</td>
-                <td className="border px-4 py-2 text-yellow-600 font-medium">Pending</td>
+                <td className="border px-4 py-2 text-yellow-600 font-medium">
+                  Pending
+                </td>
               </tr>
             </tbody>
           </table>
@@ -855,7 +988,9 @@ export default function FranchiseDs() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              alert(`Amount limits set:\nStart: ₹${startAmount}\nLimit: ₹${limitAmount}`);
+              alert(
+                `Amount limits set:\nStart: ₹${startAmount}\nLimit: ₹${limitAmount}`
+              );
               setShowLimitModal(false);
             }}
             className="space-y-5"
@@ -910,10 +1045,6 @@ export default function FranchiseDs() {
   </div>
 )}
 
-
-
-
-          {/* History Section */}
           {activeTab === "history" && (
             <div className="bg-white rounded-lg shadow p-6 overflow-x-auto">
               <h1 className="text-2xl font-bold mb-6">Completed Transactions</h1>
