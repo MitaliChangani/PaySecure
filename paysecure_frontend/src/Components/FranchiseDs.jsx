@@ -679,8 +679,8 @@ export default function FranchiseDs() {
                       {/* Show Quick Action + Approve/Reject only for these filters */}
                       {["All", "Initiate", "Pending"].includes(filterStatus) && (
                         <>
-                          <th className="border px-4 py-2 text-left">#</th>
-                          <th className="border px-4 py-2 text-left">#</th>
+                          <th className="border px-4 py-2 text-left">Quick Action</th>
+                          <th className="border px-4 py-2 text-left">Approve/Reject</th>
                         </>
                       )}
                     </tr>
@@ -732,17 +732,20 @@ export default function FranchiseDs() {
                                   setShowModal(true);
                                 }}
                               >
-                                ↺
+                                {/* Logic Added: Only show UTR update icon for Initiate/Pending */}
+                                {["Initiate", "Pending"].includes(item.status) ? "↺" : null}
                               </td>
 
                               {/* Approve / Reject Buttons */}
                               <td className="border px-4 py-2 text-center">
-                                {!item.hideButtons && (
+                                {/* NEW LOGIC: Show buttons only if status is 'Initiate' or 'Pending' AND they haven't been hidden yet */}
+                                {["Initiate", "Pending"].includes(item.status) && !item.hideButtons && (
                                   <>
                                     <button
                                       onClick={() => {
                                         const updated = [...paymentData];
                                         updated[index].hideButtons = true;
+                                        // You might want to update the status to "Successed" here
                                         setPaymentData(updated);
                                       }}
                                       className="bg-green-500 hover:bg-green-600 text-white p-1 rounded-full ml-1"
@@ -753,6 +756,7 @@ export default function FranchiseDs() {
                                     <button
                                       onClick={() => {
                                         const updated = paymentData.filter((_, i) => i !== index);
+                                        // You might want to update the status to "Failed" here before filtering
                                         setPaymentData(updated);
                                       }}
                                       className="bg-red-500 hover:bg-red-600 text-white p-1 rounded-full ml-1"
@@ -968,149 +972,149 @@ export default function FranchiseDs() {
                   </div>
 
                   {/* Example Table for Payout Requests */}
-                <div className="p-6 bg-white rounded-xl shadow-md">
-  <h2 className="text-xl font-semibold text-gray-900 mb-4 text-center sm:text-left">
-    Payout Request
-  </h2>
+                  <div className="p-6 bg-white rounded-xl shadow-md">
+                    <h2 className="text-xl font-semibold text-gray-900 mb-4 text-center sm:text-left">
+                      Payout Request
+                    </h2>
 
-  <div className="overflow-x-auto rounded-lg shadow border border-gray-300">
-    <table className="min-w-full text-sm text-gray-800 border-collapse">
-      <tbody>
-        {/* Bank Name */}
-        <tr className="bg-gray-100">
-          <th className="border px-4 py-3 text-left font-semibold text-gray-900 w-1/3">
-            Bank Name
-          </th>
-          <td className="border px-4 py-3 flex items-center gap-2">
-            <span className="font-medium text-gray-900">HDFC Bank</span>
-            <button
-              className="text-gray-500 hover:text-black transition"
-              onClick={() => navigator.clipboard.writeText("HDFC Bank")}
-              title="Copy Bank Name"
-            >
-              📋
-            </button>
-          </td>
-        </tr>
+                    <div className="overflow-x-auto rounded-lg shadow border border-gray-300">
+                      <table className="min-w-full text-sm text-gray-800 border-collapse">
+                        <tbody>
+                          {/* Bank Name */}
+                          <tr className="bg-gray-100">
+                            <th className="border px-4 py-3 text-left font-semibold text-gray-900 w-1/3">
+                              Bank Name
+                            </th>
+                            <td className="border px-4 py-3 flex items-center gap-2">
+                              <span className="font-medium text-gray-900">HDFC Bank</span>
+                              <button
+                                className="text-gray-500 hover:text-black transition"
+                                onClick={() => navigator.clipboard.writeText("HDFC Bank")}
+                                title="Copy Bank Name"
+                              >
+                                📋
+                              </button>
+                            </td>
+                          </tr>
 
-        {/* Account Name */}
-        <tr>
-          <th className="border px-4 py-3 text-left font-semibold text-gray-900 bg-gray-100">
-            Account Name
-          </th>
-          <td className="border px-4 py-3 flex items-center gap-2">
-            <span>John Doe</span>
-            <button
-              className="text-gray-500 hover:text-black transition"
-              onClick={() => navigator.clipboard.writeText("John Doe")}
-              title="Copy Account Name"
-            >
-              📋
-            </button>
-          </td>
-        </tr>
+                          {/* Account Name */}
+                          <tr>
+                            <th className="border px-4 py-3 text-left font-semibold text-gray-900 bg-gray-100">
+                              Account Name
+                            </th>
+                            <td className="border px-4 py-3 flex items-center gap-2">
+                              <span>John Doe</span>
+                              <button
+                                className="text-gray-500 hover:text-black transition"
+                                onClick={() => navigator.clipboard.writeText("John Doe")}
+                                title="Copy Account Name"
+                              >
+                                📋
+                              </button>
+                            </td>
+                          </tr>
 
-        {/* Account Number */}
-        <tr className="bg-gray-100">
-          <th className="border px-4 py-3 text-left font-semibold text-gray-900">
-            Account Number
-          </th>
-          <td className="border px-4 py-3 flex items-center gap-2">
-            <span>3232321</span>
-            <button
-              className="text-gray-500 hover:text-black transition"
-              onClick={() => navigator.clipboard.writeText("3232321")}
-              title="Copy Account Number"
-            >
-              📋
-            </button>
-          </td>
-        </tr>
+                          {/* Account Number */}
+                          <tr className="bg-gray-100">
+                            <th className="border px-4 py-3 text-left font-semibold text-gray-900">
+                              Account Number
+                            </th>
+                            <td className="border px-4 py-3 flex items-center gap-2">
+                              <span>3232321</span>
+                              <button
+                                className="text-gray-500 hover:text-black transition"
+                                onClick={() => navigator.clipboard.writeText("3232321")}
+                                title="Copy Account Number"
+                              >
+                                📋
+                              </button>
+                            </td>
+                          </tr>
 
-        {/* IFSC */}
-        <tr>
-          <th className="border px-4 py-3 text-left font-semibold text-gray-900 bg-gray-100">
-            IFSC
-          </th>
-          <td className="border px-4 py-3 flex items-center gap-2">
-            <span>HDFC000123</span>
-            <button
-              className="text-gray-500 hover:text-black transition"
-              onClick={() => navigator.clipboard.writeText("HDFC000123")}
-              title="Copy IFSC"
-            >
-              📋
-            </button>
-          </td>
-        </tr>
+                          {/* IFSC */}
+                          <tr>
+                            <th className="border px-4 py-3 text-left font-semibold text-gray-900 bg-gray-100">
+                              IFSC
+                            </th>
+                            <td className="border px-4 py-3 flex items-center gap-2">
+                              <span>HDFC000123</span>
+                              <button
+                                className="text-gray-500 hover:text-black transition"
+                                onClick={() => navigator.clipboard.writeText("HDFC000123")}
+                                title="Copy IFSC"
+                              >
+                                📋
+                              </button>
+                            </td>
+                          </tr>
 
-        {/* UPI */}
-        <tr className="bg-gray-100">
-          <th className="border px-4 py-3 text-left font-semibold text-gray-900">
-            UPI
-          </th>
-          <td className="border px-4 py-3 flex items-center gap-2">
-            <span>john@hdfc</span>
-            <button
-              className="text-gray-500 hover:text-black transition"
-              onClick={() => navigator.clipboard.writeText("john@hdfc")}
-              title="Copy UPI"
-            >
-              📋
-            </button>
-          </td>
-        </tr>
+                          {/* UPI */}
+                          <tr className="bg-gray-100">
+                            <th className="border px-4 py-3 text-left font-semibold text-gray-900">
+                              UPI
+                            </th>
+                            <td className="border px-4 py-3 flex items-center gap-2">
+                              <span>john@hdfc</span>
+                              <button
+                                className="text-gray-500 hover:text-black transition"
+                                onClick={() => navigator.clipboard.writeText("john@hdfc")}
+                                title="Copy UPI"
+                              >
+                                📋
+                              </button>
+                            </td>
+                          </tr>
 
-        {/* Time */}
-        <tr>
-          <th className="border px-4 py-3 text-left font-semibold text-gray-900 bg-gray-100">
-            Time
-          </th>
-          <td className="border px-4 py-3 text-gray-700">
-            2025-10-09 14:05:54
-          </td>
-        </tr>
+                          {/* Time */}
+                          <tr>
+                            <th className="border px-4 py-3 text-left font-semibold text-gray-900 bg-gray-100">
+                              Time
+                            </th>
+                            <td className="border px-4 py-3 text-gray-700">
+                              2025-10-09 14:05:54
+                            </td>
+                          </tr>
 
-        {/* Amount */}
-        <tr className="bg-gray-100">
-          <th className="border px-4 py-3 text-left font-semibold text-gray-900">
-            Amount
-          </th>
-          <td className="border px-4 py-3 font-semibold text-gray-900">
-            ₹1700/-
-          </td>
-        </tr>
+                          {/* Amount */}
+                          <tr className="bg-gray-100">
+                            <th className="border px-4 py-3 text-left font-semibold text-gray-900">
+                              Amount
+                            </th>
+                            <td className="border px-4 py-3 font-semibold text-gray-900">
+                              ₹1700/-
+                            </td>
+                          </tr>
 
-        {/* QR */}
-        <tr>
-          <th className="border px-4 py-3 text-left font-semibold text-gray-900 bg-gray-100">
-            QR
-          </th>
-          <td className="border px-4 py-3 text-center">
-            <button
-              className="border border-gray-700 hover:bg-gray-900 hover:text-white text-gray-900 px-3 py-1 rounded-md text-xs transition"
-              onClick={() => alert("QR downloaded!")}
-            >
-              ⬇️ Download
-            </button>
-          </td>
-        </tr>
+                          {/* QR */}
+                          <tr>
+                            <th className="border px-4 py-3 text-left font-semibold text-gray-900 bg-gray-100">
+                              QR
+                            </th>
+                            <td className="border px-4 py-3 text-center">
+                              <button
+                                className="border border-gray-700 hover:bg-gray-900 hover:text-white text-gray-900 px-3 py-1 rounded-md text-xs transition"
+                                onClick={() => alert("QR downloaded!")}
+                              >
+                                ⬇️ Download
+                              </button>
+                            </td>
+                          </tr>
 
-        {/* Action */}
-        <tr className="bg-gray-100">
-          <th className="border px-4 py-3 text-left font-semibold text-gray-900">
-            Action
-          </th>
-          <td className="border px-4 py-3 text-center">
-            <button className="bg-gray-900 hover:bg-black text-white px-4 py-1.5 rounded-md text-xs transition shadow">
-              Pay
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
+                          {/* Action */}
+                          <tr className="bg-gray-100">
+                            <th className="border px-4 py-3 text-left font-semibold text-gray-900">
+                              Action
+                            </th>
+                            <td className="border px-4 py-3 text-center">
+                              <button className="bg-gray-900 hover:bg-black text-white px-4 py-1.5 rounded-md text-xs transition shadow">
+                                Pay
+                              </button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
 
 
 
