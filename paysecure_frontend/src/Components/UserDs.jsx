@@ -735,7 +735,7 @@ export default function UserDs() {
                             time: "14:30",
                             from: "John Doe",
                             to: "Bank Account",
-                            amount: 5000,
+                        amount: 5000,
                           },
                           {
                             id: 2,
