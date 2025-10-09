@@ -4,8 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import Cookies from "js-cookie";
 import api from "../api/axios";
-
-
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState(null);

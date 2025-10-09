@@ -3,9 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 import api from "../api/axios";
-
 const API_URL = "http://localhost:8000/api";
-
 axios.defaults.withCredentials = true;
 axios.interceptors.request.use((config) => {
   const csrfToken = Cookies.get("csrftoken");
