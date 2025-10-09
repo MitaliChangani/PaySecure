@@ -154,6 +154,7 @@ export default function FranchiseDs() {
       accountNumber: "123456789012",
       bankName: "State Bank of India",
       ifsc: "SBIN0001234",
+      payment:"",
       upiId: "SBI@upi",
       QrCode: "",
     },
@@ -164,6 +165,7 @@ export default function FranchiseDs() {
     accountNumber: "",
     bankName: "",
     ifsc: "",
+    payment:"",
     upiId: "",
     QrCode: "",
   });
@@ -181,6 +183,7 @@ export default function FranchiseDs() {
       accountNumber: "",
       bankName: "",
       ifsc: "",
+      payment:"",
       upiId: "",
       QrCode: "",
     });
@@ -333,27 +336,8 @@ export default function FranchiseDs() {
 
               {/* Subtabs */}
               <div className="flex flex-wrap gap-2 mb-6">
-                {/* View Button */}
-                <button
-                  className={`px-4 py-2 rounded-lg font-medium ${accountSubTab === "view"
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                    }`}
-                  onClick={() => setAccountSubTab("view")}
-                >
-                  View
-                </button>
 
-                {/* Add Account Button */}
-                <button
-                  className={`px-4 py-2 rounded-lg font-medium ${accountSubTab === "add"
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                    }`}
-                  onClick={() => setAccountSubTab("add")}
-                >
-                  Add Account
-                </button>
+             
 
                 {/* Activate Button */}
                 <button
@@ -387,12 +371,22 @@ export default function FranchiseDs() {
                 >
                   Deleted Account
                 </button>
+                    {/* Add Account Button */}
+                <button
+                  className={`px-4 py-2 rounded-lg font-medium ${accountSubTab === "add"
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    }`}
+                  onClick={() => setAccountSubTab("add")}
+                >
+                  Add Account
+                </button>
               </div>
 
 
               {/* View Accounts */}
 
-              {accountSubTab === "view" && (
+              {accountSubTab === "activate" &&  (
                 <div className="space-y-6">
                   {accounts.map((acc) => (
                     <div
@@ -413,13 +407,7 @@ export default function FranchiseDs() {
                               {editingId === acc.id ? "Save" : "Edit"}
                             </button>
 
-                            {/* Activate Button */}
-                            <button
-                              onClick={() => handleActivate(acc.id)}
-                              className="bg-green-600 text-white px-3 py-1 rounded-lg"
-                            >
-                              Activate
-                            </button>
+                          
 
                             {/* Deactivate Button */}
                             <button
@@ -474,6 +462,20 @@ export default function FranchiseDs() {
                           )}
                         </p>
                         <p>
+                          <span className="font-semibold">Payment Link:</span>{" "}
+                          {editingId === acc.id ? (
+                            <input
+                              type="text"
+                              name="payment"
+                              value={acc.payment}
+                              onChange={(e) => handleEditChange(acc.id, e)}
+                              className="px-2 py-1 border rounded w-full"
+                            />
+                          ) : (
+                            acc.payment
+                          )}
+                        </p>
+                        <p>
                           <span className="font-semibold">UPI ID:</span>{" "}
                           {editingId === acc.id ? (
                             <input
@@ -517,7 +519,248 @@ export default function FranchiseDs() {
                 </div>
               )}
 
+              {accountSubTab === "deactivate" &&  (
+                <div className="space-y-6">
+                  {accounts.map((acc) => (
+                    <div
+                      key={acc.id}
+                      className="border rounded-lg p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+                    >
+                      <div className="flex-1">
+                        <div className="flex justify-between items-center mb-2">
+                          <h2 className="font-semibold">{acc.accountName}</h2>
+                          <div className="flex gap-2">
+                            {/* Edit Button */}
+                            <button
+                              onClick={() =>
+                                editingId === acc.id ? setEditingId(null) : setEditingId(acc.id)
+                              }
+                              className="bg-blue-600 text-white px-3 py-1 rounded-lg"
+                            >
+                              {editingId === acc.id ? "Save" : "Edit"}
+                            </button>
 
+                            {/* Activate Button */}
+                            <button
+                              onClick={() => handleActivate(acc.id)}
+                              className="bg-green-600 text-white px-3 py-1 rounded-lg"
+                            >
+                              Activate
+                            </button>
+
+                          
+                          </div>
+                        </div>
+
+                        <p>
+                          <span className="font-semibold">Account Number:</span>{" "}
+                          {editingId === acc.id ? (
+                            <input
+                              type="text"
+                              name="accountNumber"
+                              value={acc.accountNumber}
+                              onChange={(e) => handleEditChange(acc.id, e)}
+                              className="px-2 py-1 border rounded w-full"
+                            />
+                          ) : (
+                            acc.accountNumber
+                          )}
+                        </p>
+                        <p>
+                          <span className="font-semibold">Bank:</span>{" "}
+                          {editingId === acc.id ? (
+                            <input
+                              type="text"
+                              name="bankName"
+                              value={acc.bankName}
+                              onChange={(e) => handleEditChange(acc.id, e)}
+                              className="px-2 py-1 border rounded w-full"
+                            />
+                          ) : (
+                            acc.bankName
+                          )}
+                        </p>
+                        <p>
+                          <span className="font-semibold">IFSC:</span>{" "}
+                          {editingId === acc.id ? (
+                            <input
+                              type="text"
+                              name="ifsc"
+                              value={acc.ifsc}
+                              onChange={(e) => handleEditChange(acc.id, e)}
+                              className="px-2 py-1 border rounded w-full"
+                            />
+                          ) : (
+                            acc.ifsc
+                          )}
+                        </p>
+                         <p>
+                          <span className="font-semibold">Payment Link:</span>{" "}
+                          {editingId === acc.id ? (
+                            <input
+                              type="text"
+                              name="payment"
+                              value={acc.payment}
+                              onChange={(e) => handleEditChange(acc.id, e)}
+                              className="px-2 py-1 border rounded w-full"
+                            />
+                          ) : (
+                            acc.payment
+                          )}
+                        </p>
+                        <p>
+                          <span className="font-semibold">UPI ID:</span>{" "}
+                          {editingId === acc.id ? (
+                            <input
+                              type="text"
+                              name="upiId"
+                              value={acc.upiId || ""}
+                              onChange={(e) => handleEditChange(acc.id, e)}
+                              className="px-2 py-1 border rounded w-full"
+                            />
+                          ) : (
+                            acc.upiId || "Not Added"
+                          )}
+                        </p>
+
+                        {/* QR Code */}
+                        <p className="mt-2">
+                          <span className="font-semibold">QR Code:</span>{" "}
+                          {editingId === acc.id ? (
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) =>
+                                handleEditChange(acc.id, {
+                                  target: {
+                                    name: "QrCode",
+                                    value: URL.createObjectURL(e.target.files[0]),
+                                  },
+                                })
+                              }
+                              className="mt-1"
+                            />
+                          ) : acc.QrCode ? (
+                            <img src={acc.QrCode} alt="QR Code" className="h-24 w-24 mt-2" />
+                          ) : (
+                            "Not Added"
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {accountSubTab === "delete" &&  (
+                <div className="space-y-6">
+                  {accounts.map((acc) => (
+                    <div
+                      key={acc.id}
+                      className="border rounded-lg p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+                    >
+                      <div className="flex-1">
+                       
+
+                        <p>
+                          <span className="font-semibold">Account Number:</span>{" "}
+                          {editingId === acc.id ? (
+                            <input
+                              type="text"
+                              name="accountNumber"
+                              value={acc.accountNumber}
+                              onChange={(e) => handleEditChange(acc.id, e)}
+                              className="px-2 py-1 border rounded w-full"
+                            />
+                          ) : (
+                            acc.accountNumber
+                          )}
+                        </p>
+                        <p>
+                          <span className="font-semibold">Bank:</span>{" "}
+                          {editingId === acc.id ? (
+                            <input
+                              type="text"
+                              name="bankName"
+                              value={acc.bankName}
+                              onChange={(e) => handleEditChange(acc.id, e)}
+                              className="px-2 py-1 border rounded w-full"
+                            />
+                          ) : (
+                            acc.bankName
+                          )}
+                        </p>
+                        <p>
+                          <span className="font-semibold">IFSC:</span>{" "}
+                          {editingId === acc.id ? (
+                            <input
+                              type="text"
+                              name="ifsc"
+                              value={acc.ifsc}
+                              onChange={(e) => handleEditChange(acc.id, e)}
+                              className="px-2 py-1 border rounded w-full"
+                            />
+                          ) : (
+                            acc.ifsc
+                          )}
+                        </p>
+                         <p>
+                          <span className="font-semibold">Payment Link:</span>{" "}
+                          {editingId === acc.id ? (
+                            <input
+                              type="text"
+                              name="payment"
+                              value={acc.payment}
+                              onChange={(e) => handleEditChange(acc.id, e)}
+                              className="px-2 py-1 border rounded w-full"
+                            />
+                          ) : (
+                            acc.payment
+                          )}
+                        </p>
+                        <p>
+                          <span className="font-semibold">UPI ID:</span>{" "}
+                          {editingId === acc.id ? (
+                            <input
+                              type="text"
+                              name="upiId"
+                              value={acc.upiId || ""}
+                              onChange={(e) => handleEditChange(acc.id, e)}
+                              className="px-2 py-1 border rounded w-full"
+                            />
+                          ) : (
+                            acc.upiId || "Not Added"
+                          )}
+                        </p>
+
+                        {/* QR Code */}
+                        <p className="mt-2">
+                          <span className="font-semibold">QR Code:</span>{" "}
+                          {editingId === acc.id ? (
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) =>
+                                handleEditChange(acc.id, {
+                                  target: {
+                                    name: "QrCode",
+                                    value: URL.createObjectURL(e.target.files[0]),
+                                  },
+                                })
+                              }
+                              className="mt-1"
+                            />
+                          ) : acc.QrCode ? (
+                            <img src={acc.QrCode} alt="QR Code" className="h-24 w-24 mt-2" />
+                          ) : (
+                            "Not Added"
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
               {/* Add Account Form */}
               {accountSubTab === "add" && (
                 <form className="space-y-4 max-w-lg" onSubmit={handleAddAccount}>
@@ -577,6 +820,18 @@ export default function FranchiseDs() {
                       required
                     />
                   </div>
+                                    <div>
+                    <label className="block text-gray-700">Add Payment Link</label>
+                    <input
+                      type="text"
+                      placeholder="Payment Link"
+                      name="accountName"
+                      value={newAccount.accountName}
+                      onChange={handleNewChange}
+                      className="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
                   <div>
                     <label className="block text-gray-700">QR Code</label>
                     <input
@@ -603,7 +858,7 @@ export default function FranchiseDs() {
           )}
 
           {/* ✅ Payment Section */}
-          {activeTab === "payment" && (
+{activeTab === "payment" && (
             <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8">
               <h1 className="text-2xl font-bold text-center mb-6">Pay-in</h1>
 
@@ -679,8 +934,8 @@ export default function FranchiseDs() {
                       {/* Show Quick Action + Approve/Reject only for these filters */}
                       {["All", "Initiate", "Pending"].includes(filterStatus) && (
                         <>
-                          <th className="border px-4 py-2 text-left">#</th>
-                          <th className="border px-4 py-2 text-left">#</th>
+                          <th className="border px-4 py-2 text-left">Quick Action</th>
+                          <th className="border px-4 py-2 text-left">Approve/Reject</th>
                         </>
                       )}
                     </tr>
@@ -732,17 +987,20 @@ export default function FranchiseDs() {
                                   setShowModal(true);
                                 }}
                               >
-                                ↺
+                                {/* Logic Added: Only show UTR update icon for Initiate/Pending */}
+                                {["Initiate", "Pending"].includes(item.status) ? "↺" : null}
                               </td>
 
                               {/* Approve / Reject Buttons */}
                               <td className="border px-4 py-2 text-center">
-                                {!item.hideButtons && (
+                                {/* NEW LOGIC: Show buttons only if status is 'Initiate' or 'Pending' AND they haven't been hidden yet */}
+                                {["Initiate", "Pending"].includes(item.status) && !item.hideButtons && (
                                   <>
                                     <button
                                       onClick={() => {
                                         const updated = [...paymentData];
                                         updated[index].hideButtons = true;
+                                        // You might want to update the status to "Successed" here
                                         setPaymentData(updated);
                                       }}
                                       className="bg-green-500 hover:bg-green-600 text-white p-1 rounded-full ml-1"
@@ -753,6 +1011,7 @@ export default function FranchiseDs() {
                                     <button
                                       onClick={() => {
                                         const updated = paymentData.filter((_, i) => i !== index);
+                                        // You might want to update the status to "Failed" here before filtering
                                         setPaymentData(updated);
                                       }}
                                       className="bg-red-500 hover:bg-red-600 text-white p-1 rounded-full ml-1"
@@ -968,149 +1227,149 @@ export default function FranchiseDs() {
                   </div>
 
                   {/* Example Table for Payout Requests */}
-                <div className="p-6 bg-white rounded-xl shadow-md">
-  <h2 className="text-xl font-semibold text-gray-900 mb-4 text-center sm:text-left">
-    Payout Request
-  </h2>
+                  <div className="p-6 bg-white rounded-xl shadow-md">
+                    <h2 className="text-xl font-semibold text-gray-900 mb-4 text-center sm:text-left">
+                      Payout Request
+                    </h2>
 
-  <div className="overflow-x-auto rounded-lg shadow border border-gray-300">
-    <table className="min-w-full text-sm text-gray-800 border-collapse">
-      <tbody>
-        {/* Bank Name */}
-        <tr className="bg-gray-100">
-          <th className="border px-4 py-3 text-left font-semibold text-gray-900 w-1/3">
-            Bank Name
-          </th>
-          <td className="border px-4 py-3 flex items-center gap-2">
-            <span className="font-medium text-gray-900">HDFC Bank</span>
-            <button
-              className="text-gray-500 hover:text-black transition"
-              onClick={() => navigator.clipboard.writeText("HDFC Bank")}
-              title="Copy Bank Name"
-            >
-              📋
-            </button>
-          </td>
-        </tr>
+                    <div className="overflow-x-auto rounded-lg shadow border border-gray-300">
+                      <table className="min-w-full text-sm text-gray-800 border-collapse">
+                        <tbody>
+                          {/* Bank Name */}
+                          <tr className="bg-gray-100">
+                            <th className="border px-4 py-3 text-left font-semibold text-gray-900 w-1/3">
+                              Bank Name
+                            </th>
+                            <td className="border px-4 py-3 flex items-center gap-2">
+                              <span className="font-medium text-gray-900">HDFC Bank</span>
+                              <button
+                                className="text-gray-500 hover:text-black transition"
+                                onClick={() => navigator.clipboard.writeText("HDFC Bank")}
+                                title="Copy Bank Name"
+                              >
+                                📋
+                              </button>
+                            </td>
+                          </tr>
 
-        {/* Account Name */}
-        <tr>
-          <th className="border px-4 py-3 text-left font-semibold text-gray-900 bg-gray-100">
-            Account Name
-          </th>
-          <td className="border px-4 py-3 flex items-center gap-2">
-            <span>John Doe</span>
-            <button
-              className="text-gray-500 hover:text-black transition"
-              onClick={() => navigator.clipboard.writeText("John Doe")}
-              title="Copy Account Name"
-            >
-              📋
-            </button>
-          </td>
-        </tr>
+                          {/* Account Name */}
+                          <tr>
+                            <th className="border px-4 py-3 text-left font-semibold text-gray-900 bg-gray-100">
+                              Account Name
+                            </th>
+                            <td className="border px-4 py-3 flex items-center gap-2">
+                              <span>John Doe</span>
+                              <button
+                                className="text-gray-500 hover:text-black transition"
+                                onClick={() => navigator.clipboard.writeText("John Doe")}
+                                title="Copy Account Name"
+                              >
+                                📋
+                              </button>
+                            </td>
+                          </tr>
 
-        {/* Account Number */}
-        <tr className="bg-gray-100">
-          <th className="border px-4 py-3 text-left font-semibold text-gray-900">
-            Account Number
-          </th>
-          <td className="border px-4 py-3 flex items-center gap-2">
-            <span>3232321</span>
-            <button
-              className="text-gray-500 hover:text-black transition"
-              onClick={() => navigator.clipboard.writeText("3232321")}
-              title="Copy Account Number"
-            >
-              📋
-            </button>
-          </td>
-        </tr>
+                          {/* Account Number */}
+                          <tr className="bg-gray-100">
+                            <th className="border px-4 py-3 text-left font-semibold text-gray-900">
+                              Account Number
+                            </th>
+                            <td className="border px-4 py-3 flex items-center gap-2">
+                              <span>3232321</span>
+                              <button
+                                className="text-gray-500 hover:text-black transition"
+                                onClick={() => navigator.clipboard.writeText("3232321")}
+                                title="Copy Account Number"
+                              >
+                                📋
+                              </button>
+                            </td>
+                          </tr>
 
-        {/* IFSC */}
-        <tr>
-          <th className="border px-4 py-3 text-left font-semibold text-gray-900 bg-gray-100">
-            IFSC
-          </th>
-          <td className="border px-4 py-3 flex items-center gap-2">
-            <span>HDFC000123</span>
-            <button
-              className="text-gray-500 hover:text-black transition"
-              onClick={() => navigator.clipboard.writeText("HDFC000123")}
-              title="Copy IFSC"
-            >
-              📋
-            </button>
-          </td>
-        </tr>
+                          {/* IFSC */}
+                          <tr>
+                            <th className="border px-4 py-3 text-left font-semibold text-gray-900 bg-gray-100">
+                              IFSC
+                            </th>
+                            <td className="border px-4 py-3 flex items-center gap-2">
+                              <span>HDFC000123</span>
+                              <button
+                                className="text-gray-500 hover:text-black transition"
+                                onClick={() => navigator.clipboard.writeText("HDFC000123")}
+                                title="Copy IFSC"
+                              >
+                                📋
+                              </button>
+                            </td>
+                          </tr>
 
-        {/* UPI */}
-        <tr className="bg-gray-100">
-          <th className="border px-4 py-3 text-left font-semibold text-gray-900">
-            UPI
-          </th>
-          <td className="border px-4 py-3 flex items-center gap-2">
-            <span>john@hdfc</span>
-            <button
-              className="text-gray-500 hover:text-black transition"
-              onClick={() => navigator.clipboard.writeText("john@hdfc")}
-              title="Copy UPI"
-            >
-              📋
-            </button>
-          </td>
-        </tr>
+                          {/* UPI */}
+                          <tr className="bg-gray-100">
+                            <th className="border px-4 py-3 text-left font-semibold text-gray-900">
+                              UPI
+                            </th>
+                            <td className="border px-4 py-3 flex items-center gap-2">
+                              <span>john@hdfc</span>
+                              <button
+                                className="text-gray-500 hover:text-black transition"
+                                onClick={() => navigator.clipboard.writeText("john@hdfc")}
+                                title="Copy UPI"
+                              >
+                                📋
+                              </button>
+                            </td>
+                          </tr>
 
-        {/* Time */}
-        <tr>
-          <th className="border px-4 py-3 text-left font-semibold text-gray-900 bg-gray-100">
-            Time
-          </th>
-          <td className="border px-4 py-3 text-gray-700">
-            2025-10-09 14:05:54
-          </td>
-        </tr>
+                          {/* Time */}
+                          <tr>
+                            <th className="border px-4 py-3 text-left font-semibold text-gray-900 bg-gray-100">
+                              Time
+                            </th>
+                            <td className="border px-4 py-3 text-gray-700">
+                              2025-10-09 14:05:54
+                            </td>
+                          </tr>
 
-        {/* Amount */}
-        <tr className="bg-gray-100">
-          <th className="border px-4 py-3 text-left font-semibold text-gray-900">
-            Amount
-          </th>
-          <td className="border px-4 py-3 font-semibold text-gray-900">
-            ₹1700/-
-          </td>
-        </tr>
+                          {/* Amount */}
+                          <tr className="bg-gray-100">
+                            <th className="border px-4 py-3 text-left font-semibold text-gray-900">
+                              Amount
+                            </th>
+                            <td className="border px-4 py-3 font-semibold text-gray-900">
+                              ₹1700/-
+                            </td>
+                          </tr>
 
-        {/* QR */}
-        <tr>
-          <th className="border px-4 py-3 text-left font-semibold text-gray-900 bg-gray-100">
-            QR
-          </th>
-          <td className="border px-4 py-3 text-center">
-            <button
-              className="border border-gray-700 hover:bg-gray-900 hover:text-white text-gray-900 px-3 py-1 rounded-md text-xs transition"
-              onClick={() => alert("QR downloaded!")}
-            >
-              ⬇️ Download
-            </button>
-          </td>
-        </tr>
+                          {/* QR */}
+                          <tr>
+                            <th className="border px-4 py-3 text-left font-semibold text-gray-900 bg-gray-100">
+                              QR
+                            </th>
+                            <td className="border px-4 py-3 text-center">
+                              <button
+                                className="border border-gray-700 hover:bg-gray-900 hover:text-white text-gray-900 px-3 py-1 rounded-md text-xs transition"
+                                onClick={() => alert("QR downloaded!")}
+                              >
+                                ⬇️ Download
+                              </button>
+                            </td>
+                          </tr>
 
-        {/* Action */}
-        <tr className="bg-gray-100">
-          <th className="border px-4 py-3 text-left font-semibold text-gray-900">
-            Action
-          </th>
-          <td className="border px-4 py-3 text-center">
-            <button className="bg-gray-900 hover:bg-black text-white px-4 py-1.5 rounded-md text-xs transition shadow">
-              Pay
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
+                          {/* Action */}
+                          <tr className="bg-gray-100">
+                            <th className="border px-4 py-3 text-left font-semibold text-gray-900">
+                              Action
+                            </th>
+                            <td className="border px-4 py-3 text-center">
+                              <button className="bg-gray-900 hover:bg-black text-white px-4 py-1.5 rounded-md text-xs transition shadow">
+                                Pay
+                              </button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
 
 
 
