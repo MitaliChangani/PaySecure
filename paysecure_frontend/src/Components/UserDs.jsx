@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import api from "../api/axios";
+import Cookies from "js-cookie";
+
 import {
   User,
   Clock,
@@ -33,45 +36,127 @@ export default function UserDs() {
   const [activeTab, setActiveTab] = useState("history");
   const [historyTab, setHistoryTab] = useState("pending");
   const [filterStatus, setFilterStatus] = useState("All");
+
   const [showModal, setShowModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const [selectedData, setSelectedData] = useState(null);
   const [selectedTx, setSelectedTx] = useState(null);
+
   const [utrInput, setUtrInput] = useState("");
   const [amountInput, setamountInput] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [customerId, setCustomerId] = useState("");
 
-  const handleSubmitt = (e) => {
-    e.preventDefault();
-    console.log("Customer ID:", customerId);
-    setIsModalOpen(false);
-    setCustomerId("");
+  const [payins, setPayins] = useState([]);
+  const [amount, setAmount] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const [paymentData, setPaymentData] = useState([]);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+
+  useEffect(() => {
+    fetchPayins();
+  }, []);
+
+  //  fetch user payin requests
+
+  const fetchPayins = async () => {
+    try {
+      const res = await api.get("/payin/");
+      // Map backend fields to frontend-friendly keys
+      const mappedData = res.data.map((item) => ({
+        id: item.id,
+        date: item.created_at
+          ? new Date(item.created_at).toLocaleDateString()
+          : "",
+        requestId: item.id, // or you can generate like REQ + id
+        utrNo: item.utr_number || "",
+        amount: item.amount || "",
+        username: item.user_name || "", // backend field
+        customerId: item.customer_id || "",
+        status: item.status || "",
+        transactionId: item.id, // or keep null if not available
+        paymentLink: item.razorpay_link || "",
+        qrCode: item.qr_code || "",
+        assignedFranchise: item.assigned_franchise_name || "",
+      }));
+
+      setPaymentData(mappedData);
+      console.log("Fetched PayIns:", mappedData);
+    } catch (err) {
+      console.error("Error fetching PayIns", err);
+    }
   };
-  const paymentData = [
-    {
-      date: "2025-10-08",
-      requestId: "REQ12345",
-      utrNo: "UTR987654321",
-      amount: "₹5000",
-      username: "john_doe",
-      customerId: "CUST001",
-      status: "Successed",
-      transactionId: "TXN99887766",
-      time: "14:30",
-    },
-    {
-      date: "2025-10-07",
-      requestId: "REQ98765",
-      utrNo: "UTR123456789",
-      amount: "₹1200",
-      username: "alex123",
-      customerId: "CUST002",
-      status: "Pending",
-      transactionId: "TXN88776655",
-      time: "11:45",
-    },
-  ];
+
+  // create a new payin request
+
+  const createPayin = async () => {
+    if (!amount) return alert("Enter amount");
+
+    try {
+      setLoading(true);
+
+      const payload = {
+        amount: amount.toString(),
+        customer_id: "CUST-" + Math.floor(Math.random() * 100000),
+      };
+
+      console.log("Creating PayIn with payload:", payload);
+
+      const res = await api.post("/payin/", payload);
+      console.log("Created PayIn response:", res.data);
+
+      alert("PayIn request created!");
+      fetchPayins(); // refresh table
+    } catch (err) {
+      console.error(
+        "Error creating PayIn:",
+        err.response ? err.response.data : err
+      );
+      alert("Error creating PayIn");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // update utr after payment is done
+
+  const updateUTR = async (id, utr) => {
+    try {
+      await api.patch(`/payin/${id}/`, { utr_number: utr });
+      console.log(`Updated UTR for PayIn ID ${id}:`, res.data);
+      alert("UTR updated successfully!");
+      fetchPayins();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // const paymentData = [
+  //   {
+  //     date: "2025-10-08",
+  //     requestId: "REQ12345",
+  //     utrNo: "UTR987654321",
+  //     amount: "₹5000",
+  //     username: "john_doe",
+  //     customerId: "CUST001",
+  //     status: "Successed",
+  //     transactionId: "TXN99887766",
+  //     time: "14:30",
+  //   },
+  //   {
+  //     date: "2025-10-07",
+  //     requestId: "REQ98765",
+  //     utrNo: "UTR123456789",
+  //     amount: "₹1200",
+  //     username: "alex123",
+  //     customerId: "CUST002",
+  //     status: "Pending",
+  //     transactionId: "TXN88776655",
+  //     time: "11:45",
+  //   },
+  // ];
 
   const withdrawRequests = [
     {
@@ -101,9 +186,17 @@ export default function UserDs() {
       status: "Pending",
     },
   ];
+
+  const handleSubmitt = (e) => {
+    e.preventDefault();
+    console.log("Customer ID:", customerId);
+    setIsModalOpen(false);
+    setCustomerId("");
+  };
+
   const handleView = (item) => {
-    setSelectedData(item);
-    setShowModal(true);
+    setSelectedTx(item); // use selectedTx for transaction details modal
+    setShowDetailsModal(true);
   };
 
   const handleCopy = () => {
@@ -112,13 +205,35 @@ export default function UserDs() {
     );
     alert("Payment link copied!");
   };
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Manual Status Updated Successfully!");
-    setShowModal(false);
-    setUtrInput("");
-    setamountInput("");
+    if (!selectedTx) return;
+    try {
+      await updateUTR(selectedTx.id, utrInput);
+      // update status locally
+      setPaymentData((prev) =>
+        prev.map((tx) =>
+          tx.id === selectedTx.id
+            ? {
+              ...tx,
+              utrNo: utrInput,
+              amount: amountInput,
+              status: "Successed",
+            }
+            : tx
+        )
+      );
+      setShowModal(false);
+      setSelectedTx(null);
+      setUtrInput("");
+      setamountInput("");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update UTR");
+    }
   };
+
   const handleAddSubmit = (e) => {
     e.preventDefault();
     alert("New Pay-Out Record Added!");
@@ -130,9 +245,17 @@ export default function UserDs() {
       <div className="w-full bg-white shadow-sm">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-3 px-6 py-3">
           {[
-            { key: "dashboard", label: "Dashboard", icon: <LayoutDashboard size={20} /> },
+            {
+              key: "dashboard",
+              label: "Dashboard",
+              icon: <LayoutDashboard size={20} />,
+            },
             { key: "payment", label: "Pay-in", icon: <CreditCard size={20} /> },
-            { key: "withdraw", label: "Pay-out", icon: <ArrowUpCircle size={20} /> },
+            {
+              key: "withdraw",
+              label: "Pay-out",
+              icon: <ArrowUpCircle size={20} />,
+            },
             { key: "history", label: "History", icon: <Clock size={20} /> },
             { key: "profile", label: "Profile", icon: <User size={20} /> },
           ].map((tab) => (
@@ -166,35 +289,50 @@ export default function UserDs() {
                 {/* Buttons Row + Filter */}
                 <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
                   <button
-                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "All" ? "bg-gray-300" : "bg-gray-200 hover:bg-gray-300"}`}
+                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "All"
+                      ? "bg-gray-300"
+                      : "bg-gray-200 hover:bg-gray-300"
+                      }`}
                     onClick={() => setFilterStatus("All")}
                   >
                     All
                   </button>
 
                   <button
-                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Initiate" ? "bg-blue-200" : "bg-blue-100 hover:bg-blue-200"}`}
+                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Initiate"
+                      ? "bg-blue-200"
+                      : "bg-blue-100 hover:bg-blue-200"
+                      }`}
                     onClick={() => setFilterStatus("Initiate")}
                   >
                     Initiate
                   </button>
 
                   <button
-                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Pending" ? "bg-yellow-200" : "bg-yellow-100 hover:bg-yellow-200"}`}
+                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Pending"
+                      ? "bg-yellow-200"
+                      : "bg-yellow-100 hover:bg-yellow-200"
+                      }`}
                     onClick={() => setFilterStatus("Pending")}
                   >
                     Pending
                   </button>
 
                   <button
-                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Successed" ? "bg-green-200" : "bg-green-100 hover:bg-green-200"}`}
+                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Successed"
+                      ? "bg-green-200"
+                      : "bg-green-100 hover:bg-green-200"
+                      }`}
                     onClick={() => setFilterStatus("Successed")}
                   >
                     Successed
                   </button>
 
                   <button
-                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Failed" ? "bg-red-200" : "bg-red-100 hover:bg-red-200"}`}
+                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Failed"
+                      ? "bg-red-200"
+                      : "bg-red-100 hover:bg-red-200"
+                      }`}
                     onClick={() => setFilterStatus("Failed")}
                   >
                     Failed
@@ -202,7 +340,9 @@ export default function UserDs() {
 
                   {/* Filter Section */}
                   <div className="flex flex-wrap items-center gap-2 ml-4">
-                    <span className="font-medium text-gray-700">Filter By:</span>
+                    <span className="font-medium text-gray-700">
+                      Filter By:
+                    </span>
                     <input
                       type="date"
                       className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -229,17 +369,25 @@ export default function UserDs() {
                     <thead className="bg-gray-100 text-gray-700">
                       <tr>
                         <th className="border px-4 py-2 text-left">Date</th>
-                        <th className="border px-4 py-2 text-left">Request ID</th>
+                        <th className="border px-4 py-2 text-left">
+                          Request ID
+                        </th>
                         <th className="border px-4 py-2 text-left">UTR No.</th>
                         <th className="border px-4 py-2 text-left">Amount</th>
-                        <th className="border px-4 py-2 text-left">Transaction by Username</th>
-                        <th className="border px-4 py-2 text-left">Customer ID</th>
+                        <th className="border px-4 py-2 text-left">
+                          Transaction by Username
+                        </th>
+                        <th className="border px-4 py-2 text-left">
+                          Customer ID
+                        </th>
                         <th className="border px-4 py-2 text-left">Status</th>
                         <th className="border px-4 py-2 text-left">Action</th>
 
                         {/* Show Quick Action column header only for All or Initiate filter */}
                         {["All", "Initiate"].includes(filterStatus) && (
-                          <th className="border px-4 py-2 text-left">Quick Action</th>
+                          <th className="border px-4 py-2 text-left">
+                            Quick Action
+                          </th>
                         )}
                       </tr>
                     </thead>
@@ -247,15 +395,25 @@ export default function UserDs() {
                     <tbody>
                       {/* Ensure `paymentData` is defined in your component scope */}
                       {paymentData
-                        .filter(item => filterStatus === "All" || item.status === filterStatus)
+                        .filter(
+                          (item) =>
+                            filterStatus === "All" ||
+                            item.status === filterStatus
+                        )
                         .map((item, index) => (
                           <tr key={index} className="hover:bg-gray-50">
                             <td className="border px-4 py-2">{item.date}</td>
-                            <td className="border px-4 py-2">{item.requestId}</td>
+                            <td className="border px-4 py-2">
+                              {item.requestId}
+                            </td>
                             <td className="border px-4 py-2">{item.utrNo}</td>
                             <td className="border px-4 py-2">{item.amount}</td>
-                            <td className="border px-4 py-2">{item.username}</td>
-                            <td className="border px-4 py-2">{item.customerId}</td>
+                            <td className="border px-4 py-2">
+                              {item.username}
+                            </td>
+                            <td className="border px-4 py-2">
+                              {item.customerId}
+                            </td>
                             <td
                               className={`border px-4 py-2 font-medium ${item.status === "Successed"
                                 ? "text-green-600"
@@ -303,7 +461,6 @@ export default function UserDs() {
                           </tr>
                         ))}
                     </tbody>
-
                   </table>
 
                   {/* Manual Update Modal */}
@@ -373,15 +530,58 @@ export default function UserDs() {
                     Add New Pay-Out Record
                   </h2>
 
-                  <form onSubmit={handleAddSubmit} className="grid grid-cols-1 gap-4">
-                    <input type="text" placeholder="Bank Name" className="border rounded-lg px-3 py-2" required />
-                    <input type="text" placeholder="Customer ID" className="border rounded-lg px-3 py-2" required />
-                    <input type="text" placeholder="Account" className="border rounded-lg px-3 py-2" required />
-                    <input type="text" placeholder="UPI" className="border rounded-lg px-3 py-2" required />
-                    <input type="text" placeholder="Account No." className="border rounded-lg px-3 py-2" required />
-                    <input type="text" placeholder="Account Name" className="border rounded-lg px-3 py-2" required />
-                    <input type="text" placeholder="IFSC" className="border rounded-lg px-3 py-2" required />
-                    <input type="number" placeholder="Amount" className="border rounded-lg px-3 py-2" required />
+                  <form
+                    onSubmit={handleAddSubmit}
+                    className="grid grid-cols-1 gap-4"
+                  >
+                    <input
+                      type="text"
+                      placeholder="Bank Name"
+                      className="border rounded-lg px-3 py-2"
+                      required
+                    />
+                    <input
+                      type="text"
+                      placeholder="Customer ID"
+                      className="border rounded-lg px-3 py-2"
+                      required
+                    />
+                    <input
+                      type="text"
+                      placeholder="Account"
+                      className="border rounded-lg px-3 py-2"
+                      required
+                    />
+                    <input
+                      type="text"
+                      placeholder="UPI"
+                      className="border rounded-lg px-3 py-2"
+                      required
+                    />
+                    <input
+                      type="text"
+                      placeholder="Account No."
+                      className="border rounded-lg px-3 py-2"
+                      required
+                    />
+                    <input
+                      type="text"
+                      placeholder="Account Name"
+                      className="border rounded-lg px-3 py-2"
+                      required
+                    />
+                    <input
+                      type="text"
+                      placeholder="IFSC"
+                      className="border rounded-lg px-3 py-2"
+                      required
+                    />
+                    <input
+                      type="number"
+                      placeholder="Amount"
+                      className="border rounded-lg px-3 py-2"
+                      required
+                    />
 
                     <div className="flex justify-end gap-3 mt-4">
                       <button
@@ -410,35 +610,50 @@ export default function UserDs() {
                 {/* Buttons Row + Filter */}
                 <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
                   <button
-                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "All" ? "bg-gray-300" : "bg-gray-200 hover:bg-gray-300"}`}
+                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "All"
+                      ? "bg-gray-300"
+                      : "bg-gray-200 hover:bg-gray-300"
+                      }`}
                     onClick={() => setFilterStatus("All")}
                   >
                     All
                   </button>
 
                   <button
-                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Initiate" ? "bg-blue-200" : "bg-blue-100 hover:bg-blue-200"}`}
+                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Initiate"
+                      ? "bg-blue-200"
+                      : "bg-blue-100 hover:bg-blue-200"
+                      }`}
                     onClick={() => setFilterStatus("Initiate")}
                   >
                     Initiate
                   </button>
 
                   <button
-                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Pending" ? "bg-yellow-200" : "bg-yellow-100 hover:bg-yellow-200"}`}
+                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Pending"
+                      ? "bg-yellow-200"
+                      : "bg-yellow-100 hover:bg-yellow-200"
+                      }`}
                     onClick={() => setFilterStatus("Pending")}
                   >
                     Pending
                   </button>
 
                   <button
-                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Successed" ? "bg-green-200" : "bg-green-100 hover:bg-green-200"}`}
+                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Successed"
+                      ? "bg-green-200"
+                      : "bg-green-100 hover:bg-green-200"
+                      }`}
                     onClick={() => setFilterStatus("Successed")}
                   >
                     Successed
                   </button>
 
                   <button
-                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Failed" ? "bg-red-200" : "bg-red-100 hover:bg-red-200"}`}
+                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Failed"
+                      ? "bg-red-200"
+                      : "bg-red-100 hover:bg-red-200"
+                      }`}
                     onClick={() => setFilterStatus("Failed")}
                   >
                     Failed
@@ -446,7 +661,9 @@ export default function UserDs() {
 
                   {/* Filter Section */}
                   <div className="flex flex-wrap items-center gap-2 ml-4">
-                    <span className="font-medium text-gray-700">Filter By:</span>
+                    <span className="font-medium text-gray-700">
+                      Filter By:
+                    </span>
                     <input
                       type="date"
                       className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -471,7 +688,9 @@ export default function UserDs() {
                       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
                         <div className="bg-white rounded-lg shadow-lg w-[90%] max-w-lg p-6 relative">
                           <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-lg font-semibold">Generate Bank Details</h2>
+                            <h2 className="text-lg font-semibold">
+                              Generate Bank Details
+                            </h2>
                             <button
                               onClick={() => setIsModalOpen(false)}
                               className="text-gray-500 hover:text-gray-700 text-xl"
@@ -480,7 +699,7 @@ export default function UserDs() {
                             </button>
                           </div>
                           {/* Assuming GenerateBankForm is a defined component */}
-                          <GenerateBankForm />
+                          <GenerateBankForm currentUser={loggedInUser} selectedFranchise={selectedFranchise} />
                           <div className="flex justify-end pt-2">
                             <button
                               type="button"
@@ -502,17 +721,25 @@ export default function UserDs() {
                     <thead className="bg-gray-100 text-gray-700">
                       <tr>
                         <th className="border px-4 py-2 text-left">Date</th>
-                        <th className="border px-4 py-2 text-left">Request ID</th>
+                        <th className="border px-4 py-2 text-left">
+                          Request ID
+                        </th>
                         <th className="border px-4 py-2 text-left">UTR No.</th>
                         <th className="border px-4 py-2 text-left">Amount</th>
-                        <th className="border px-4 py-2 text-left">Transaction by Username</th>
-                        <th className="border px-4 py-2 text-left">Customer ID</th>
+                        <th className="border px-4 py-2 text-left">
+                          Transaction by Username
+                        </th>
+                        <th className="border px-4 py-2 text-left">
+                          Customer ID
+                        </th>
                         <th className="border px-4 py-2 text-left">Status</th>
                         <th className="border px-4 py-2 text-left">Action</th>
 
                         {/* Show Quick Action column header only for All or Initiate filter */}
                         {["All", "Initiate"].includes(filterStatus) && (
-                          <th className="border px-4 py-2 text-left">Quick Action</th>
+                          <th className="border px-4 py-2 text-left">
+                            Quick Action
+                          </th>
                         )}
                       </tr>
                     </thead>
@@ -520,15 +747,25 @@ export default function UserDs() {
                     <tbody>
                       {/* Ensure `paymentData` is defined in your component scope */}
                       {paymentData
-                        .filter(item => filterStatus === "All" || item.status === filterStatus)
+                        .filter(
+                          (item) =>
+                            filterStatus === "All" ||
+                            item.status === filterStatus
+                        )
                         .map((item, index) => (
                           <tr key={index} className="hover:bg-gray-50">
                             <td className="border px-4 py-2">{item.date}</td>
-                            <td className="border px-4 py-2">{item.requestId}</td>
+                            <td className="border px-4 py-2">
+                              {item.requestId}
+                            </td>
                             <td className="border px-4 py-2">{item.utrNo}</td>
                             <td className="border px-4 py-2">{item.amount}</td>
-                            <td className="border px-4 py-2">{item.username}</td>
-                            <td className="border px-4 py-2">{item.customerId}</td>
+                            <td className="border px-4 py-2">
+                              {item.username}
+                            </td>
+                            <td className="border px-4 py-2">
+                              {item.customerId}
+                            </td>
                             <td
                               className={`border px-4 py-2 font-medium ${item.status === "Successed"
                                 ? "text-green-600"
@@ -576,8 +813,6 @@ export default function UserDs() {
                           </tr>
                         ))}
                     </tbody>
-
-
                   </table>
 
                   {/* Manual Update Modal */}
@@ -642,16 +877,33 @@ export default function UserDs() {
                 {selectedTx && showDetailsModal && (
                   <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                     <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md">
-                      <h2 className="text-xl font-bold text-center mb-4">Transaction Details</h2>
+                      <h2 className="text-xl font-bold text-center mb-4">
+                        Transaction Details
+                      </h2>
 
                       <div className="space-y-2 text-sm sm:text-base">
-                        <p><strong>UTR No.:</strong> {selectedTx.utrNo}</p>
-                        <p><strong>Amount:</strong> ₹{selectedTx.amount}</p>
-                        <p><strong>Customer ID:</strong> {selectedTx.customerId}</p>
-                        <p><strong>Request ID:</strong> {selectedTx.requestId}</p>
-                        <p><strong>Transaction ID:</strong> {selectedTx.transactionId}</p>
-                        <p><strong>Date:</strong> {selectedTx.date}</p>
-                        <p><strong>Time:</strong> {selectedTx.time}</p>
+                        <p>
+                          <strong>UTR No.:</strong> {selectedTx.utrNo}
+                        </p>
+                        <p>
+                          <strong>Amount:</strong> ₹{selectedTx.amount}
+                        </p>
+                        <p>
+                          <strong>Customer ID:</strong> {selectedTx.customerId}
+                        </p>
+                        <p>
+                          <strong>Request ID:</strong> {selectedTx.requestId}
+                        </p>
+                        <p>
+                          <strong>Transaction ID:</strong>{" "}
+                          {selectedTx.transactionId}
+                        </p>
+                        <p>
+                          <strong>Date:</strong> {selectedTx.date}
+                        </p>
+                        <p>
+                          <strong>Time:</strong> {selectedTx.time}
+                        </p>
 
                         <p>
                           <strong>Payment Link:</strong>{" "}
@@ -699,15 +951,32 @@ export default function UserDs() {
                   className="bg-white rounded-xl shadow-xl p-6 w-[90%] max-w-md"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <h2 className="text-xl font-bold mb-4 text-center">Transaction Details</h2>
+                  <h2 className="text-xl font-bold mb-4 text-center">
+                    Transaction Details
+                  </h2>
                   <div className="space-y-2 text-sm">
-                    <p><strong>UTR No.:</strong> {selectedData.utrNo}</p>
-                    <p><strong>Amount:</strong> {selectedData.amount}</p>
-                    <p><strong>Customer ID:</strong> {selectedData.customerId}</p>
-                    <p><strong>Request ID:</strong> {selectedData.requestId}</p>
-                    <p><strong>Transaction ID:</strong> {selectedData.transactionId}</p>
-                    <p><strong>Date:</strong> {selectedData.date}</p>
-                    <p><strong>Time:</strong> {selectedData.time}</p>
+                    <p>
+                      <strong>UTR No.:</strong> {selectedData.utrNo}
+                    </p>
+                    <p>
+                      <strong>Amount:</strong> {selectedData.amount}
+                    </p>
+                    <p>
+                      <strong>Customer ID:</strong> {selectedData.customerId}
+                    </p>
+                    <p>
+                      <strong>Request ID:</strong> {selectedData.requestId}
+                    </p>
+                    <p>
+                      <strong>Transaction ID:</strong>{" "}
+                      {selectedData.transactionId}
+                    </p>
+                    <p>
+                      <strong>Date:</strong> {selectedData.date}
+                    </p>
+                    <p>
+                      <strong>Time:</strong> {selectedData.time}
+                    </p>
                     <p>
                       <strong>Payment Link:</strong>{" "}
                       <a
@@ -763,7 +1032,9 @@ export default function UserDs() {
                 </div>
                 {historyTab === "pending" && (
                   <div className="bg-white rounded-xl shadow-lg p-6 overflow-x-auto">
-                    <h2 className="text-xl font-semibold mb-4">Pay-out Requests</h2>
+                    <h2 className="text-xl font-semibold mb-4">
+                      Pay-out Requests
+                    </h2>
                     <table className="min-w-full border border-gray-300 text-sm md:text-base">
                       <thead>
                         <tr className="bg-gray-100">
@@ -780,7 +1051,9 @@ export default function UserDs() {
                             "Time",
                             "Status",
                           ].map((th) => (
-                            <th key={th} className="border px-4 py-2 text-left">{th}</th>
+                            <th key={th} className="border px-4 py-2 text-left">
+                              {th}
+                            </th>
                           ))}
                         </tr>
                       </thead>
@@ -788,13 +1061,21 @@ export default function UserDs() {
                         {withdrawRequests.map((req, index) => (
                           <tr key={req.id} className="hover:bg-gray-50">
                             <td className="border px-4 py-2">{index + 1}</td>
-                            <td className="border px-4 py-2">{req.franchiseName}</td>
-                            <td className="border px-4 py-2">{req.accountName}</td>
-                            <td className="border px-4 py-2">{req.accountNumber}</td>
+                            <td className="border px-4 py-2">
+                              {req.franchiseName}
+                            </td>
+                            <td className="border px-4 py-2">
+                              {req.accountName}
+                            </td>
+                            <td className="border px-4 py-2">
+                              {req.accountNumber}
+                            </td>
                             <td className="border px-4 py-2">{req.bankName}</td>
                             <td className="border px-4 py-2">{req.ifsc}</td>
                             <td className="border px-4 py-2">{req.upiId}</td>
-                            <td className="border px-4 py-2">₹{req.amount.toLocaleString()}</td>
+                            <td className="border px-4 py-2">
+                              ₹{req.amount.toLocaleString()}
+                            </td>
                             <td className="border px-4 py-2">{req.date}</td>
                             <td className="border px-4 py-2">{req.time}</td>
                             <td className="border px-4 py-2">{req.status}</td>
@@ -806,7 +1087,9 @@ export default function UserDs() {
                 )}
                 {historyTab === "complete" && (
                   <div className="bg-white rounded-xl shadow-lg p-6 overflow-x-auto">
-                    <h2 className="text-xl font-semibold mb-4">Completed Transactions</h2>
+                    <h2 className="text-xl font-semibold mb-4">
+                      Completed Transactions
+                    </h2>
                     <table className="min-w-full border border-gray-300 text-sm md:text-base">
                       <thead>
                         <tr className="bg-gray-100">
@@ -821,7 +1104,9 @@ export default function UserDs() {
                             "To",
                             "Amount",
                           ].map((th) => (
-                            <th key={th} className="border px-4 py-2 text-left">{th}</th>
+                            <th key={th} className="border px-4 py-2 text-left">
+                              {th}
+                            </th>
                           ))}
                         </tr>
                       </thead>
@@ -836,7 +1121,7 @@ export default function UserDs() {
                             time: "14:30",
                             from: "John Doe",
                             to: "Bank Account",
-                        amount: 5000,
+                            amount: 5000,
                           },
                           {
                             id: 2,
@@ -854,12 +1139,16 @@ export default function UserDs() {
                             <td className="border px-4 py-2">{index + 1}</td>
                             <td className="border px-4 py-2">{tx.status}</td>
                             <td className="border px-4 py-2">{tx.upi}</td>
-                            <td className="border px-4 py-2">{tx.transactionId}</td>
+                            <td className="border px-4 py-2">
+                              {tx.transactionId}
+                            </td>
                             <td className="border px-4 py-2">{tx.date}</td>
                             <td className="border px-4 py-2">{tx.time}</td>
                             <td className="border px-4 py-2">{tx.from}</td>
                             <td className="border px-4 py-2">{tx.to}</td>
-                            <td className="border px-4 py-2">₹{tx.amount.toLocaleString()}</td>
+                            <td className="border px-4 py-2">
+                              ₹{tx.amount.toLocaleString()}
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -870,7 +1159,9 @@ export default function UserDs() {
             )}
             {activeTab === "profile" && (
               <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8 max-w-lg mx-auto ">
-                <h1 className="text-2xl font-bold mb-6 text-center">Edit Profile</h1>
+                <h1 className="text-2xl font-bold mb-6 text-center">
+                  Edit Profile
+                </h1>
                 <div className="mt-6 flex justify-center mb-6">
                   <img
                     src={ProfilePic}
@@ -915,15 +1206,15 @@ export default function UserDs() {
       </main>
 
       <style jsx>{`
-                .input-field {
-                    width: 100%;
-                    padding: 0.5rem 1rem;
-                    border: 1px solid #d1d5db;
-                    border-radius: 0.5rem;
-                    focus-ring: 2px;
-                    focus-ring-color: #3b82f6;
-                }
-            `}</style>
+        .input-field {
+          width: 100%;
+          padding: 0.5rem 1rem;
+          border: 1px solid #d1d5db;
+          border-radius: 0.5rem;
+          focus-ring: 2px;
+          focus-ring-color: #3b82f6;
+        }
+      `}</style>
     </div>
   );
 }
@@ -942,9 +1233,7 @@ function PayInDashboard() {
                 <CheckCircle className="text-blue-600" size={26} />
                 <div>
                   <p className="font-semibold text-blue-900">Success Txns</p>
-                  <p className="text-xl font-bold text-blue-900 mt-1">
-                    ₹
-                  </p>
+                  <p className="text-xl font-bold text-blue-900 mt-1">₹</p>
                 </div>
               </div>
               <p className="relative text-gray-700 font-medium">0 Txns</p>
@@ -956,9 +1245,7 @@ function PayInDashboard() {
                 <Clock className="text-yellow-700" size={26} />
                 <div>
                   <p className="font-semibold text-yellow-900">Pending Txns</p>
-                  <p className="text-xl font-bold text-yellow-900 mt-1">
-                    ₹
-                  </p>
+                  <p className="text-xl font-bold text-yellow-900 mt-1">₹</p>
                 </div>
               </div>
               <p className="relative text-gray-700 font-medium">0 Txns</p>
@@ -978,7 +1265,9 @@ function PayInDashboard() {
           </div>
           <div className="bg-white border rounded-xl shadow-sm p-4">
             <h3 className="text-lg font-semibold mb-4">Pay In</h3>
-            <p className="font-medium text-gray-600 mb-2">Pay In Weekly Report</p>
+            <p className="font-medium text-gray-600 mb-2">
+              Pay In Weekly Report
+            </p>
             <ResponsiveContainer width="100%" height={200}>
               <LineChart data={data}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -1052,7 +1341,9 @@ function PayOutDashboard() {
         </div>
         <div className="bg-white border rounded-xl shadow-sm p-4">
           <h3 className="text-lg font-semibold mb-4">Pay Out</h3>
-          <p className="font-medium text-gray-600 mb-2">Pay Out Weekly Report</p>
+          <p className="font-medium text-gray-600 mb-2">
+            Pay Out Weekly Report
+          </p>
 
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={data}>
@@ -1077,6 +1368,7 @@ function PayOutDashboard() {
 }
 function GenerateBankForm() {
   const [customerId, setCustomerId] = useState("");
+  const [amount, setAmount] = useState("");
   const [generated, setGenerated] = useState(false);
   const [bankData, setBankData] = useState({
     payinId: "",
@@ -1084,17 +1376,65 @@ function GenerateBankForm() {
     paymentLink: "",
     qrImage: "",
   });
+  const [loading, setLoading] = useState(false);
 
-  const handleGenerate = (e) => {
+  // const handleGenerate = (e) => {
+  //   e.preventDefault();
+  //   setBankData({
+  //     payinId: "68e7590c6c691411d3602433",
+  //     upiId: "UPO@UPI.COM",
+  //     paymentLink: "https://razorpay.com/",
+  //     qrImage:
+  //       "https://api.qrserver.com/v1/create-qr-code/?data=https://razorpay.com/&size=150x150",
+  //   });
+  //   setGenerated(true);
+  // };
+
+  const handleGenerate = async (e) => {
     e.preventDefault();
-    setBankData({
-      payinId: "68e7590c6c691411d3602433",
-      upiId: "UPO@UPI.COM",
-      paymentLink: "https://razorpay.com/",
-      qrImage:
-        "https://api.qrserver.com/v1/create-qr-code/?data=https://razorpay.com/&size=150x150",
-    });
-    setGenerated(true);
+
+    if (!customerId || !amount) return alert("Enter Customer ID");
+
+    try {
+      setLoading(true);
+      console.log("Generating PayIn for:", customerId);
+
+      const csrftoken = Cookies.get("csrftoken");
+
+      const payload = {
+        amount: parseFloat(amount).toFixed(2),
+        customer_id: customerId,
+        user: currentUser?.id || 18, // fallback if currentUser undefined
+        assigned_franchise: selectedFranchise?.id || 10, // fallback if undefined
+      };
+
+      console.log("Payload to send:", payload);
+
+      const res = await api.post(
+        "/payin/",
+        payload,
+        {
+          headers: {
+            "X-CSRFToken": csrftoken, // <-- must send this
+          },
+        }
+      );
+
+      console.log("PayIn created:", res.data);
+
+      // Update bankData with response from backend
+      setBankData({
+        payinId: res.data.id,
+        qrImage: res.data.qr_code,
+        upiId: res.data.upi_id,
+        paymentLink: res.data.razorpay_link,
+      });
+
+      setGenerated(true); // switch to "generated" view
+    } catch (err) {
+      console.error("Error generating PayIn:", err);
+      alert("Failed to generate PayIn.");
+    }
   };
 
   const handleCopy = () => {
@@ -1114,6 +1454,14 @@ function GenerateBankForm() {
             className="flex-1 border rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
+          <input
+            type="text"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder="Enter Amount"
+            className="flex-1 border rounded-lg px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+          />
+
           <button
             type="submit"
             className="bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded-lg flex items-center gap-2"
