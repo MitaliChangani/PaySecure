@@ -162,8 +162,6 @@ export default function UserDs() {
             {activeTab === "withdraw" && (
               <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8">
                 <h1 className="text-2xl font-bold text-center mb-6">Pay-Out</h1>
-
-                {/* Buttons Row + Filter */}
                 <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
                   <button
                     className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "All" ? "bg-gray-300" : "bg-gray-200 hover:bg-gray-300"}`}
@@ -199,8 +197,6 @@ export default function UserDs() {
                   >
                     Failed
                   </button>
-
-                  {/* Filter Section */}
                   <div className="flex flex-wrap items-center gap-2 ml-4">
                     <span className="font-medium text-gray-700">Filter By:</span>
                     <input
@@ -222,8 +218,6 @@ export default function UserDs() {
                     </button>
                   </div>
                 </div>
-
-                {/* Responsive Table Section */}
                 <div className="overflow-x-auto mt-6">
                   <table className="min-w-full border border-gray-300 text-sm">
                     <thead className="bg-gray-100 text-gray-700">
@@ -236,8 +230,6 @@ export default function UserDs() {
                         <th className="border px-4 py-2 text-left">Customer ID</th>
                         <th className="border px-4 py-2 text-left">Status</th>
                         <th className="border px-4 py-2 text-left">Action</th>
-
-                        {/* Show Quick Action column header only for All or Initiate filter */}
                         {["All", "Initiate"].includes(filterStatus) && (
                           <th className="border px-4 py-2 text-left">Quick Action</th>
                         )}
@@ -245,7 +237,6 @@ export default function UserDs() {
                     </thead>
 
                     <tbody>
-                      {/* Ensure `paymentData` is defined in your component scope */}
                       {paymentData
                         .filter(item => filterStatus === "All" || item.status === filterStatus)
                         .map((item, index) => (
@@ -268,8 +259,6 @@ export default function UserDs() {
                             >
                               {item.status}
                             </td>
-
-                            {/* View Button */}
                             <td className="border px-4 py-2">
                               <button
                                 onClick={() => handleView(item)}
@@ -278,21 +267,17 @@ export default function UserDs() {
                                 View
                               </button>
                             </td>
-
-                            {/* Quick Action (Manual UTR Update) */}
                             {["All", "Initiate"].includes(filterStatus) && (
                               <td
                                 className="border px-4 py-2 text-center"
                                 title="Click to update UTR manually"
                                 onClick={() => {
-                                  // CONDITION: Only execute the modal opening logic if status is "Initiate"
                                   if (item.status === "Initiate") {
                                     setSelectedTx(item);
                                     setShowModal(true);
                                   }
                                 }}
                               >
-                                {/* RENDERING: Only show '↺' icon if the item's status is "Initiate" */}
                                 {item.status === "Initiate" ? (
                                   <span className="cursor-pointer text-blue-600 hover:text-blue-800">
                                     ↺
@@ -305,9 +290,6 @@ export default function UserDs() {
                     </tbody>
 
                   </table>
-
-                  {/* Manual Update Modal */}
-                  {/* Ensure `showModal`, `utrInput`, `amountInput`, `handleSubmit`, `setUtrInput`, `setAmountInput` are defined */}
                   {showModal && (
                     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                       <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-6">
@@ -336,7 +318,7 @@ export default function UserDs() {
                             <input
                               type="text"
                               value={amountInput}
-                              onChange={(e) => setAmountInput(e.target.value)} // Corrected to setAmountInput
+                              onChange={(e) => setAmountInput(e.target.value)}
                               placeholder="Enter Amount"
                               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                               required
@@ -406,8 +388,6 @@ export default function UserDs() {
             {activeTab === "payment" && (
               <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8">
                 <h1 className="text-2xl font-bold text-center mb-6">Pay-in</h1>
-
-                {/* Buttons Row + Filter */}
                 <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
                   <button
                     className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "All" ? "bg-gray-300" : "bg-gray-200 hover:bg-gray-300"}`}
@@ -443,8 +423,6 @@ export default function UserDs() {
                   >
                     Failed
                   </button>
-
-                  {/* Filter Section */}
                   <div className="flex flex-wrap items-center gap-2 ml-4">
                     <span className="font-medium text-gray-700">Filter By:</span>
                     <input
@@ -458,15 +436,12 @@ export default function UserDs() {
                     <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
                       Apply
                     </button>
-
-                    {/* Bank Details Request Button & Modal */}
                     <button
                       onClick={() => setIsModalOpen(true)}
                       className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
                     >
                       + Request bank details
                     </button>
-                    {/* Ensure `isModalOpen` and `GenerateBankForm` are defined in your component scope */}
                     {isModalOpen && (
                       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
                         <div className="bg-white rounded-lg shadow-lg w-[90%] max-w-lg p-6 relative">
@@ -479,7 +454,6 @@ export default function UserDs() {
                               ✕
                             </button>
                           </div>
-                          {/* Assuming GenerateBankForm is a defined component */}
                           <GenerateBankForm />
                           <div className="flex justify-end pt-2">
                             <button
@@ -495,8 +469,6 @@ export default function UserDs() {
                     )}
                   </div>
                 </div>
-
-                {/* ✅ Responsive Table Section */}
                 <div className="overflow-x-auto mt-6">
                   <table className="min-w-full border border-gray-300 text-sm">
                     <thead className="bg-gray-100 text-gray-700">
@@ -509,8 +481,6 @@ export default function UserDs() {
                         <th className="border px-4 py-2 text-left">Customer ID</th>
                         <th className="border px-4 py-2 text-left">Status</th>
                         <th className="border px-4 py-2 text-left">Action</th>
-
-                        {/* Show Quick Action column header only for All or Initiate filter */}
                         {["All", "Initiate"].includes(filterStatus) && (
                           <th className="border px-4 py-2 text-left">Quick Action</th>
                         )}
@@ -518,7 +488,6 @@ export default function UserDs() {
                     </thead>
 
                     <tbody>
-                      {/* Ensure `paymentData` is defined in your component scope */}
                       {paymentData
                         .filter(item => filterStatus === "All" || item.status === filterStatus)
                         .map((item, index) => (
@@ -541,8 +510,6 @@ export default function UserDs() {
                             >
                               {item.status}
                             </td>
-
-                            {/* View Button */}
                             <td className="border px-4 py-2">
                               <button
                                 onClick={() => handleView(item)}
@@ -551,21 +518,17 @@ export default function UserDs() {
                                 View
                               </button>
                             </td>
-
-                            {/* Quick Action (Manual UTR Update) */}
                             {["All", "Initiate"].includes(filterStatus) && (
                               <td
                                 className="border px-4 py-2 text-center"
                                 title="Click to update UTR manually"
                                 onClick={() => {
-                                  // LOGIC CHANGE: Only execute the click action if status is "Initiate"
                                   if (item.status === "Initiate") {
                                     setSelectedTx(item);
                                     setShowModal(true);
                                   }
                                 }}
                               >
-                                {/* LOGIC CHANGE: Only render '↺' icon if the item's status is "Initiate" */}
                                 {item.status === "Initiate" ? (
                                   <span className="cursor-pointer text-blue-600 hover:text-blue-800">
                                     ↺
@@ -579,9 +542,6 @@ export default function UserDs() {
 
 
                   </table>
-
-                  {/* Manual Update Modal */}
-                  {/* Ensure `showModal`, `utrInput`, `amountInput`, `handleSubmit`, `setUtrInput`, `setAmountInput` are defined */}
                   {showModal && (
                     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                       <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-6">
@@ -636,9 +596,6 @@ export default function UserDs() {
                     </div>
                   )}
                 </div>
-
-                {/* ✅ Transaction Details Modal */}
-                {/* Ensure `selectedTx` and `showDetailsModal` are defined */}
                 {selectedTx && showDetailsModal && (
                   <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                     <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md">

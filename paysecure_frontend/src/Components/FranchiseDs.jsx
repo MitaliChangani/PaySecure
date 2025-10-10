@@ -39,7 +39,7 @@ export default function FranchiseDs() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedTx, setSelectedTx] = useState(null);
-  const [showDetailsModal, setShowDetailsModal] = useState(false); // ✅ Added
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [utrInput, setUtrInput] = useState("");
   const [amountInput, setAmountInput] = useState("");
   const [available, setAvailable] = useState(false);
@@ -89,8 +89,6 @@ export default function FranchiseDs() {
       utrNumber: "",
     },
   ]);
-
-  // ✅ Payment Data (useState for dynamic updates)
   const [paymentData, setPaymentData] = useState([
     {
       date: "2025-10-08",
@@ -154,7 +152,7 @@ export default function FranchiseDs() {
       accountNumber: "123456789012",
       bankName: "State Bank of India",
       ifsc: "SBIN0001234",
-      payment:"",
+      payment: "",
       upiId: "SBI@upi",
       QrCode: "",
     },
@@ -165,7 +163,7 @@ export default function FranchiseDs() {
     accountNumber: "",
     bankName: "",
     ifsc: "",
-    payment:"",
+    payment: "",
     upiId: "",
     QrCode: "",
   });
@@ -183,7 +181,7 @@ export default function FranchiseDs() {
       accountNumber: "",
       bankName: "",
       ifsc: "",
-      payment:"",
+      payment: "",
       upiId: "",
       QrCode: "",
     });
@@ -221,8 +219,6 @@ export default function FranchiseDs() {
     alert("New Pay-Out Record Added!");
     setShowAddModal(false);
   };
-
-  // ✅ Approve / Reject Payment Functions
   const handleApprove = (requestId) => {
     setPaymentData((prev) =>
       prev.map((item) =>
@@ -240,8 +236,6 @@ export default function FranchiseDs() {
     );
     alert("❌ Payment marked as failed!");
   };
-
-  // ✅ View Button Logic
   const handleView = (item) => {
     setSelectedTx(item);
     setShowDetailsModal(true);
@@ -250,7 +244,6 @@ export default function FranchiseDs() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-      {/* Center Tabs */}
       <header className="bg-white shadow-md px-4 md:px-8 py-3 flex items-center justify-center">
         <nav className="flex flex-wrap justify-center gap-2 sm:gap-4">
           <button
@@ -273,11 +266,6 @@ export default function FranchiseDs() {
             <CreditCard size={18} className="mr-2" />
             Account
           </button>
-
-
-
-
-          {/* Pay-In Button */}
           <button
             onClick={() => setActiveTab("payment")}
             className={`flex items-center px-3 sm:px-4 py-2 rounded-lg transition font-medium text-sm sm:text-base ${activeTab === "payin"
@@ -288,8 +276,6 @@ export default function FranchiseDs() {
             <CreditCard size={18} className="mr-2" />
             Pay-In
           </button>
-
-          {/* Pay-Out Button */}
           <button
             onClick={() => setActiveTab("withdraw")}
             className={`flex items-center px-3 sm:px-4 py-2 rounded-lg transition font-medium text-sm sm:text-base ${activeTab === "payout"
@@ -322,24 +308,13 @@ export default function FranchiseDs() {
           </button>
         </nav>
       </header>
-
-
-      {/* ---------- MAIN CONTENT ---------- */}
       <main className="flex-1 flex items-start justify-center p-4 md:p-8 overflow-y-auto">
         <div className="w-full max-w-5xl">
           {activeTab === "dashboard" && (<><PayInDashboard /><PayOutDashboard /></>)}
-          {/* Account Section */}
-
           {activeTab === "account" && (
             <div className="bg-white rounded-lg shadow p-6">
               <h1 className="text-2xl font-bold mb-6">Bank Accounts</h1>
-
-              {/* Subtabs */}
               <div className="flex flex-wrap gap-2 mb-6">
-
-             
-
-                {/* Activate Button */}
                 <button
                   className={`px-4 py-2 rounded-lg font-medium ${accountSubTab === "activate"
                     ? "bg-green-600 text-white"
@@ -349,8 +324,6 @@ export default function FranchiseDs() {
                 >
                   Activated Account
                 </button>
-
-                {/* Deactivate Button */}
                 <button
                   className={`px-4 py-2 rounded-lg font-medium ${accountSubTab === "deactivate"
                     ? "bg-yellow-500 text-white"
@@ -360,8 +333,6 @@ export default function FranchiseDs() {
                 >
                   Deactivated Account
                 </button>
-
-                {/* Delete Button */}
                 <button
                   className={`px-4 py-2 rounded-lg font-medium ${accountSubTab === "delete"
                     ? "bg-red-600 text-white"
@@ -371,7 +342,6 @@ export default function FranchiseDs() {
                 >
                   Deleted Account
                 </button>
-                    {/* Add Account Button */}
                 <button
                   className={`px-4 py-2 rounded-lg font-medium ${accountSubTab === "add"
                     ? "bg-blue-600 text-white"
@@ -382,11 +352,7 @@ export default function FranchiseDs() {
                   Add Account
                 </button>
               </div>
-
-
-              {/* View Accounts */}
-
-              {accountSubTab === "activate" &&  (
+              {accountSubTab === "activate" && (
                 <div className="space-y-6">
                   {accounts.map((acc) => (
                     <div
@@ -397,7 +363,6 @@ export default function FranchiseDs() {
                         <div className="flex justify-between items-center mb-2">
                           <h2 className="font-semibold">{acc.accountName}</h2>
                           <div className="flex gap-2">
-                            {/* Edit Button */}
                             <button
                               onClick={() =>
                                 editingId === acc.id ? setEditingId(null) : setEditingId(acc.id)
@@ -406,10 +371,6 @@ export default function FranchiseDs() {
                             >
                               {editingId === acc.id ? "Save" : "Edit"}
                             </button>
-
-                          
-
-                            {/* Deactivate Button */}
                             <button
                               onClick={() => handleDeactivate(acc.id)}
                               className="bg-yellow-500 text-white px-3 py-1 rounded-lg"
@@ -418,7 +379,6 @@ export default function FranchiseDs() {
                             </button>
                           </div>
                         </div>
-
                         <p>
                           <span className="font-semibold">Account Number:</span>{" "}
                           {editingId === acc.id ? (
@@ -489,8 +449,6 @@ export default function FranchiseDs() {
                             acc.upiId || "Not Added"
                           )}
                         </p>
-
-                        {/* QR Code */}
                         <p className="mt-2">
                           <span className="font-semibold">QR Code:</span>{" "}
                           {editingId === acc.id ? (
@@ -519,7 +477,7 @@ export default function FranchiseDs() {
                 </div>
               )}
 
-              {accountSubTab === "deactivate" &&  (
+              {accountSubTab === "deactivate" && (
                 <div className="space-y-6">
                   {accounts.map((acc) => (
                     <div
@@ -530,7 +488,6 @@ export default function FranchiseDs() {
                         <div className="flex justify-between items-center mb-2">
                           <h2 className="font-semibold">{acc.accountName}</h2>
                           <div className="flex gap-2">
-                            {/* Edit Button */}
                             <button
                               onClick={() =>
                                 editingId === acc.id ? setEditingId(null) : setEditingId(acc.id)
@@ -539,19 +496,14 @@ export default function FranchiseDs() {
                             >
                               {editingId === acc.id ? "Save" : "Edit"}
                             </button>
-
-                            {/* Activate Button */}
                             <button
                               onClick={() => handleActivate(acc.id)}
                               className="bg-green-600 text-white px-3 py-1 rounded-lg"
                             >
                               Activate
                             </button>
-
-                          
                           </div>
                         </div>
-
                         <p>
                           <span className="font-semibold">Account Number:</span>{" "}
                           {editingId === acc.id ? (
@@ -594,7 +546,7 @@ export default function FranchiseDs() {
                             acc.ifsc
                           )}
                         </p>
-                         <p>
+                        <p>
                           <span className="font-semibold">Payment Link:</span>{" "}
                           {editingId === acc.id ? (
                             <input
@@ -622,8 +574,6 @@ export default function FranchiseDs() {
                             acc.upiId || "Not Added"
                           )}
                         </p>
-
-                        {/* QR Code */}
                         <p className="mt-2">
                           <span className="font-semibold">QR Code:</span>{" "}
                           {editingId === acc.id ? (
@@ -652,7 +602,7 @@ export default function FranchiseDs() {
                 </div>
               )}
 
-              {accountSubTab === "delete" &&  (
+              {accountSubTab === "delete" && (
                 <div className="space-y-6">
                   {accounts.map((acc) => (
                     <div
@@ -660,8 +610,6 @@ export default function FranchiseDs() {
                       className="border rounded-lg p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4"
                     >
                       <div className="flex-1">
-                       
-
                         <p>
                           <span className="font-semibold">Account Number:</span>{" "}
                           {editingId === acc.id ? (
@@ -704,7 +652,7 @@ export default function FranchiseDs() {
                             acc.ifsc
                           )}
                         </p>
-                         <p>
+                        <p>
                           <span className="font-semibold">Payment Link:</span>{" "}
                           {editingId === acc.id ? (
                             <input
@@ -732,8 +680,6 @@ export default function FranchiseDs() {
                             acc.upiId || "Not Added"
                           )}
                         </p>
-
-                        {/* QR Code */}
                         <p className="mt-2">
                           <span className="font-semibold">QR Code:</span>{" "}
                           {editingId === acc.id ? (
@@ -761,7 +707,6 @@ export default function FranchiseDs() {
                   ))}
                 </div>
               )}
-              {/* Add Account Form */}
               {accountSubTab === "add" && (
                 <form className="space-y-4 max-w-lg" onSubmit={handleAddAccount}>
                   <div>
@@ -820,7 +765,7 @@ export default function FranchiseDs() {
                       required
                     />
                   </div>
-                                    <div>
+                  <div>
                     <label className="block text-gray-700">Add Payment Link</label>
                     <input
                       type="text"
@@ -856,13 +801,9 @@ export default function FranchiseDs() {
               )}
             </div>
           )}
-
-          {/* ✅ Payment Section */}
-{activeTab === "payment" && (
+          {activeTab === "payment" && (
             <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8">
               <h1 className="text-2xl font-bold text-center mb-6">Pay-in</h1>
-
-              {/* Buttons Row + Filter */}
               <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
                 <button
                   className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "All" ? "bg-gray-300" : "bg-gray-200 hover:bg-gray-300"}`}
@@ -898,9 +839,6 @@ export default function FranchiseDs() {
                 >
                   Failed
                 </button>
-
-
-                {/* Filter Section */}
                 <div className="flex flex-wrap items-center gap-2 ml-4">
                   <span className="font-medium text-gray-700">Filter By:</span>
                   <input
@@ -916,8 +854,6 @@ export default function FranchiseDs() {
                   </button>
                 </div>
               </div>
-
-              {/* ✅ Responsive Table Section */}
               <div className="overflow-x-auto mt-6">
                 <table className="min-w-full border border-gray-300 text-sm">
                   <thead className="bg-gray-100 text-gray-700">
@@ -930,8 +866,6 @@ export default function FranchiseDs() {
                       <th className="border px-4 py-2 text-left">Customer ID</th>
                       <th className="border px-4 py-2 text-left">Status</th>
                       <th className="border px-4 py-2 text-left">Action</th>
-
-                      {/* Show Quick Action + Approve/Reject only for these filters */}
                       {["All", "Initiate", "Pending"].includes(filterStatus) && (
                         <>
                           <th className="border px-4 py-2 text-left">Quick Action</th>
@@ -964,8 +898,6 @@ export default function FranchiseDs() {
                           >
                             {item.status}
                           </td>
-
-                          {/* View Button */}
                           <td className="border px-4 py-2">
                             <button
                               onClick={() => handleView(item)}
@@ -974,11 +906,8 @@ export default function FranchiseDs() {
                               View
                             </button>
                           </td>
-
-                          {/* Quick Action + Approve/Reject (only for All, Initiate, Pending) */}
                           {["All", "Initiate", "Pending"].includes(filterStatus) && (
                             <>
-                              {/* Manual UTR Update */}
                               <td
                                 className="border px-4 py-2 text-center cursor-pointer text-blue-600 hover:text-blue-800"
                                 title="Click to update UTR manually"
@@ -987,20 +916,15 @@ export default function FranchiseDs() {
                                   setShowModal(true);
                                 }}
                               >
-                                {/* Logic Added: Only show UTR update icon for Initiate/Pending */}
                                 {["Initiate", "Pending"].includes(item.status) ? "↺" : null}
                               </td>
-
-                              {/* Approve / Reject Buttons */}
                               <td className="border px-4 py-2 text-center">
-                                {/* NEW LOGIC: Show buttons only if status is 'Initiate' or 'Pending' AND they haven't been hidden yet */}
                                 {["Initiate", "Pending"].includes(item.status) && !item.hideButtons && (
                                   <>
                                     <button
                                       onClick={() => {
                                         const updated = [...paymentData];
                                         updated[index].hideButtons = true;
-                                        // You might want to update the status to "Successed" here
                                         setPaymentData(updated);
                                       }}
                                       className="bg-green-500 hover:bg-green-600 text-white p-1 rounded-full ml-1"
@@ -1011,7 +935,6 @@ export default function FranchiseDs() {
                                     <button
                                       onClick={() => {
                                         const updated = paymentData.filter((_, i) => i !== index);
-                                        // You might want to update the status to "Failed" here before filtering
                                         setPaymentData(updated);
                                       }}
                                       className="bg-red-500 hover:bg-red-600 text-white p-1 rounded-full ml-1"
@@ -1027,11 +950,7 @@ export default function FranchiseDs() {
                         </tr>
                       ))}
                   </tbody>
-
-
                 </table>
-
-                {/* Manual Update Modal */}
                 {showModal && (
                   <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                     <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-6">
@@ -1086,8 +1005,6 @@ export default function FranchiseDs() {
                   </div>
                 )}
               </div>
-
-              {/* ✅ Transaction Details Modal */}
               {selectedTx && showDetailsModal && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                   <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md">
@@ -1101,7 +1018,6 @@ export default function FranchiseDs() {
                       <p><strong>Transaction ID:</strong> {selectedTx.transactionId}</p>
                       <p><strong>Date:</strong> {selectedTx.date}</p>
                       <p><strong>Time:</strong> {selectedTx.time}</p>
-
                       <p>
                         <strong>Payment Link:</strong>{" "}
                         <a
@@ -1139,13 +1055,9 @@ export default function FranchiseDs() {
               )}
             </div>
           )}
-
-
           {activeTab === "withdraw" && (
             <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8">
               <h1 className="text-2xl font-bold text-center mb-6">Pay-Out</h1>
-
-              {/* Buttons Row + Filter */}
               <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
                 <button
                   className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "All" ? "bg-gray-300" : "bg-gray-200 hover:bg-gray-300"}`}
@@ -1181,16 +1093,11 @@ export default function FranchiseDs() {
                 >
                   Failed
                 </button>
-
-
-                {/* Filter Section */}
                 <div className="flex flex-wrap items-center gap-2 ml-4">
                   <span className="font-medium text-gray-700">Filter By:</span>
                   <input type="date" className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
                   <input type="date" className="border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
                   <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">Apply</button>
-
-                  {/* Available Toggle */}
                   <div className="flex items-center gap-2">
                     <span className="font-medium text-gray-700">Available:</span>
                     <button
@@ -1210,8 +1117,6 @@ export default function FranchiseDs() {
               </div>
 
               <br />
-
-              {/* ✅ Payout Request Section (only visible when Available = true) */}
               {available && startAmount && limitAmount && (
                 <div className="mt-8 transition-opacity duration-300">
                   <div className="flex justify-between items-center mb-3">
@@ -1225,8 +1130,6 @@ export default function FranchiseDs() {
                       Edit Limit
                     </button>
                   </div>
-
-                  {/* Example Table for Payout Requests */}
                   <div className="p-6 bg-white rounded-xl shadow-md">
                     <h2 className="text-xl font-semibold text-gray-900 mb-4 text-center sm:text-left">
                       Payout Request
@@ -1235,7 +1138,6 @@ export default function FranchiseDs() {
                     <div className="overflow-x-auto rounded-lg shadow border border-gray-300">
                       <table className="min-w-full text-sm text-gray-800 border-collapse">
                         <tbody>
-                          {/* Bank Name */}
                           <tr className="bg-gray-100">
                             <th className="border px-4 py-3 text-left font-semibold text-gray-900 w-1/3">
                               Bank Name
@@ -1251,8 +1153,6 @@ export default function FranchiseDs() {
                               </button>
                             </td>
                           </tr>
-
-                          {/* Account Name */}
                           <tr>
                             <th className="border px-4 py-3 text-left font-semibold text-gray-900 bg-gray-100">
                               Account Name
@@ -1268,8 +1168,6 @@ export default function FranchiseDs() {
                               </button>
                             </td>
                           </tr>
-
-                          {/* Account Number */}
                           <tr className="bg-gray-100">
                             <th className="border px-4 py-3 text-left font-semibold text-gray-900">
                               Account Number
@@ -1285,8 +1183,6 @@ export default function FranchiseDs() {
                               </button>
                             </td>
                           </tr>
-
-                          {/* IFSC */}
                           <tr>
                             <th className="border px-4 py-3 text-left font-semibold text-gray-900 bg-gray-100">
                               IFSC
@@ -1302,8 +1198,6 @@ export default function FranchiseDs() {
                               </button>
                             </td>
                           </tr>
-
-                          {/* UPI */}
                           <tr className="bg-gray-100">
                             <th className="border px-4 py-3 text-left font-semibold text-gray-900">
                               UPI
@@ -1319,8 +1213,6 @@ export default function FranchiseDs() {
                               </button>
                             </td>
                           </tr>
-
-                          {/* Time */}
                           <tr>
                             <th className="border px-4 py-3 text-left font-semibold text-gray-900 bg-gray-100">
                               Time
@@ -1329,8 +1221,6 @@ export default function FranchiseDs() {
                               2025-10-09 14:05:54
                             </td>
                           </tr>
-
-                          {/* Amount */}
                           <tr className="bg-gray-100">
                             <th className="border px-4 py-3 text-left font-semibold text-gray-900">
                               Amount
@@ -1339,8 +1229,6 @@ export default function FranchiseDs() {
                               ₹1700/-
                             </td>
                           </tr>
-
-                          {/* QR */}
                           <tr>
                             <th className="border px-4 py-3 text-left font-semibold text-gray-900 bg-gray-100">
                               QR
@@ -1354,8 +1242,6 @@ export default function FranchiseDs() {
                               </button>
                             </td>
                           </tr>
-
-                          {/* Action */}
                           <tr className="bg-gray-100">
                             <th className="border px-4 py-3 text-left font-semibold text-gray-900">
                               Action
@@ -1370,16 +1256,9 @@ export default function FranchiseDs() {
                       </table>
                     </div>
                   </div>
-
-
-
-
                 </div>
               )}
-
               <br />
-
-              {/* ✅ Main Paying Request Table (always visible) */}
               <div className="w-full overflow-x-auto rounded-lg shadow-sm scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
                 <table className="min-w-[700px] sm:min-w-full border border-gray-300 text-xs sm:text-sm">
                   <thead className="bg-gray-100 text-gray-700">
@@ -1397,7 +1276,6 @@ export default function FranchiseDs() {
                       )}
                     </tr>
                   </thead>
-
                   <tbody>
                     {paymentData
                       .filter(item => filterStatus === "All" || item.status === filterStatus)
@@ -1501,7 +1379,6 @@ export default function FranchiseDs() {
                   </div>
                 </div>
               )}
-              {/* Set Amount Limits Modal */}
               {showLimitModal && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                   <div className="bg-white w-full max-w-md rounded-2xl shadow-xl p-6">
@@ -1557,8 +1434,6 @@ export default function FranchiseDs() {
                   </div>
                 </div>
               )}
-
-              {/* 🧩 Transaction Details Modal */}
               {selectedTx && showDetailsModal && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                   <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md">
@@ -1609,9 +1484,6 @@ export default function FranchiseDs() {
               )}
             </div>
           )}
-
-
-          {/* History Section */}
           {activeTab === "history" && (
             <div className="bg-white rounded-lg shadow p-6 overflow-x-auto">
               <h1 className="text-2xl font-bold mb-6">Completed Transactions</h1>
@@ -1678,12 +1550,8 @@ export default function FranchiseDs() {
                   ))}
                 </tbody>
               </table>
-
-
             </div>
           )}
-
-          {/* Profile Section */}
           {activeTab === "profile" && (
             <div className="bg-white rounded-lg shadow p-6 max-w-md mx-auto">
               <h1 className="text-2xl font-bold mb-6 text-center">Edit Profile</h1>
@@ -1729,7 +1597,6 @@ export default function FranchiseDs() {
     </div >
   );
 }
-
 function PayInDashboard() {
   return (
     <>
@@ -1737,9 +1604,7 @@ function PayInDashboard() {
         <h2 className="text-2xl font-semibold mb-4">Pay In</h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Left: Transaction Cards */}
           <div className="flex flex-col gap-4">
-            {/* Success Txn */}
             <div className="relative flex justify-between items-center rounded-xl p-5 overflow-hidden border border-blue-200 shadow-sm">
               <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-blue-50"></div>
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.15)_0%,transparent_70%)]"></div>
@@ -1754,7 +1619,6 @@ function PayInDashboard() {
               </div>
               <p className="relative text-gray-700 font-medium">0 Txns</p>
             </div>
-            {/* Pending Txn */}
             <div className="relative flex justify-between items-center rounded-xl p-5 overflow-hidden border border-yellow-200 shadow-sm">
               <div className="absolute inset-0 bg-gradient-to-br from-yellow-100 to-yellow-50"></div>
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(234,179,8,0.2)_0%,transparent_70%)]"></div>
@@ -1769,8 +1633,6 @@ function PayInDashboard() {
               </div>
               <p className="relative text-gray-700 font-medium">0 Txns</p>
             </div>
-
-            {/* Failed Txn */}
             <div className="relative flex justify-between items-center rounded-xl p-5 overflow-hidden border border-red-200 shadow-sm">
               <div className="absolute inset-0 bg-gradient-to-br from-red-100 to-red-50"></div>
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(239,68,68,0.2)_0%,transparent_70%)]"></div>
@@ -1784,8 +1646,6 @@ function PayInDashboard() {
               <p className="relative text-gray-700 font-medium">0 Txns</p>
             </div>
           </div>
-
-          {/* Right: Chart */}
           <div className="bg-white border rounded-xl shadow-sm p-4">
             <h3 className="text-lg font-semibold mb-4">Pay In</h3>
             <p className="font-medium text-gray-600 mb-2">Pay In Weekly Report</p>
@@ -1818,9 +1678,7 @@ function PayOutDashboard() {
       <h2 className="text-2xl font-semibold mb-4">Pay Out</h2>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Left Side: Cards */}
         <div className="flex flex-col gap-4">
-          {/* Success Txn */}
           <div className="relative flex justify-between items-center rounded-xl p-5 overflow-hidden border border-blue-200 shadow-sm">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-blue-50"></div>
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.15)_0%,transparent_70%)]"></div>
@@ -1835,8 +1693,6 @@ function PayOutDashboard() {
             </div>
             <p className="relative text-gray-700 font-medium">7646 Txns</p>
           </div>
-
-          {/* Pending Txn */}
           <div className="relative flex justify-between items-center rounded-xl p-5 overflow-hidden border border-yellow-200 shadow-sm">
             <div className="absolute inset-0 bg-gradient-to-br from-yellow-100 to-yellow-50"></div>
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(234,179,8,0.2)_0%,transparent_70%)]"></div>
@@ -1851,8 +1707,6 @@ function PayOutDashboard() {
             </div>
             <p className="relative text-gray-700 font-medium">2377 Txns</p>
           </div>
-
-          {/* Failed Txn */}
           <div className="relative flex justify-between items-center rounded-xl p-5 overflow-hidden border border-red-200 shadow-sm">
             <div className="absolute inset-0 bg-gradient-to-br from-red-100 to-red-50"></div>
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(239,68,68,0.2)_0%,transparent_70%)]"></div>
@@ -1866,12 +1720,9 @@ function PayOutDashboard() {
             <p className="relative text-gray-700 font-medium">5411 Txns</p>
           </div>
         </div>
-
-        {/* Right Side: Chart */}
         <div className="bg-white border rounded-xl shadow-sm p-4">
           <h3 className="text-lg font-semibold mb-4">Pay Out</h3>
           <p className="font-medium text-gray-600 mb-2">Pay Out Weekly Report</p>
-
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
