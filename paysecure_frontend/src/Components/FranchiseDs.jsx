@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   User,
   Clock,
@@ -35,7 +35,7 @@ export default function FranchiseDs() {
   const [historyTab, setHistoryTab] = useState("complete");
   const [dashboard, setDashboard] = useState("dashboard");
 
-  const [filterStatus, setFilterStatus] = useState("All");
+  // const [filterStatus, setFilterStatus] = useState("All");
   const [showAddModal, setShowAddModal] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedTx, setSelectedTx] = useState(null);
@@ -46,7 +46,86 @@ export default function FranchiseDs() {
   const [showLimitModal, setShowLimitModal] = useState(false);
   const [startAmount, setStartAmount] = useState("");
   const [limitAmount, setLimitAmount] = useState("");
+  const [selectedAccount, setSelectedAccount] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [filterStatuss, setFilterStatuss] = useState("All");
 
+  const transactionss = [
+    { id: 1, status: "Initiate", amount: 100 },
+    { id: 2, status: "Pending", amount: 50 },
+    { id: 3, status: "Successed", amount: 200 },
+    { id: 4, status: "Failed", amount: 70 },
+    { id: 5, status: "Pending", amount: 30 },
+  ];
+  const [filterStatus, setFilterStatus] = useState("All");
+  const [paymentData, setPaymentData] = useState([
+    {
+      date: "2025-10-08",
+      requestId: "REQ1001",
+      utrNo: "UTR876543",
+      amount: "₹2,500",
+      username: "john_doe",
+      customerId: "CUST001",
+      status: "Pending",
+    },
+    {
+      date: "2025-10-09",
+      requestId: "REQ1002",
+      utrNo: "UTR123456",
+      amount: "₹4,800",
+      username: "alice_w",
+      customerId: "CUST002",
+      status: "Initiate",
+    },
+    {
+      date: "2025-10-09",
+      requestId: "REQ1003",
+      utrNo: "UTR999111",
+      amount: "₹5,000",
+      username: "mike_smith",
+      customerId: "CUST003",
+      status: "Successed",
+    },
+    {
+      date: "2025-10-10",
+      requestId: "REQ1004",
+      utrNo: "UTR222333",
+      amount: "₹3,600",
+      username: "sarah_lee",
+      customerId: "CUST004",
+      status: "Failed",
+    },
+    {
+      date: "2025-10-10",
+      requestId: "REQ1005",
+      utrNo: "UTR444555",
+      amount: "₹7,200",
+      username: "rohan_k",
+      customerId: "CUST005",
+      status: "Pending",
+    },
+  ]);
+
+  // Automatically calculate total for each status
+  const totals = useMemo(() => {
+    const sum = { All: 0, Initiate: 0, Pending: 0, Successed: 0, Failed: 0 };
+    transactionss.forEach((t) => {
+      sum.All += t.amount;
+      if (sum[t.status] !== undefined) {
+        sum[t.status] += t.amount;
+      }
+    });
+    return sum;
+  }, [transactionss]);
+  const handleDelete = (account) => {
+    setSelectedAccount(account);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = () => {
+    setAccounts(accounts.filter((acc) => acc.id !== selectedAccount.id));
+    setShowDeleteModal(false);
+  };
   const handleLimitSubmit = (e) => {
     e.preventDefault();
     alert(`Amount limits set:\nStart: ₹${startAmount}\nLimit: ₹${limitAmount}`);
@@ -68,7 +147,7 @@ export default function FranchiseDs() {
       toAccountn: "123512",
       toBankn: "SBI",
       amount: 5000,
-      statusResult: "",
+      statusResult: "Success",
       utrNumber: "",
     },
     {
@@ -85,34 +164,8 @@ export default function FranchiseDs() {
       toAccountn: "123512",
       toBankn: "SBI",
       amount: 2000,
-      statusResult: "",
+      statusResult: "success",
       utrNumber: "",
-    },
-  ]);
-
-  // ✅ Payment Data (useState for dynamic updates)
-  const [paymentData, setPaymentData] = useState([
-    {
-      date: "2025-10-08",
-      requestId: "REQ12345",
-      utrNo: "UTR987654321",
-      amount: "₹5000",
-      username: "john_doe",
-      customerId: "CUST001",
-      status: "Successed",
-      transactionId: "TXN99887766",
-      time: "14:30",
-    },
-    {
-      date: "2025-10-07",
-      requestId: "REQ98765",
-      utrNo: "UTR123456789",
-      amount: "₹1200",
-      username: "alex123",
-      customerId: "CUST002",
-      status: "Pending",
-      transactionId: "TXN88776655",
-      time: "11:45",
     },
   ]);
 
@@ -154,7 +207,7 @@ export default function FranchiseDs() {
       accountNumber: "123456789012",
       bankName: "State Bank of India",
       ifsc: "SBIN0001234",
-      payment:"",
+      payment: "",
       upiId: "SBI@upi",
       QrCode: "",
     },
@@ -165,7 +218,7 @@ export default function FranchiseDs() {
     accountNumber: "",
     bankName: "",
     ifsc: "",
-    payment:"",
+    payment: "",
     upiId: "",
     QrCode: "",
   });
@@ -183,7 +236,7 @@ export default function FranchiseDs() {
       accountNumber: "",
       bankName: "",
       ifsc: "",
-      payment:"",
+      payment: "",
       upiId: "",
       QrCode: "",
     });
@@ -337,7 +390,7 @@ export default function FranchiseDs() {
               {/* Subtabs */}
               <div className="flex flex-wrap gap-2 mb-6">
 
-             
+
 
                 {/* Activate Button */}
                 <button
@@ -371,7 +424,7 @@ export default function FranchiseDs() {
                 >
                   Deleted Account
                 </button>
-                    {/* Add Account Button */}
+                {/* Add Account Button */}
                 <button
                   className={`px-4 py-2 rounded-lg font-medium ${accountSubTab === "add"
                     ? "bg-blue-600 text-white"
@@ -386,7 +439,7 @@ export default function FranchiseDs() {
 
               {/* View Accounts */}
 
-              {accountSubTab === "activate" &&  (
+              {accountSubTab === "activate" && (
                 <div className="space-y-6">
                   {accounts.map((acc) => (
                     <div
@@ -407,7 +460,7 @@ export default function FranchiseDs() {
                               {editingId === acc.id ? "Save" : "Edit"}
                             </button>
 
-                          
+
 
                             {/* Deactivate Button */}
                             <button
@@ -416,6 +469,21 @@ export default function FranchiseDs() {
                             >
                               Deactivate
                             </button>
+                            {accounts.map((acc) => (
+                              <div
+                                key={acc.id}
+                                className="flex justify-between items-center rounded-lg p-4 bg-transparent hover:bg-gray-50/10 transition"
+                              >
+                                <span className="font-medium text-white">{acc.name}</span>
+
+                                <button
+                                  className="px-4 py-2 rounded-lg font-medium bg-red-600 text-white hover:bg-red-700 transition"
+                                  onClick={() => handleDelete(acc)}
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            ))}
                           </div>
                         </div>
 
@@ -516,10 +584,37 @@ export default function FranchiseDs() {
                       </div>
                     </div>
                   ))}
+                  {showDeleteModal && (
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                      <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm">
+                        <h2 className="text-lg font-semibold text-center mb-4">
+                          Confirm Delete
+                        </h2>
+                        <p className="text-center mb-6 text-gray-600">
+                          Are you sure you want to delete{" "}
+                          <span className="font-semibold">{selectedAccount.name}</span>?
+                        </p>
+                        <div className="flex justify-between">
+                          <button
+                            onClick={() => setShowDeleteModal(false)}
+                            className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-medium"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            onClick={confirmDelete}
+                            className="px-4 py-2 rounded-lg font-medium bg-red-600 text-white hover:bg-red-700"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
-              {accountSubTab === "deactivate" &&  (
+              {accountSubTab === "deactivate" && (
                 <div className="space-y-6">
                   {accounts.map((acc) => (
                     <div
@@ -547,9 +642,29 @@ export default function FranchiseDs() {
                             >
                               Activate
                             </button>
+                            {accounts.map((acc) => (
+                              <div
+                                key={acc.id}
+                                className="flex justify-between items-center rounded-lg p-4 bg-transparent hover:bg-gray-50/10 transition"
+                              >
+                                <span className="font-medium text-white">{acc.name}</span>
 
-                          
+                                <button
+                                  className="px-4 py-2 rounded-lg font-medium bg-red-600 text-white hover:bg-red-700 transition"
+                                  onClick={() => handleDelete(acc)}
+                                >
+                                  Delete
+                                </button>
+                              </div>
+                            ))}
+
+
+
+
+
+
                           </div>
+
                         </div>
 
                         <p>
@@ -594,7 +709,7 @@ export default function FranchiseDs() {
                             acc.ifsc
                           )}
                         </p>
-                         <p>
+                        <p>
                           <span className="font-semibold">Payment Link:</span>{" "}
                           {editingId === acc.id ? (
                             <input
@@ -649,10 +764,38 @@ export default function FranchiseDs() {
                       </div>
                     </div>
                   ))}
+                  {showDeleteModal && (
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                      <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm">
+                        <h2 className="text-lg font-semibold text-center mb-4">
+                          Confirm Delete
+                        </h2>
+                        <p className="text-center mb-6 text-gray-600">
+                          Are you sure you want to delete{" "}
+                          <span className="font-semibold">{selectedAccount.name}</span>?
+                        </p>
+                        <div className="flex justify-between">
+                          <button
+                            onClick={() => setShowDeleteModal(false)}
+                            className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-medium"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            onClick={confirmDelete}
+                            className="px-4 py-2 rounded-lg font-medium bg-red-600 text-white hover:bg-red-700"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                 </div>
               )}
 
-              {accountSubTab === "delete" &&  (
+              {accountSubTab === "delete" && (
                 <div className="space-y-6">
                   {accounts.map((acc) => (
                     <div
@@ -660,7 +803,7 @@ export default function FranchiseDs() {
                       className="border rounded-lg p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4"
                     >
                       <div className="flex-1">
-                       
+
 
                         <p>
                           <span className="font-semibold">Account Number:</span>{" "}
@@ -704,7 +847,7 @@ export default function FranchiseDs() {
                             acc.ifsc
                           )}
                         </p>
-                         <p>
+                        <p>
                           <span className="font-semibold">Payment Link:</span>{" "}
                           {editingId === acc.id ? (
                             <input
@@ -820,7 +963,7 @@ export default function FranchiseDs() {
                       required
                     />
                   </div>
-                                    <div>
+                  <div>
                     <label className="block text-gray-700">Add Payment Link</label>
                     <input
                       type="text"
@@ -858,46 +1001,33 @@ export default function FranchiseDs() {
           )}
 
           {/* ✅ Payment Section */}
-{activeTab === "payment" && (
+          {activeTab === "payment" && (
             <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8">
               <h1 className="text-2xl font-bold text-center mb-6">Pay-in</h1>
 
               {/* Buttons Row + Filter */}
               <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
-                <button
-                  className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "All" ? "bg-gray-300" : "bg-gray-200 hover:bg-gray-300"}`}
-                  onClick={() => setFilterStatus("All")}
-                >
-                  All
-                </button>
-
-                <button
-                  className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Initiate" ? "bg-blue-200" : "bg-blue-100 hover:bg-blue-200"}`}
-                  onClick={() => setFilterStatus("Initiate")}
-                >
-                  Initiate
-                </button>
-
-                <button
-                  className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Pending" ? "bg-yellow-200" : "bg-yellow-100 hover:bg-yellow-200"}`}
-                  onClick={() => setFilterStatus("Pending")}
-                >
-                  Pending
-                </button>
-
-                <button
-                  className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Successed" ? "bg-green-200" : "bg-green-100 hover:bg-green-200"}`}
-                  onClick={() => setFilterStatus("Successed")}
-                >
-                  Successed
-                </button>
-
-                <button
-                  className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Failed" ? "bg-red-200" : "bg-red-100 hover:bg-red-200"}`}
-                  onClick={() => setFilterStatus("Failed")}
-                >
-                  Failed
-                </button>
+                <div className="flex flex-wrap gap-3">
+                  {[
+                    { key: "All", color: "gray" },
+                    { key: "Initiate", color: "blue" },
+                    { key: "Pending", color: "yellow" },
+                    { key: "Successed", color: "green" },
+                    { key: "Failed", color: "red" },
+                  ].map(({ key, color }) => (
+                    <button
+                      key={key}
+                      className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 ${filterStatus === key
+                        ? `bg-${color}-300`
+                        : `bg-${color}-100 hover:bg-${color}-200`
+                        }`}
+                      onClick={() => setFilterStatus(key)}
+                    >
+                      <span>{key}</span>
+                      <span className="text-sm font-semibold">₹{totals[key]}</span>
+                    </button>
+                  ))}
+                </div>
 
 
                 {/* Filter Section */}
@@ -1147,40 +1277,27 @@ export default function FranchiseDs() {
 
               {/* Buttons Row + Filter */}
               <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
-                <button
-                  className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "All" ? "bg-gray-300" : "bg-gray-200 hover:bg-gray-300"}`}
-                  onClick={() => setFilterStatus("All")}
-                >
-                  All
-                </button>
-
-                <button
-                  className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Initiate" ? "bg-blue-200" : "bg-blue-100 hover:bg-blue-200"}`}
-                  onClick={() => setFilterStatus("Initiate")}
-                >
-                  Initiate
-                </button>
-
-                <button
-                  className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Pending" ? "bg-yellow-200" : "bg-yellow-100 hover:bg-yellow-200"}`}
-                  onClick={() => setFilterStatus("Pending")}
-                >
-                  Pending
-                </button>
-
-                <button
-                  className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Successed" ? "bg-green-200" : "bg-green-100 hover:bg-green-200"}`}
-                  onClick={() => setFilterStatus("Successed")}
-                >
-                  Successed
-                </button>
-
-                <button
-                  className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Failed" ? "bg-red-200" : "bg-red-100 hover:bg-red-200"}`}
-                  onClick={() => setFilterStatus("Failed")}
-                >
-                  Failed
-                </button>
+                <div className="flex flex-wrap gap-3">
+                  {[
+                    { key: "All", color: "gray" },
+                    { key: "Initiate", color: "blue" },
+                    { key: "Pending", color: "yellow" },
+                    { key: "Successed", color: "green" },
+                    { key: "Failed", color: "red" },
+                  ].map(({ key, color }) => (
+                    <button
+                      key={key}
+                      className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 ${filterStatus === key
+                          ? `bg-${color}-300`
+                          : `bg-${color}-100 hover:bg-${color}-200`
+                        }`}
+                      onClick={() => setFilterStatus(key)}
+                    >
+                      <span>{key}</span>
+                      <span className="text-sm font-semibold">₹{totals[key]}</span>
+                    </button>
+                  ))}
+                </div>
 
 
                 {/* Filter Section */}
@@ -1430,18 +1547,19 @@ export default function FranchiseDs() {
                             </button>
                           </td>
 
-                          {["All", "Initiate"].includes(filterStatus) && (
-                            <td
-                              className="border px-4 py-2 text-center cursor-pointer text-blue-600 hover:text-blue-800"
-                              title="Click to update UTR manually"
-                              onClick={() => {
-                                setSelectedTx(item);
-                                setShowModal(true);
-                              }}
-                            >
-                              ↺
-                            </td>
-                          )}
+                         {["All", "Initiate"].includes(filterStatus) && item.status === "Initiate" && (
+  <td
+    className="border px-4 py-2 text-center cursor-pointer text-blue-600 hover:text-blue-800"
+    title="Click to update UTR manually"
+    onClick={() => {
+      setSelectedTx(item);
+      setShowModal(true);
+    }}
+  >
+    ↺
+  </td>
+)}
+
                         </tr>
                       ))}
                   </tbody>
@@ -1631,6 +1749,7 @@ export default function FranchiseDs() {
                     <th className="border px-4 py-2 text-left">Amount</th>
                     <th className="border px-4 py-2 text-left">UTR</th>
                     <th className="border px-4 py-2 text-left">Status</th>
+                    <th className="border px-4 py-2 text-left">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1671,13 +1790,67 @@ export default function FranchiseDs() {
                       </td>
                       <td className="border px-4 py-2">₹{tx.amount.toLocaleString()}</td>
                       <td className="border px-4 py-2">{tx.utrNumber || "-"}</td>
-                      <td className={`border px-4 py-2 font-semibold ${tx.statusResult === "Successful" ? "text-green-600" : tx.statusResult === "Failed" ? "text-red-600" : "text-gray-600"}`}>
-                        {tx.statusResult || "-"}
+                      <td className="border px-4 py-2">{tx.statusResult}</td>
+                      <td className="border px-4 py-2">
+                        <button
+                          onClick={() => handleView(tx)}
+                          className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded-lg"
+                        >
+                          View
+                        </button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+              {selectedTx && showDetailsModal && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                  <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md">
+                    <h2 className="text-xl font-bold text-center mb-4">Transaction Details</h2>
+
+                    <div className="space-y-2 text-sm sm:text-base">
+                      <p><strong>UTR No.:</strong> {selectedTx.utrNo}</p>
+                      <p><strong>Amount:</strong> ₹{selectedTx.amount}</p>
+                      <p><strong>Customer ID:</strong> {selectedTx.customerId}</p>
+                      <p><strong>Request ID:</strong> {selectedTx.requestId}</p>
+                      <p><strong>Transaction ID:</strong> {selectedTx.transactionId}</p>
+                      <p><strong>Date:</strong> {selectedTx.date}</p>
+                      <p><strong>Time:</strong> {selectedTx.time}</p>
+                      <p>
+                        <strong>Payment Link:</strong>{" "}
+                        <a
+                          href={`https://payment.example.com/${selectedTx.transactionId}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline"
+                        >
+                          {`https://payment.example.com/${selectedTx.transactionId}`}
+                        </a>
+                      </p>
+                    </div>
+
+                    <div className="flex justify-between items-center mt-6">
+                      <button
+                        onClick={() =>
+                          navigator.clipboard.writeText(
+                            `https://payment.example.com/${selectedTx.transactionId}`
+                          )
+                        }
+                        className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium"
+                      >
+                        Copy Link
+                      </button>
+
+                      <button
+                        onClick={() => setShowDetailsModal(false)}
+                        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium"
+                      >
+                        Close
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
 
 
             </div>
