@@ -700,6 +700,7 @@ export default function UserDs() {
                           </div>
                           {/* Assuming GenerateBankForm is a defined component */}
                           <GenerateBankForm currentUser={loggedInUser} selectedFranchise={selectedFranchise} />
+
                           <div className="flex justify-end pt-2">
                             <button
                               type="button"
