@@ -3,11 +3,9 @@ export default function AccountSection() {
   const [activeTab, setActiveTab] = useState("account");
   const [accountSubTab, setAccountSubTab] = useState("add");
   const [userSubTab, setUserSubTab] = useState("withdraw");
-
   const [walletBalance, setWalletBalance] = useState(25000);
   const [showMore, setShowMore] = useState(false);
   const [showAccounts, setShowAccounts] = useState(false);
-
   const [accounts, setAccounts] = useState([
     {
       id: 1,
@@ -18,7 +16,6 @@ export default function AccountSection() {
       upiId: "john@upi",
     },
   ]);
-
   const [transactionHistory, setTransactionHistory] = useState([
     {
       id: 1,
@@ -73,7 +70,6 @@ export default function AccountSection() {
       status: "Pending",
     },
   ]);
-
   const [depositRequests, setDepositRequests] = useState([
     {
       id: 1,
@@ -120,7 +116,6 @@ export default function AccountSection() {
     e.target.reset();
     setAccountSubTab("history");
   };
-
   const handleStatusChange = (type, id, status) => {
     if (type === "withdraw") {
       setWithdrawRequests((prev) =>
@@ -136,7 +131,6 @@ export default function AccountSection() {
         ]);
       }
     }
-
     if (type === "deposit") {
       const depositReq = depositRequests.find((req) => req.id === id);
       setDepositRequests((prev) =>
@@ -158,7 +152,6 @@ export default function AccountSection() {
       }
     }
   };
-
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <div className="flex justify-center bg-white shadow-sm p-3">
@@ -209,7 +202,6 @@ export default function AccountSection() {
                 >
                   Account
                 </button>
-
                 <button
                   className={`px-4 py-2 rounded-lg font-medium transition-colors ${accountSubTab === "history"
                     ? "bg-blue-600 text-white"
@@ -219,7 +211,6 @@ export default function AccountSection() {
                 >
                   History
                 </button>
-
                 <button
                   className={`px-4 py-2 rounded-lg font-medium transition-colors ${accountSubTab === "wallet"
                     ? "bg-blue-600 text-white"
@@ -229,7 +220,6 @@ export default function AccountSection() {
                 >
                   Wallet
                 </button>
-
                 <button
                   className={`px-4 py-2 rounded-lg font-medium transition-colors ${accountSubTab === "assignPayout"
                     ? "bg-blue-600 text-white"
@@ -314,7 +304,6 @@ export default function AccountSection() {
                       ))}
                     </tbody>
                   </table>
-
                 </div>
               )}
               {accountSubTab === "wallet" && (
@@ -421,7 +410,6 @@ export default function AccountSection() {
                   </table>
                 </div>
               )}
-
             </div>
           )}
           {activeTab === "users" && (
@@ -486,7 +474,6 @@ export default function AccountSection() {
                       {withdrawRequests.map((req, index) => {
                         const isAccepted = req.status === "Accepted";
                         const isRejected = req.status === "Rejected";
-
                         return (
                           <tr key={req.id} className="hover:bg-gray-50">
                             <td className="border px-4 py-2">{index + 1}</td>
@@ -527,7 +514,6 @@ export default function AccountSection() {
                                 </button>
                               )}
                             </td>
-
                           </tr>
                         );
                       })}
@@ -592,7 +578,6 @@ export default function AccountSection() {
                                 </button>
                               </div>
                             )}
-
                             {req.status === "Accepted" && !req.showAssign && (
                               <button
                                 onClick={() => handleAssign(req.id)}
@@ -677,7 +662,6 @@ export default function AccountSection() {
               {userSubTab === "history" && (
                 <div className="bg-white rounded-lg shadow p-6 overflow-x-auto">
                   <h1 className="text-2xl font-bold mb-6">Completed Transactions</h1>
-
                   <table className="min-w-full border-collapse border border-gray-300">
                     <thead>
                       <tr className="bg-gray-100">
@@ -739,7 +723,6 @@ export default function AccountSection() {
                               </tbody>
                             </table>
                           </td>
-
                           <td className="border px-4 py-2">₹{tx.amount.toLocaleString()}</td>
                           <td className="border px-4 py-2">{tx.utrNumber || "-"}</td>
                           <td className={`border px-4 py-2 font-semibold ${tx.statusResult === "Successful"
@@ -756,7 +739,6 @@ export default function AccountSection() {
                   </table>
                 </div>
               )}
-
             </div>
           )}
           {activeTab === "profile" && (
@@ -820,7 +802,6 @@ export default function AccountSection() {
                           </tbody>
                         </table>
                       </td>
-
                       <td className="border px-4 py-2">{tx.utrNumber || "-"}</td>
                       <td className={`border px-4 py-2 font-semibold ${tx.statusResult === "Successful" ? "text-green-600" :
                         tx.statusResult === "Failed" ? "text-red-600" : "text-yellow-600"
@@ -833,7 +814,6 @@ export default function AccountSection() {
               </table>
             </div>
           )}
-
         </div>
       </main>
     </div>

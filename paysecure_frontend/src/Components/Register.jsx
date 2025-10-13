@@ -9,9 +9,7 @@ function Register() {
   const [role, setRole] = useState("user");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
   const navigate = useNavigate();
-
   useEffect(() => {
     const role = localStorage.getItem("user_role");
     if (role) {
@@ -22,12 +20,10 @@ function Register() {
       else navigate("/");
     }
   }, [navigate]);
-
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
     setLoading(true);
-
     try {
       const response = await axios.post(`${API_URL}/register/`, {
         username,
@@ -35,7 +31,6 @@ function Register() {
         password,
         role: role.toLowerCase(),
       });
-
       console.log("Response:", response.data);
       alert("Registered Successfully!");
       navigate("/Login");
@@ -50,7 +45,6 @@ function Register() {
       setLoading(false);
     }
   }
-
   return (
     <div className="flex items-center justify-center min-h-screen bg-blue-100 px-4">
       <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
@@ -63,7 +57,6 @@ function Register() {
             {error}
           </div>
         )}
-
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -78,7 +71,6 @@ function Register() {
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
-
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Email
@@ -92,7 +84,6 @@ function Register() {
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
-
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Password
@@ -106,7 +97,6 @@ function Register() {
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
-
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Select Role
@@ -121,7 +111,6 @@ function Register() {
               <option value="user">User</option>
             </select>
           </div>
-
           <button
             type="submit"
             disabled={loading}
@@ -140,5 +129,4 @@ function Register() {
     </div>
   );
 }
-
 export default Register;

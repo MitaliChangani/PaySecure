@@ -17,9 +17,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
   const navigate = useNavigate();
-
   useEffect(() => {
     const role = localStorage.getItem("user_role");
     if (role) {
@@ -30,27 +28,21 @@ function Login() {
       else navigate("/");
     }
   }, [navigate]);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
-
     try {
       const response = await axios.post(
         `${API_URL}/login/`,
         { username, password },
         { withCredentials: true }
       );
-
       console.log("Login response:", response.data);
-
       localStorage.setItem("user_role", response.data.role);
       localStorage.setItem("user_id", response.data.id);
       localStorage.setItem("username", response.data.username);
-
       alert("Login Successful!");
-
       const role = response.data.role.toLowerCase();
       if (role === "franchise") {
         navigate("/FranchiseDs");
@@ -73,18 +65,15 @@ function Login() {
       setLoading(false);
     }
   };
-
   return (
     <div className="flex items-center justify-center min-h-screen bg-blue-100 px-4">
       <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
         <h2 className="text-3xl font-bold text-center text-blue-600 mb-6">
           Login
         </h2>
-
         {error && (
           <div className="bg-red-100 text-red-700 p-3 rounded mb-4">{error}</div>
         )}
-
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -99,7 +88,6 @@ function Login() {
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
-
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Password
@@ -113,7 +101,6 @@ function Login() {
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
-
           <div className="text-right">
             <button
               type="button"
@@ -123,7 +110,6 @@ function Login() {
               Forgot Password?
             </button>
           </div>
-
           <button
             type="submit"
             disabled={loading}
@@ -131,7 +117,6 @@ function Login() {
           >
             {loading ? "Logging in..." : "Login"}
           </button>
-
           <p className="text-center text-sm text-gray-600 mt-4">
             Don't have an account?{" "}
             <Link
@@ -146,5 +131,4 @@ function Login() {
     </div>
   );
 }
-
 export default Login;

@@ -11,9 +11,7 @@ function ForgotResetPassword() {
   const navigate = useNavigate();
   useEffect(() => {
     if (!otpSent) return;
-
     setTimeLeft(300);
-
     const timer = setInterval(() => {
       setTimeLeft(prev => {
         if (prev <= 1) {
@@ -23,13 +21,10 @@ function ForgotResetPassword() {
         return prev - 1;
       });
     }, 1000);
-
     return () => clearInterval(timer);
   }, [otpSent]);
-
   const handleSendOtp = async () => {
     if (!username) return alert("Enter your username first");
-
     try {
       await axios.post("http://localhost:8000/api/forgot-password/", { username }, { withCredentials: true });
       alert("OTP sent successfully!");
@@ -42,10 +37,8 @@ function ForgotResetPassword() {
       alert(error.response?.data?.detail || "Something went wrong");
     }
   };
-
   const handleResetPassword = async (e) => {
     e.preventDefault();
-
     console.log("Attempting to reset password...");
     console.log("Username:", username, "OTP:", otp, "New Password:", newPassword);
     console.log("Time left:", timeLeft);
@@ -53,14 +46,12 @@ function ForgotResetPassword() {
       console.warn("Frontend timer expired");
       return alert("OTP expired. Please request a new OTP.");
     }
-
     try {
       const response = await axios.post(
         "http://localhost:8000/api/reset-password/",
         { username, otp, new_password: newPassword },
         { withCredentials: true }
       );
-
       console.log("Reset password response:", response);
       alert(response.data.detail);
       navigate("/login");
@@ -70,7 +61,6 @@ function ForgotResetPassword() {
       setUsername("");
       setOtp("");
       setNewPassword("");
-
     } catch (error) {
       console.error("Reset password error object:", error);
       if (error.response) {
@@ -85,7 +75,6 @@ function ForgotResetPassword() {
       alert(error.response?.data?.detail || "Something went wrong");
     }
   };
-
   return (
     <div className="flex items-center justify-center min-h-screen bg-blue-100 px-4">
       <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
@@ -163,5 +152,4 @@ function ForgotResetPassword() {
     </div>
   );
 }
-
 export default ForgotResetPassword;

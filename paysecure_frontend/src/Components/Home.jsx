@@ -9,7 +9,6 @@ import {
   Users,
   CreditCard,
 } from "lucide-react";
-
 function Home() {
   const features = [
     {
@@ -33,7 +32,6 @@ function Home() {
       desc: "Advanced encryption keeps your transactions safe.",
     },
   ];
-
   return (
     <>
       <div className="bg-blue-50">
@@ -52,12 +50,10 @@ function Home() {
             </div>
           </div>
           <div className="flex flex-col justify-center space-y-6 text-center order-2 md:order-1 px-4 sm:px-6 md:px-0">
-
             <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-snug">
               Receive & Withdraw Payments Directly to your <br />
               Account @ <span className="text-blue-700">0% Transaction Fee</span>
             </h1>
-
             <p className="text-gray-600 text-base sm:text-lg md:text-xl">
               Simplify Payments with Next-Gen <br />
               QR Code Solutions
@@ -70,7 +66,6 @@ function Home() {
                 Continue &gt;
               </Link>
             </div>
-
           </div>
         </div>
       </div>
@@ -86,7 +81,6 @@ function Home() {
             Discover the benefits of using our payment solution
           </p>
         </div>
-
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
           {features.map((feature, index) => (
             <div
@@ -160,5 +154,4 @@ function Home() {
     </>
   );
 }
-
 export default Home;

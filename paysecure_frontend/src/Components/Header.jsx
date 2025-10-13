@@ -18,13 +18,9 @@ export default function Header() {
       setIsLoggedIn(!!role);
       setUserRole(role ? role.toLowerCase() : null);
     };
-
     window.addEventListener("storage", handleStorageChange);
-
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
-
-
   const handleLogout = async () => {
     try {
       await axios.post("http://localhost:8000/api/logout/", {}, { withCredentials: true });
@@ -45,7 +41,6 @@ export default function Header() {
     if (userRole === "admin") return "/AdminDs";
     return "/";
   };
-
   return (
     <header className="w-full bg-[#476EAE] shadow-sm">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
