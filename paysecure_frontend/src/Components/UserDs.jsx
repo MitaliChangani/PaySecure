@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   User,
   Clock,
@@ -31,8 +31,8 @@ const data = [
 
 export default function UserDs() {
   const [activeTab, setActiveTab] = useState("history");
-  const [historyTab, setHistoryTab] = useState("pending");
-  const [filterStatus, setFilterStatus] = useState("All");
+  const [historyTab, setHistoryTab] = useState("complete");
+  // const [filterStatus, setFilterStatus] = useState("All");
   const [showModal, setShowModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
@@ -41,37 +41,82 @@ export default function UserDs() {
   const [amountInput, setamountInput] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [customerId, setCustomerId] = useState("");
+  const [filterStatuss, setFilterStatuss] = useState("All");
+const [filterStatus, setFilterStatus] = useState("All");
+const [paymentData, setPaymentData] = useState([
+  {
+    date: "2025-10-08",
+    requestId: "REQ1001",
+    utrNo: "UTR876543",
+    amount: "₹2,500",
+    username: "john_doe",
+    customerId: "CUST001",
+    status: "Pending",
+  },
+  {
+    date: "2025-10-09",
+    requestId: "REQ1002",
+    utrNo: "UTR123456",
+    amount: "₹4,800",
+    username: "alice_w",
+    customerId: "CUST002",
+    status: "Initiate",
+  },
+  {
+    date: "2025-10-09",
+    requestId: "REQ1003",
+    utrNo: "UTR999111",
+    amount: "₹5,000",
+    username: "mike_smith",
+    customerId: "CUST003",
+    status: "Successed",
+  },
+  {
+    date: "2025-10-10",
+    requestId: "REQ1004",
+    utrNo: "UTR222333",
+    amount: "₹3,600",
+    username: "sarah_lee",
+    customerId: "CUST004",
+    status: "Failed",
+  },
+  {
+    date: "2025-10-10",
+    requestId: "REQ1005",
+    utrNo: "UTR444555",
+    amount: "₹7,200",
+    username: "rohan_k",
+    customerId: "CUST005",
+    status: "Pending",
+  },
+]);
 
+  const transactionss = [
+    { id: 1, status: "Initiate", amount: 100 },
+    { id: 2, status: "Pending", amount: 50 },
+    { id: 3, status: "Successed", amount: 200 },
+    { id: 4, status: "Failed", amount: 70 },
+    { id: 5, status: "Pending", amount: 30 },
+  ];
+
+  // Automatically calculate total for each status
+  const totals = useMemo(() => {
+    const sum = { All: 0, Initiate: 0, Pending: 0, Successed: 0, Failed: 0 };
+    transactionss.forEach((t) => {
+      sum.All += t.amount;
+      if (sum[t.status] !== undefined) {
+        sum[t.status] += t.amount;
+      }
+    });
+    return sum;
+  }, [transactionss]);
   const handleSubmitt = (e) => {
     e.preventDefault();
     console.log("Customer ID:", customerId);
     setIsModalOpen(false);
     setCustomerId("");
   };
-  const paymentData = [
-    {
-      date: "2025-10-08",
-      requestId: "REQ12345",
-      utrNo: "UTR987654321",
-      amount: "₹5000",
-      username: "john_doe",
-      customerId: "CUST001",
-      status: "Successed",
-      transactionId: "TXN99887766",
-      time: "14:30",
-    },
-    {
-      date: "2025-10-07",
-      requestId: "REQ98765",
-      utrNo: "UTR123456789",
-      amount: "₹1200",
-      username: "alex123",
-      customerId: "CUST002",
-      status: "Pending",
-      transactionId: "TXN88776655",
-      time: "11:45",
-    },
-  ];
+ 
 
   const withdrawRequests = [
     {
@@ -162,41 +207,32 @@ export default function UserDs() {
             {activeTab === "withdraw" && (
               <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8">
                 <h1 className="text-2xl font-bold text-center mb-6">Pay-Out</h1>
+
+                {/* Buttons Row + Filter */}
                 <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
-                  <button
-                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "All" ? "bg-gray-300" : "bg-gray-200 hover:bg-gray-300"}`}
-                    onClick={() => setFilterStatus("All")}
-                  >
-                    All
-                  </button>
+                  <div className="flex flex-wrap gap-3">
+                    {[
+                      { key: "All", color: "gray" },
+                      { key: "Initiate", color: "blue" },
+                      { key: "Pending", color: "yellow" },
+                      { key: "Successed", color: "green" },
+                      { key: "Failed", color: "red" },
+                    ].map(({ key, color }) => (
+                      <button
+                        key={key}
+                        className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 ${filterStatus === key
+                            ? `bg-${color}-300`
+                            : `bg-${color}-100 hover:bg-${color}-200`
+                          }`}
+                        onClick={() => setFilterStatus(key)}
+                      >
+                        <span>{key}</span>
+                        <span className="text-sm font-semibold">₹{totals[key]}</span>
+                      </button>
+                    ))}
+                  </div>
 
-                  <button
-                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Initiate" ? "bg-blue-200" : "bg-blue-100 hover:bg-blue-200"}`}
-                    onClick={() => setFilterStatus("Initiate")}
-                  >
-                    Initiate
-                  </button>
-
-                  <button
-                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Pending" ? "bg-yellow-200" : "bg-yellow-100 hover:bg-yellow-200"}`}
-                    onClick={() => setFilterStatus("Pending")}
-                  >
-                    Pending
-                  </button>
-
-                  <button
-                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Successed" ? "bg-green-200" : "bg-green-100 hover:bg-green-200"}`}
-                    onClick={() => setFilterStatus("Successed")}
-                  >
-                    Successed
-                  </button>
-
-                  <button
-                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Failed" ? "bg-red-200" : "bg-red-100 hover:bg-red-200"}`}
-                    onClick={() => setFilterStatus("Failed")}
-                  >
-                    Failed
-                  </button>
+                  {/* Filter Section */}
                   <div className="flex flex-wrap items-center gap-2 ml-4">
                     <span className="font-medium text-gray-700">Filter By:</span>
                     <input
@@ -218,6 +254,8 @@ export default function UserDs() {
                     </button>
                   </div>
                 </div>
+
+                {/* Responsive Table Section */}
                 <div className="overflow-x-auto mt-6">
                   <table className="min-w-full border border-gray-300 text-sm">
                     <thead className="bg-gray-100 text-gray-700">
@@ -230,6 +268,8 @@ export default function UserDs() {
                         <th className="border px-4 py-2 text-left">Customer ID</th>
                         <th className="border px-4 py-2 text-left">Status</th>
                         <th className="border px-4 py-2 text-left">Action</th>
+
+                        {/* Show Quick Action column header only for All or Initiate filter */}
                         {["All", "Initiate"].includes(filterStatus) && (
                           <th className="border px-4 py-2 text-left">Quick Action</th>
                         )}
@@ -237,6 +277,7 @@ export default function UserDs() {
                     </thead>
 
                     <tbody>
+                      {/* Ensure `paymentData` is defined in your component scope */}
                       {paymentData
                         .filter(item => filterStatus === "All" || item.status === filterStatus)
                         .map((item, index) => (
@@ -259,6 +300,8 @@ export default function UserDs() {
                             >
                               {item.status}
                             </td>
+
+                            {/* View Button */}
                             <td className="border px-4 py-2">
                               <button
                                 onClick={() => handleView(item)}
@@ -267,17 +310,21 @@ export default function UserDs() {
                                 View
                               </button>
                             </td>
+
+                            {/* Quick Action (Manual UTR Update) */}
                             {["All", "Initiate"].includes(filterStatus) && (
                               <td
                                 className="border px-4 py-2 text-center"
                                 title="Click to update UTR manually"
                                 onClick={() => {
+                                  // CONDITION: Only execute the modal opening logic if status is "Initiate"
                                   if (item.status === "Initiate") {
                                     setSelectedTx(item);
                                     setShowModal(true);
                                   }
                                 }}
                               >
+                                {/* RENDERING: Only show '↺' icon if the item's status is "Initiate" */}
                                 {item.status === "Initiate" ? (
                                   <span className="cursor-pointer text-blue-600 hover:text-blue-800">
                                     ↺
@@ -290,6 +337,9 @@ export default function UserDs() {
                     </tbody>
 
                   </table>
+
+                  {/* Manual Update Modal */}
+                  {/* Ensure `showModal`, `utrInput`, `amountInput`, `handleSubmit`, `setUtrInput`, `setAmountInput` are defined */}
                   {showModal && (
                     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                       <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-6">
@@ -318,7 +368,7 @@ export default function UserDs() {
                             <input
                               type="text"
                               value={amountInput}
-                              onChange={(e) => setAmountInput(e.target.value)}
+                              onChange={(e) => setAmountInput(e.target.value)} // Corrected to setAmountInput
                               placeholder="Enter Amount"
                               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                               required
@@ -388,41 +438,32 @@ export default function UserDs() {
             {activeTab === "payment" && (
               <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8">
                 <h1 className="text-2xl font-bold text-center mb-6">Pay-in</h1>
+
+                {/* Buttons Row + Filter */}
                 <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
-                  <button
-                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "All" ? "bg-gray-300" : "bg-gray-200 hover:bg-gray-300"}`}
-                    onClick={() => setFilterStatus("All")}
-                  >
-                    All
-                  </button>
+                  <div className="flex flex-wrap gap-3">
+                    {[
+                      { key: "All", color: "gray" },
+                      { key: "Initiate", color: "blue" },
+                      { key: "Pending", color: "yellow" },
+                      { key: "Successed", color: "green" },
+                      { key: "Failed", color: "red" },
+                    ].map(({ key, color }) => (
+                      <button
+                        key={key}
+                        className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 ${filterStatus === key
+                            ? `bg-${color}-300`
+                            : `bg-${color}-100 hover:bg-${color}-200`
+                          }`}
+                        onClick={() => setFilterStatus(key)}
+                      >
+                        <span>{key}</span>
+                        <span className="text-sm font-semibold">₹{totals[key]}</span>
+                      </button>
+                    ))}
+                  </div>
 
-                  <button
-                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Initiate" ? "bg-blue-200" : "bg-blue-100 hover:bg-blue-200"}`}
-                    onClick={() => setFilterStatus("Initiate")}
-                  >
-                    Initiate
-                  </button>
-
-                  <button
-                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Pending" ? "bg-yellow-200" : "bg-yellow-100 hover:bg-yellow-200"}`}
-                    onClick={() => setFilterStatus("Pending")}
-                  >
-                    Pending
-                  </button>
-
-                  <button
-                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Successed" ? "bg-green-200" : "bg-green-100 hover:bg-green-200"}`}
-                    onClick={() => setFilterStatus("Successed")}
-                  >
-                    Successed
-                  </button>
-
-                  <button
-                    className={`px-4 py-2 rounded-lg font-medium ${filterStatus === "Failed" ? "bg-red-200" : "bg-red-100 hover:bg-red-200"}`}
-                    onClick={() => setFilterStatus("Failed")}
-                  >
-                    Failed
-                  </button>
+                  {/* Filter Section */}
                   <div className="flex flex-wrap items-center gap-2 ml-4">
                     <span className="font-medium text-gray-700">Filter By:</span>
                     <input
@@ -436,12 +477,15 @@ export default function UserDs() {
                     <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium">
                       Apply
                     </button>
+
+                    {/* Bank Details Request Button & Modal */}
                     <button
                       onClick={() => setIsModalOpen(true)}
                       className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
                     >
                       + Request bank details
                     </button>
+                    {/* Ensure `isModalOpen` and `GenerateBankForm` are defined in your component scope */}
                     {isModalOpen && (
                       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
                         <div className="bg-white rounded-lg shadow-lg w-[90%] max-w-lg p-6 relative">
@@ -454,6 +498,7 @@ export default function UserDs() {
                               ✕
                             </button>
                           </div>
+                          {/* Assuming GenerateBankForm is a defined component */}
                           <GenerateBankForm />
                           <div className="flex justify-end pt-2">
                             <button
@@ -469,6 +514,8 @@ export default function UserDs() {
                     )}
                   </div>
                 </div>
+
+                {/* ✅ Responsive Table Section */}
                 <div className="overflow-x-auto mt-6">
                   <table className="min-w-full border border-gray-300 text-sm">
                     <thead className="bg-gray-100 text-gray-700">
@@ -481,6 +528,8 @@ export default function UserDs() {
                         <th className="border px-4 py-2 text-left">Customer ID</th>
                         <th className="border px-4 py-2 text-left">Status</th>
                         <th className="border px-4 py-2 text-left">Action</th>
+
+                        {/* Show Quick Action column header only for All or Initiate filter */}
                         {["All", "Initiate"].includes(filterStatus) && (
                           <th className="border px-4 py-2 text-left">Quick Action</th>
                         )}
@@ -488,6 +537,7 @@ export default function UserDs() {
                     </thead>
 
                     <tbody>
+                      {/* Ensure `paymentData` is defined in your component scope */}
                       {paymentData
                         .filter(item => filterStatus === "All" || item.status === filterStatus)
                         .map((item, index) => (
@@ -510,6 +560,8 @@ export default function UserDs() {
                             >
                               {item.status}
                             </td>
+
+                            {/* View Button */}
                             <td className="border px-4 py-2">
                               <button
                                 onClick={() => handleView(item)}
@@ -518,17 +570,21 @@ export default function UserDs() {
                                 View
                               </button>
                             </td>
+
+                            {/* Quick Action (Manual UTR Update) */}
                             {["All", "Initiate"].includes(filterStatus) && (
                               <td
                                 className="border px-4 py-2 text-center"
                                 title="Click to update UTR manually"
                                 onClick={() => {
+                                  // LOGIC CHANGE: Only execute the click action if status is "Initiate"
                                   if (item.status === "Initiate") {
                                     setSelectedTx(item);
                                     setShowModal(true);
                                   }
                                 }}
                               >
+                                {/* LOGIC CHANGE: Only render '↺' icon if the item's status is "Initiate" */}
                                 {item.status === "Initiate" ? (
                                   <span className="cursor-pointer text-blue-600 hover:text-blue-800">
                                     ↺
@@ -542,6 +598,9 @@ export default function UserDs() {
 
 
                   </table>
+
+                  {/* Manual Update Modal */}
+                  {/* Ensure `showModal`, `utrInput`, `amountInput`, `handleSubmit`, `setUtrInput`, `setAmountInput` are defined */}
                   {showModal && (
                     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                       <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl p-6">
@@ -596,6 +655,9 @@ export default function UserDs() {
                     </div>
                   )}
                 </div>
+
+                {/* ✅ Transaction Details Modal */}
+                {/* Ensure `selectedTx` and `showDetailsModal` are defined */}
                 {selectedTx && showDetailsModal && (
                   <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                     <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md">
@@ -699,15 +761,7 @@ export default function UserDs() {
               <div>
                 <h1 className="text-2xl font-bold mb-6">History</h1>
                 <div className="flex flex-wrap gap-4 mb-6">
-                  <button
-                    onClick={() => setHistoryTab("pending")}
-                    className={`px-4 py-2 rounded-lg font-medium ${historyTab === "pending"
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                      }`}
-                  >
-                    Pending
-                  </button>
+
                   <button
                     onClick={() => setHistoryTab("complete")}
                     className={`px-4 py-2 rounded-lg font-medium ${historyTab === "complete"
@@ -718,49 +772,7 @@ export default function UserDs() {
                     Complete
                   </button>
                 </div>
-                {historyTab === "pending" && (
-                  <div className="bg-white rounded-xl shadow-lg p-6 overflow-x-auto">
-                    <h2 className="text-xl font-semibold mb-4">Pay-out Requests</h2>
-                    <table className="min-w-full border border-gray-300 text-sm md:text-base">
-                      <thead>
-                        <tr className="bg-gray-100">
-                          {[
-                            "#",
-                            "Franchise Name",
-                            "Account Holder",
-                            "Account Number",
-                            "Bank Name",
-                            "IFSC",
-                            "UPI ID",
-                            "Amount",
-                            "Date",
-                            "Time",
-                            "Status",
-                          ].map((th) => (
-                            <th key={th} className="border px-4 py-2 text-left">{th}</th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {withdrawRequests.map((req, index) => (
-                          <tr key={req.id} className="hover:bg-gray-50">
-                            <td className="border px-4 py-2">{index + 1}</td>
-                            <td className="border px-4 py-2">{req.franchiseName}</td>
-                            <td className="border px-4 py-2">{req.accountName}</td>
-                            <td className="border px-4 py-2">{req.accountNumber}</td>
-                            <td className="border px-4 py-2">{req.bankName}</td>
-                            <td className="border px-4 py-2">{req.ifsc}</td>
-                            <td className="border px-4 py-2">{req.upiId}</td>
-                            <td className="border px-4 py-2">₹{req.amount.toLocaleString()}</td>
-                            <td className="border px-4 py-2">{req.date}</td>
-                            <td className="border px-4 py-2">{req.time}</td>
-                            <td className="border px-4 py-2">{req.status}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
+
                 {historyTab === "complete" && (
                   <div className="bg-white rounded-xl shadow-lg p-6 overflow-x-auto">
                     <h2 className="text-xl font-semibold mb-4">Completed Transactions</h2>
@@ -769,7 +781,7 @@ export default function UserDs() {
                         <tr className="bg-gray-100">
                           {[
                             "#",
-                            "Status",
+                            "Type",
                             "UPI ID",
                             "Transaction ID",
                             "Date",
@@ -777,6 +789,8 @@ export default function UserDs() {
                             "From",
                             "To",
                             "Amount",
+                            "Status",
+                            "Action",
                           ].map((th) => (
                             <th key={th} className="border px-4 py-2 text-left">{th}</th>
                           ))}
@@ -793,7 +807,7 @@ export default function UserDs() {
                             time: "14:30",
                             from: "John Doe",
                             to: "Bank Account",
-                            amount: 5000,
+                        amount: 5000,
                           },
                           {
                             id: 2,
@@ -805,6 +819,7 @@ export default function UserDs() {
                             from: "Bank Account",
                             to: "John Doe",
                             amount: 2000,
+                            status: "Success",
                           },
                         ].map((tx, index) => (
                           <tr key={tx.id} className="hover:bg-gray-50">
@@ -817,12 +832,70 @@ export default function UserDs() {
                             <td className="border px-4 py-2">{tx.from}</td>
                             <td className="border px-4 py-2">{tx.to}</td>
                             <td className="border px-4 py-2">₹{tx.amount.toLocaleString()}</td>
+                            <td className="border px-4 py-2">{tx.status}</td>
+                            <td className="border px-4 py-2">
+                              <button
+                                onClick={() => handleView(tx)}
+                                className="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded-lg"
+                              >
+                                View
+                              </button>
+                            </td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </div>
                 )}
+                {selectedTx && showDetailsModal && (
+                  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md">
+                      <h2 className="text-xl font-bold text-center mb-4">Transaction Details</h2>
+
+                      <div className="space-y-2 text-sm sm:text-base">
+                        <p><strong>UTR No.:</strong> {selectedTx.utrNo}</p>
+                        <p><strong>Amount:</strong> ₹{selectedTx.amount}</p>
+                        <p><strong>Customer ID:</strong> {selectedTx.customerId}</p>
+                        <p><strong>Request ID:</strong> {selectedTx.requestId}</p>
+                        <p><strong>Transaction ID:</strong> {selectedTx.transactionId}</p>
+                        <p><strong>Date:</strong> {selectedTx.date}</p>
+                        <p><strong>Time:</strong> {selectedTx.time}</p>
+                        <p>
+                          <strong>Payment Link:</strong>{" "}
+                          <a
+                            href={`https://payment.example.com/${selectedTx.transactionId}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:underline"
+                          >
+                            {`https://payment.example.com/${selectedTx.transactionId}`}
+                          </a>
+                        </p>
+                      </div>
+
+                      <div className="flex justify-between items-center mt-6">
+                        <button
+                          onClick={() =>
+                            navigator.clipboard.writeText(
+                              `https://payment.example.com/${selectedTx.transactionId}`
+                            )
+                          }
+                          className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium"
+                        >
+                          Copy Link
+                        </button>
+
+                        <button
+                          onClick={() => setShowDetailsModal(false)}
+                          className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium"
+                        >
+                          Close
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
               </div>
             )}
             {activeTab === "profile" && (
